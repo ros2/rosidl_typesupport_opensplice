@@ -564,8 +564,7 @@ server_is_available__@(spec.srv_name)(
 {
   using RequesterT = rosidl_typesupport_opensplice_cpp::Requester<
     @(__dds_msg_type_prefix)_Request_,
-    @(__dds_msg_type_prefix)_Response_
-    >;
+    @(__dds_msg_type_prefix)_Response_>;
 
   auto typed_requester = reinterpret_cast<RequesterT *>(requester);
 
