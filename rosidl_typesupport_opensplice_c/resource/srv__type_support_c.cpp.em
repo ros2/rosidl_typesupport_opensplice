@@ -110,7 +110,8 @@ send_request__@(spec.srv_name)(
 
   using RequesterT = rosidl_typesupport_opensplice_cpp::Requester<
     @(__dds_msg_type_prefix)_Request_,
-    @(__dds_msg_type_prefix)_Response_>;
+    @(__dds_msg_type_prefix)_Response_
+  >;
 
   auto requester = reinterpret_cast<RequesterT *>(untyped_requester);
 
@@ -130,7 +131,8 @@ take_request__@(spec.srv_name)(
 {
   using ResponderT = rosidl_typesupport_opensplice_cpp::Responder<
     @(__dds_msg_type_prefix)_Request_,
-    @(__dds_msg_type_prefix)_Response_>;
+    @(__dds_msg_type_prefix)_Response_
+  >;
 
   auto responder = reinterpret_cast<ResponderT *>(untyped_responder);
 
@@ -175,7 +177,8 @@ send_response__@(spec.srv_name)(
 
   using ResponderT = rosidl_typesupport_opensplice_cpp::Responder<
     @(__dds_msg_type_prefix)_Request_,
-    @(__dds_msg_type_prefix)_Response_>;
+    @(__dds_msg_type_prefix)_Response_
+  >;
   auto responder = reinterpret_cast<ResponderT *>(untyped_responder);
 
   const char * error_string = responder->send_response(*request_header, response);
@@ -192,7 +195,8 @@ take_response__@(spec.srv_name)(
 {
   using RequesterT = rosidl_typesupport_opensplice_cpp::Requester<
     @(__dds_msg_type_prefix)_Request_,
-    @(__dds_msg_type_prefix)_Response_>;
+    @(__dds_msg_type_prefix)_Response_
+  >;
   auto requester = reinterpret_cast<RequesterT *>(untyped_requester);
 
   rosidl_typesupport_opensplice_cpp::Sample<@(__dds_msg_type_prefix)_Response_> response;
