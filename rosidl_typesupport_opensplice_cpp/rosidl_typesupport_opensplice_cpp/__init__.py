@@ -12,6 +12,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+import contextlib
 import os
 import subprocess
 
@@ -22,6 +23,16 @@ from rosidl_cmake import get_newest_modification_time
 from rosidl_parser import parse_message_file
 from rosidl_parser import parse_service_file
 from rosidl_parser import validate_field_types
+
+
+@contextlib.contextmanager
+def change_working_directory(path):
+    old_working_directory=os.getcwd()
+    os.chdir(path)
+    try:
+        yield
+    finally:
+        os.chdir(old_working_directory)
 
 
 def generate_dds_opensplice_cpp(
@@ -44,6 +55,7 @@ def generate_dds_opensplice_cpp(
         assert os.path.exists(idl_file), 'Could not find IDL file: ' + idl_file
 
         # get two level of parent folders for idl file
+        filename = os.path.basename(idl_file)
         folder = os.path.dirname(idl_file)
         parent_folder = os.path.dirname(folder)
         output_path = os.path.join(
@@ -63,7 +75,7 @@ def generate_dds_opensplice_cpp(
             '-l', 'cpp',
             '-N',
             '-d', output_path,
-            idl_file
+            filename
         ]
         if os.name == 'nt':
             cmd[-1:-1] = [
@@ -71,14 +83,16 @@ def generate_dds_opensplice_cpp(
                 'ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_%s,%s' % (
                     pkg_name,
                     '%s/msg/rosidl_typesupport_opensplice_cpp__visibility_control.h' % pkg_name)]
-        subprocess.check_call(cmd)
+
+        with change_working_directory(folder):
+            subprocess.check_call(cmd)
 
         # modify generated code to
         # remove path information of the building machine as well as timestamps
-        msg_name = os.path.splitext(os.path.basename(idl_file))[0]
+        msg_name = os.path.splitext(filename)[0]
         idl_path = os.path.join(
             pkg_name, os.path.basename(parent_folder), os.path.basename(folder),
-            os.path.basename(idl_file))
+            filename)
         h_filename = os.path.join(output_path, '%s.h' % msg_name)
         _modify(h_filename, msg_name, _replace_path_and_timestamp, idl_path=idl_path)
         cpp_filename = os.path.join(output_path, '%s.cpp' % msg_name)
