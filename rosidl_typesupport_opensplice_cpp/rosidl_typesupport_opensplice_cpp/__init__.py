@@ -55,6 +55,9 @@ def generate_dds_opensplice_cpp(
         except FileExistsError:
             pass
 
+        # idlpp doesn't like long path arguments over 256 chars, get just the filename
+        filename = os.path.basename(idl_file)
+
         cmd = [idl_pp]
         for include_dir in include_dirs:
             cmd += ['-I', include_dir]
@@ -63,7 +66,7 @@ def generate_dds_opensplice_cpp(
             '-l', 'cpp',
             '-N',
             '-d', output_path,
-            idl_file
+            filename
         ]
         if os.name == 'nt':
             cmd[-1:-1] = [
@@ -71,14 +74,14 @@ def generate_dds_opensplice_cpp(
                 'ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_%s,%s' % (
                     pkg_name,
                     '%s/msg/rosidl_typesupport_opensplice_cpp__visibility_control.h' % pkg_name)]
-        subprocess.check_call(cmd)
+        subprocess.check_call(cmd, cwd=folder)
 
         # modify generated code to
         # remove path information of the building machine as well as timestamps
-        msg_name = os.path.splitext(os.path.basename(idl_file))[0]
+        msg_name = os.path.splitext(filename)[0]
         idl_path = os.path.join(
             pkg_name, os.path.basename(parent_folder), os.path.basename(folder),
-            os.path.basename(idl_file))
+            filename)
         h_filename = os.path.join(output_path, '%s.h' % msg_name)
         _modify(h_filename, msg_name, _replace_path_and_timestamp, idl_path=idl_path)
         cpp_filename = os.path.join(output_path, '%s.cpp' % msg_name)
