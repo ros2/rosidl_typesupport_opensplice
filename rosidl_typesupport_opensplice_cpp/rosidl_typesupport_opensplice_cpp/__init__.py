@@ -12,7 +12,6 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-import contextlib
 import os
 import subprocess
 
@@ -23,16 +22,6 @@ from rosidl_cmake import get_newest_modification_time
 from rosidl_parser import parse_message_file
 from rosidl_parser import parse_service_file
 from rosidl_parser import validate_field_types
-
-
-@contextlib.contextmanager
-def change_working_directory(path):
-    old_working_directory=os.getcwd()
-    os.chdir(path)
-    try:
-        yield
-    finally:
-        os.chdir(old_working_directory)
 
 
 def generate_dds_opensplice_cpp(
@@ -55,7 +44,6 @@ def generate_dds_opensplice_cpp(
         assert os.path.exists(idl_file), 'Could not find IDL file: ' + idl_file
 
         # get two level of parent folders for idl file
-        filename = os.path.basename(idl_file)
         folder = os.path.dirname(idl_file)
         parent_folder = os.path.dirname(folder)
         output_path = os.path.join(
@@ -66,6 +54,9 @@ def generate_dds_opensplice_cpp(
             os.makedirs(output_path)
         except FileExistsError:
             pass
+
+        # idlpp doesn't like long path arguments over 256 chars, get just the filename
+        filename = os.path.basename(idl_file)
 
         cmd = [idl_pp]
         for include_dir in include_dirs:
@@ -83,9 +74,7 @@ def generate_dds_opensplice_cpp(
                 'ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_%s,%s' % (
                     pkg_name,
                     '%s/msg/rosidl_typesupport_opensplice_cpp__visibility_control.h' % pkg_name)]
-
-        with change_working_directory(folder):
-            subprocess.check_call(cmd)
+        subprocess.check_call(cmd, cwd=folder)
 
         # modify generated code to
         # remove path information of the building machine as well as timestamps
