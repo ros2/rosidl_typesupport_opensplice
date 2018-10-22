@@ -7,10 +7,13 @@
 @# Context:
 @#  - spec (rosidl_parser.ServiceSpecification)
 @#    Parsed specification of the .srv file
+@#  - subfolder (string)
+@#    The subfolder / subnamespace of the message
+@#    Either 'srv' or 'action'
 @#  - get_header_filename_from_msg_name (function)
 @#######################################################################
 @
-#include "@(spec.pkg_name)/srv/@(get_header_filename_from_msg_name(spec.srv_name))__rosidl_typesupport_opensplice_c.h"
+#include "@(spec.pkg_name)/@(subfolder)/@(get_header_filename_from_msg_name(spec.srv_name))__rosidl_typesupport_opensplice_c.h"
 
 #include <cstring>
 #include <iostream>
@@ -22,23 +25,23 @@
 @{header_file_name = get_header_filename_from_msg_name(spec.srv_name)}@
 @{req_header_file_name = get_header_filename_from_msg_name(spec.srv_name + '__request')}@
 @{res_header_file_name = get_header_filename_from_msg_name(spec.srv_name + '__response')}@
-#include "@(spec.pkg_name)/srv/@(req_header_file_name).h"
-#include "@(spec.pkg_name)/srv/@(res_header_file_name).h"
-#include "@(spec.pkg_name)/srv/dds_opensplice/ccpp_@(spec.srv_name)_Request_.h"
-#include "@(spec.pkg_name)/srv/dds_opensplice/ccpp_@(spec.srv_name)_Response_.h"
-#include "@(spec.pkg_name)/srv/dds_opensplice/ccpp_Sample_@(spec.srv_name)_Request_.h"
-#include "@(spec.pkg_name)/srv/dds_opensplice/ccpp_Sample_@(spec.srv_name)_Response_.h"
+#include "@(spec.pkg_name)/@(subfolder)/@(req_header_file_name).h"
+#include "@(spec.pkg_name)/@(subfolder)/@(res_header_file_name).h"
+#include "@(spec.pkg_name)/@(subfolder)/dds_opensplice/ccpp_@(spec.srv_name)_Request_.h"
+#include "@(spec.pkg_name)/@(subfolder)/dds_opensplice/ccpp_@(spec.srv_name)_Response_.h"
+#include "@(spec.pkg_name)/@(subfolder)/dds_opensplice/ccpp_Sample_@(spec.srv_name)_Request_.h"
+#include "@(spec.pkg_name)/@(subfolder)/dds_opensplice/ccpp_Sample_@(spec.srv_name)_Response_.h"
 #include "rosidl_typesupport_opensplice_c/identifier.h"
 
 // TODO(dirk-thomas) including another cpp file is just nasty
-#include "@(spec.pkg_name)/srv/dds_opensplice/@(get_header_filename_from_msg_name(spec.srv_name))__type_support.cpp"
+#include "@(spec.pkg_name)/@(subfolder)/dds_opensplice/@(get_header_filename_from_msg_name(spec.srv_name))__type_support.cpp"
 #include "@(spec.pkg_name)/msg/rosidl_generator_c__visibility_control.h"
 
 @{
-# Same as @(spec.pkg_name)::srv::dds_::@(spec.srv_name)
-__dds_msg_type_prefix = "{spec.pkg_name}::srv::dds_::{spec.srv_name}".format(spec=spec)
-# Same as @(spec.pkg_name)::srv::dds_::Sample_@(spec.srv_name)
-__dds_sample_type_prefix = "{spec.pkg_name}::srv::dds_::Sample_{spec.srv_name}".format(spec=spec)
+# Same as @(spec.pkg_name)::@(subfolder)::dds_::@(spec.srv_name)
+__dds_msg_type_prefix = "{spec.pkg_name}::{subfolder}::dds_::{spec.srv_name}".format(spec=spec, subfolder=subfolder)
+# Same as @(spec.pkg_name)::@(subfolder)::dds_::Sample_@(spec.srv_name)
+__dds_sample_type_prefix = "{spec.pkg_name}::{subfolder}::dds_::Sample_{spec.srv_name}".format(spec=spec, subfolder=subfolder)
 }@
 #if defined(__cplusplus)
 extern "C"
@@ -55,7 +58,7 @@ const char *
 register_types__@(spec.srv_name)(
   void * untyped_participant, const char * request_type_name, const char * response_type_name)
 {
-  return @(spec.pkg_name)::srv::typesupport_opensplice_cpp::register_types__@(spec.srv_name)(
+  return @(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::register_types__@(spec.srv_name)(
     untyped_participant, request_type_name, response_type_name);
 }
 
@@ -68,7 +71,7 @@ create_requester__@(spec.srv_name)(
   bool avoid_ros_namespace_conventions,
   void * (*allocator)(size_t))
 {
-  return @(spec.pkg_name)::srv::typesupport_opensplice_cpp::create_requester__@(spec.srv_name)(
+  return @(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::create_requester__@(spec.srv_name)(
     untyped_participant, service_name,
     untyped_requester, untyped_reader,
     untyped_datareader_qos,
@@ -86,7 +89,7 @@ create_responder__@(spec.srv_name)(
   bool avoid_ros_namespace_conventions,
   void * (*allocator)(size_t))
 {
-  return @(spec.pkg_name)::srv::typesupport_opensplice_cpp::create_responder__@(spec.srv_name)(
+  return @(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::create_responder__@(spec.srv_name)(
     untyped_participant, service_name,
     untyped_responder, untyped_reader,
     untyped_datareader_qos,
@@ -222,14 +225,14 @@ take_response__@(spec.srv_name)(
 const char *
 destroy_requester__@(spec.srv_name)(void * untyped_requester, void (* deallocator)(void *))
 {
-  return @(spec.pkg_name)::srv::typesupport_opensplice_cpp::destroy_requester__@(spec.srv_name)(
+  return @(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::destroy_requester__@(spec.srv_name)(
     untyped_requester, deallocator);
 }
 
 const char *
 destroy_responder__@(spec.srv_name)(void * untyped_responder, void (* deallocator)(void *))
 {
-  return @(spec.pkg_name)::srv::typesupport_opensplice_cpp::destroy_responder__@(spec.srv_name)(
+  return @(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::destroy_responder__@(spec.srv_name)(
     untyped_responder, deallocator);
 }
 
@@ -237,7 +240,7 @@ const char *
 server_is_available__@(spec.srv_name)(
   void * requester, const rmw_node_t * node, bool * is_available)
 {
-  return @(spec.pkg_name)::srv::typesupport_opensplice_cpp::server_is_available__@(spec.srv_name)(
+  return @(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::server_is_available__@(spec.srv_name)(
     requester, node, is_available);
 }
 

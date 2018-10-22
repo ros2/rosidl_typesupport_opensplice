@@ -70,20 +70,27 @@ foreach(_idl_file ${rosidl_generate_interfaces_IDL_FILES})
       "${_output_path}/${_parent_folder}/${_header_name}__rosidl_typesupport_opensplice_c.h"
       "${_output_path}/${_parent_folder}/dds_opensplice_c/${_header_name}__type_support_c.cpp")
   elseif(_extension STREQUAL ".srv")
-    list(APPEND _generated_srv_files "${_output_path}/srv/${_header_name}__rosidl_typesupport_opensplice_c.h")
-    list(APPEND _generated_srv_files "${_output_path}/srv/dds_opensplice_c/${_header_name}__type_support_c.cpp")
+    get_filename_component(_parent_folder "${_idl_file}" DIRECTORY)
+    get_filename_component(_parent_folder "${_parent_folder}" NAME)
+    if(_parent_folder STREQUAL "srv")
+      set(_var "_generated_srv_files")
+    else()
+      message(FATAL_ERROR "Interface file with unknown parent folder: ${_idl_file}")
+    endif()
+    list(APPEND ${_var} "${_output_path}/${_parent_folder}/${_header_name}__rosidl_typesupport_opensplice_c.h")
+    list(APPEND ${_var} "${_output_path}/${_parent_folder}/dds_opensplice_c/${_header_name}__type_support_c.cpp")
 
     foreach(_suffix "_Request" "_Response")
       list(APPEND _generated_external_srv_files
-        "${_dds_output_path}/srv/dds_opensplice/Sample_${_msg_name}${_suffix}_.h"
-        "${_dds_output_path}/srv/dds_opensplice/Sample_${_msg_name}${_suffix}_.cpp"
-        "${_dds_output_path}/srv/dds_opensplice/Sample_${_msg_name}${_suffix}_Dcps.h"
-        "${_dds_output_path}/srv/dds_opensplice/Sample_${_msg_name}${_suffix}_Dcps.cpp"
-        "${_dds_output_path}/srv/dds_opensplice/Sample_${_msg_name}${_suffix}_Dcps_impl.h"
-        "${_dds_output_path}/srv/dds_opensplice/Sample_${_msg_name}${_suffix}_Dcps_impl.cpp"
-        "${_dds_output_path}/srv/dds_opensplice/Sample_${_msg_name}${_suffix}_SplDcps.h"
-        "${_dds_output_path}/srv/dds_opensplice/Sample_${_msg_name}${_suffix}_SplDcps.cpp"
-        "${_dds_output_path}/srv/dds_opensplice/ccpp_Sample_${_msg_name}${_suffix}_.h")
+        "${_dds_output_path}/${_parent_folder}/dds_opensplice/Sample_${_msg_name}${_suffix}_.h"
+        "${_dds_output_path}/${_parent_folder}/dds_opensplice/Sample_${_msg_name}${_suffix}_.cpp"
+        "${_dds_output_path}/${_parent_folder}/dds_opensplice/Sample_${_msg_name}${_suffix}_Dcps.h"
+        "${_dds_output_path}/${_parent_folder}/dds_opensplice/Sample_${_msg_name}${_suffix}_Dcps.cpp"
+        "${_dds_output_path}/${_parent_folder}/dds_opensplice/Sample_${_msg_name}${_suffix}_Dcps_impl.h"
+        "${_dds_output_path}/${_parent_folder}/dds_opensplice/Sample_${_msg_name}${_suffix}_Dcps_impl.cpp"
+        "${_dds_output_path}/${_parent_folder}/dds_opensplice/Sample_${_msg_name}${_suffix}_SplDcps.h"
+        "${_dds_output_path}/${_parent_folder}/dds_opensplice/Sample_${_msg_name}${_suffix}_SplDcps.cpp"
+        "${_dds_output_path}/${_parent_folder}/dds_opensplice/ccpp_Sample_${_msg_name}${_suffix}_.h")
     endforeach()
   else()
     message(FATAL_ERROR "Interface file with unknown extension: ${_idl_file}")
