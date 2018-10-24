@@ -36,7 +36,7 @@ extern "C"
 
 ROSIDL_TYPESUPPORT_OPENSPLICE_C_PUBLIC_@(spec.pkg_name)
 const rosidl_service_type_support_t *
-  ROSIDL_TYPESUPPORT_INTERFACE__SERVICE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(spec.pkg_name), @(spec.srv_name))();
+  ROSIDL_TYPESUPPORT_INTERFACE__SERVICE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(spec.pkg_name), @(subfolder), @(spec.srv_name))();
 
 #ifdef __cplusplus
 }
