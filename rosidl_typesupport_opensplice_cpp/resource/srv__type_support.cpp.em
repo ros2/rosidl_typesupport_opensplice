@@ -7,11 +7,14 @@
 @# Context:
 @#  - spec (rosidl_parser.ServiceSpecification)
 @#    Parsed specification of the .srv file
+@#  - subfolder (string)
+@#    The subfolder / subnamespace of the message
+@#    Either 'srv' or 'action'
 @#  - get_header_filename_from_msg_name (function)
 @#######################################################################
 @
 @{header_file_name = get_header_filename_from_msg_name(spec.srv_name)}@
-#include "@(spec.pkg_name)/srv/@(header_file_name)__rosidl_typesupport_opensplice_cpp.hpp"
+#include "@(spec.pkg_name)/@(subfolder)/@(header_file_name)__rosidl_typesupport_opensplice_cpp.hpp"
 
 #include <cstring>
 #include <iostream>
@@ -23,15 +26,15 @@
 #include "rosidl_typesupport_opensplice_cpp/visibility_control.h"
 #include "rmw/rmw.h"
 
-#include "@(spec.pkg_name)/srv/@(header_file_name)__struct.hpp"
+#include "@(spec.pkg_name)/@(subfolder)/@(header_file_name)__struct.hpp"
 @{req_header_file_name = get_header_filename_from_msg_name(spec.srv_name + '_Request')}@
 @{res_header_file_name = get_header_filename_from_msg_name(spec.srv_name + '_Response')}@
-#include "@(spec.pkg_name)/srv/@(req_header_file_name)__rosidl_typesupport_opensplice_cpp.hpp"
-#include "@(spec.pkg_name)/srv/@(res_header_file_name)__rosidl_typesupport_opensplice_cpp.hpp"
-#include "@(spec.pkg_name)/srv/dds_opensplice/ccpp_@(spec.srv_name)_Request_.h"
-#include "@(spec.pkg_name)/srv/dds_opensplice/ccpp_@(spec.srv_name)_Response_.h"
-#include "@(spec.pkg_name)/srv/dds_opensplice/ccpp_Sample_@(spec.srv_name)_Request_.h"
-#include "@(spec.pkg_name)/srv/dds_opensplice/ccpp_Sample_@(spec.srv_name)_Response_.h"
+#include "@(spec.pkg_name)/@(subfolder)/@(req_header_file_name)__rosidl_typesupport_opensplice_cpp.hpp"
+#include "@(spec.pkg_name)/@(subfolder)/@(res_header_file_name)__rosidl_typesupport_opensplice_cpp.hpp"
+#include "@(spec.pkg_name)/@(subfolder)/dds_opensplice/ccpp_@(spec.srv_name)_Request_.h"
+#include "@(spec.pkg_name)/@(subfolder)/dds_opensplice/ccpp_@(spec.srv_name)_Response_.h"
+#include "@(spec.pkg_name)/@(subfolder)/dds_opensplice/ccpp_Sample_@(spec.srv_name)_Request_.h"
+#include "@(spec.pkg_name)/@(subfolder)/dds_opensplice/ccpp_Sample_@(spec.srv_name)_Response_.h"
 #include "rosidl_typesupport_opensplice_cpp/identifier.hpp"
 #include "rosidl_typesupport_opensplice_cpp/service_type_support.h"
 #include "rosidl_typesupport_opensplice_cpp/service_type_support_decl.hpp"
@@ -39,10 +42,10 @@
 #include "rosidl_typesupport_opensplice_cpp/responder.hpp"
 
 @{
-# Same as @(spec.pkg_name)::srv::dds_::@(spec.srv_name)
-__dds_msg_type_prefix = "{spec.pkg_name}::srv::dds_::{spec.srv_name}".format(spec=spec)
-# Same as @(spec.pkg_name)::srv::dds_::Sample_@(spec.srv_name)
-__dds_sample_type_prefix = "{spec.pkg_name}::srv::dds_::Sample_{spec.srv_name}".format(spec=spec)
+# Same as @(spec.pkg_name)::@(subfolder)::dds_::@(spec.srv_name)
+__dds_msg_type_prefix = "{spec.pkg_name}::{subfolder}::dds_::{spec.srv_name}".format(spec=spec, subfolder=subfolder)
+# Same as @(spec.pkg_name)::@(subfolder)::dds_::Sample_@(spec.srv_name)
+__dds_sample_type_prefix = "{spec.pkg_name}::{subfolder}::dds_::Sample_{spec.srv_name}".format(spec=spec, subfolder=subfolder)
 }@
 
 namespace rosidl_typesupport_opensplice_cpp
@@ -220,7 +223,7 @@ class TemplateDataWriter<Sample<@(__dds_msg_type_prefix)@(suffix)_>>
 namespace @(spec.pkg_name)
 {
 
-namespace srv
+namespace @(subfolder)
 {
 
 namespace typesupport_opensplice_cpp
@@ -399,11 +402,11 @@ send_request__@(spec.srv_name)(
   void * untyped_requester, const void * untyped_ros_request, int64_t * sequence_number)
 {
   using SampleT = rosidl_typesupport_opensplice_cpp::Sample<@(__dds_msg_type_prefix)_Request_>;
-  using ROSRequestT = @(spec.pkg_name)::srv::@(spec.srv_name)_Request;
+  using ROSRequestT = @(spec.pkg_name)::@(subfolder)::@(spec.srv_name)_Request;
 
   SampleT request;
   auto ros_request = reinterpret_cast<const ROSRequestT *>(untyped_ros_request);
-  @(spec.pkg_name)::srv::typesupport_opensplice_cpp::convert_ros_message_to_dds(*ros_request, request.data());
+  @(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::convert_ros_message_to_dds(*ros_request, request.data());
 
   using RequesterT = rosidl_typesupport_opensplice_cpp::Requester<
     @(__dds_msg_type_prefix)_Request_,
@@ -430,7 +433,7 @@ take_request__@(spec.srv_name)(
     @(__dds_msg_type_prefix)_Request_,
     @(__dds_msg_type_prefix)_Response_
   >;
-  using ROSRequestT = @(spec.pkg_name)::srv::@(spec.srv_name)_Request;
+  using ROSRequestT = @(spec.pkg_name)::@(subfolder)::@(spec.srv_name)_Request;
 
   auto ros_request = static_cast<ROSRequestT *>(untyped_ros_request);
 
@@ -443,7 +446,7 @@ take_request__@(spec.srv_name)(
   }
 
   if (*taken) {
-    @(spec.pkg_name)::srv::typesupport_opensplice_cpp::convert_dds_message_to_ros(request.data(), *ros_request);
+    @(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::convert_dds_message_to_ros(request.data(), *ros_request);
 
     request_header->sequence_number = request.sequence_number_;
     std::memcpy(
@@ -464,10 +467,10 @@ send_response__@(spec.srv_name)(
   void * untyped_responder, const rmw_request_id_t * request_header,
   const void * untyped_ros_response)
 {
-  using ROSResponseT = @(spec.pkg_name)::srv::@(spec.srv_name)_Response;
+  using ROSResponseT = @(spec.pkg_name)::@(subfolder)::@(spec.srv_name)_Response;
   rosidl_typesupport_opensplice_cpp::Sample<@(__dds_msg_type_prefix)_Response_> response;
   auto ros_response = reinterpret_cast<const ROSResponseT *>(untyped_ros_response);
-  @(spec.pkg_name)::srv::typesupport_opensplice_cpp::convert_ros_message_to_dds(*ros_response, response.data());
+  @(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::convert_ros_message_to_dds(*ros_response, response.data());
 
 
   using ResponderT = rosidl_typesupport_opensplice_cpp::Responder<
@@ -488,7 +491,7 @@ take_response__@(spec.srv_name)(
   void * untyped_requester, rmw_request_id_t * request_header, void * untyped_ros_response,
   bool * taken)
 {
-  using ROSResponseT = @(spec.pkg_name)::srv::@(spec.srv_name)_Response;
+  using ROSResponseT = @(spec.pkg_name)::@(subfolder)::@(spec.srv_name)_Response;
   auto ros_response = static_cast<ROSResponseT *>(untyped_ros_response);
 
   using RequesterT = rosidl_typesupport_opensplice_cpp::Requester<
@@ -505,7 +508,7 @@ take_response__@(spec.srv_name)(
   if (*taken) {
     request_header->sequence_number = response.sequence_number_;
 
-    @(spec.pkg_name)::srv::typesupport_opensplice_cpp::convert_dds_message_to_ros(
+    @(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::convert_dds_message_to_ros(
       response.data(), *ros_response);
     return nullptr;
   }
@@ -602,7 +605,7 @@ static rosidl_service_type_support_t handle = {
 
 }  // namespace typesupport_opensplice_cpp
 
-}  // namespace srv
+}  // namespace @(subfolder)
 
 }  // namespace @(spec.pkg_name)
 
@@ -613,9 +616,9 @@ namespace rosidl_typesupport_opensplice_cpp
 template<>
 ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(spec.pkg_name)
 const rosidl_service_type_support_t *
-get_service_type_support_handle<@(spec.pkg_name)::srv::@(spec.srv_name)>()
+get_service_type_support_handle<@(spec.pkg_name)::@(subfolder)::@(spec.srv_name)>()
 {
-  return &@(spec.pkg_name)::srv::typesupport_opensplice_cpp::handle;
+  return &@(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::handle;
 }
 
 }  // namespace rosidl_typesupport_opensplice_cpp
@@ -626,8 +629,8 @@ extern "C"
 #endif
 
 const rosidl_service_type_support_t *
-ROSIDL_TYPESUPPORT_INTERFACE__SERVICE_SYMBOL_NAME(rosidl_typesupport_opensplice_cpp, @(spec.pkg_name), @(spec.srv_name))() {
-  return &@(spec.pkg_name)::srv::typesupport_opensplice_cpp::handle;
+ROSIDL_TYPESUPPORT_INTERFACE__SERVICE_SYMBOL_NAME(rosidl_typesupport_opensplice_cpp, @(spec.pkg_name), @(subfolder), @(spec.srv_name))() {
+  return &@(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::handle;
 }
 
 #ifdef __cplusplus
