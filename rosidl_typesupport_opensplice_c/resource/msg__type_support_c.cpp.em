@@ -327,14 +327,14 @@ convert_dds_to_ros(const void * untyped_dds_message, void * untyped_ros_message)
 @[    else]@
 @{
 if field.type.type == 'string':
-    array_init = 'rosidl_generator_c__String__Array__init'
-    array_fini = 'rosidl_generator_c__String__Array__fini'
+    array_init = 'rosidl_generator_c__String__Sequence__init'
+    array_fini = 'rosidl_generator_c__String__Sequence__fini'
 elif field.type.is_primitive_type():
-    array_init = 'rosidl_generator_c__{field.type.type}__Array__init'.format(**locals())
-    array_fini = 'rosidl_generator_c__{field.type.type}__Array__fini'.format(**locals())
+    array_init = 'rosidl_generator_c__{field.type.type}__Sequence__init'.format(**locals())
+    array_fini = 'rosidl_generator_c__{field.type.type}__Sequence__fini'.format(**locals())
 else:
-    array_init = '{field.type.pkg_name}__msg__{field.type.type}__Array__init'.format(**locals())
-    array_fini = '{field.type.pkg_name}__msg__{field.type.type}__Array__fini'.format(**locals())
+    array_init = '{field.type.pkg_name}__msg__{field.type.type}__Sequence__init'.format(**locals())
+    array_fini = '{field.type.pkg_name}__msg__{field.type.type}__Sequence__fini'.format(**locals())
 }@
     size_t size = dds_message->@(field.name)_.length();
     if (ros_message->@(field.name).data) {
