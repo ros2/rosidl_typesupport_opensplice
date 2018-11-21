@@ -26,7 +26,16 @@
 #include "rosidl_typesupport_opensplice_cpp/visibility_control.h"
 #include "rmw/rmw.h"
 
-#include "@(spec.pkg_name)/@(subfolder)/@(header_file_name)__struct.hpp"
+@{
+header_filename = get_header_filename_from_msg_name(spec.srv_name)
+if header_filename.endswith('__goal'):
+    header_filename = header_filename[:-6]
+elif header_filename.endswith('__result'):
+    header_filename = header_filename[:-8]
+elif header_filename.endswith('__feedback'):
+    header_filename = header_filename[:-10]
+}@
+#include "@(spec.pkg_name)/@(subfolder)/@(header_filename)__struct.hpp"
 @{req_header_file_name = get_header_filename_from_msg_name(spec.srv_name + '_Request')}@
 @{res_header_file_name = get_header_filename_from_msg_name(spec.srv_name + '_Response')}@
 #include "@(spec.pkg_name)/@(subfolder)/@(req_header_file_name)__rosidl_typesupport_opensplice_cpp.hpp"
