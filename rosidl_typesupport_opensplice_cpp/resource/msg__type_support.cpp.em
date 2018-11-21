@@ -24,7 +24,20 @@
 
 #include "rosidl_typesupport_cpp/message_type_support.hpp"
 
-#include "@(spec.base_type.pkg_name)/@(subfolder)/@(header_file_name)__struct.hpp"
+@{
+header_filename = get_header_filename_from_msg_name(spec.base_type.type)
+if header_filename.endswith('__request'):
+    header_filename = header_filename[:-9]
+elif header_filename.endswith('__response'):
+    header_filename = header_filename[:-10]
+if header_filename.endswith('__goal'):
+    header_filename = header_filename[:-6]
+elif header_filename.endswith('__result'):
+    header_filename = header_filename[:-8]
+elif header_filename.endswith('__feedback'):
+    header_filename = header_filename[:-10]
+}@
+#include "@(spec.base_type.pkg_name)/@(subfolder)/@(header_filename)__struct.hpp"
 #include "@(spec.base_type.pkg_name)/@(subfolder)/dds_opensplice/ccpp_@(spec.base_type.type)_.h"
 #include "rosidl_typesupport_opensplice_cpp/identifier.hpp"
 #include "rosidl_typesupport_opensplice_cpp/message_type_support.h"

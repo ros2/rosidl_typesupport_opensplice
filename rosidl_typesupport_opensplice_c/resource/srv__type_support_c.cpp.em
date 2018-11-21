@@ -23,10 +23,7 @@
 
 #include "@(spec.pkg_name)/msg/rosidl_typesupport_opensplice_c__visibility_control.h"
 @{header_file_name = get_header_filename_from_msg_name(spec.srv_name)}@
-@{req_header_file_name = get_header_filename_from_msg_name(spec.srv_name + '__request')}@
-@{res_header_file_name = get_header_filename_from_msg_name(spec.srv_name + '__response')}@
-#include "@(spec.pkg_name)/@(subfolder)/@(req_header_file_name).h"
-#include "@(spec.pkg_name)/@(subfolder)/@(res_header_file_name).h"
+#include "@(spec.pkg_name)/@(subfolder)/@(header_file_name).h"
 #include "@(spec.pkg_name)/@(subfolder)/dds_opensplice/ccpp_@(spec.srv_name)_Request_.h"
 #include "@(spec.pkg_name)/@(subfolder)/dds_opensplice/ccpp_@(spec.srv_name)_Response_.h"
 #include "@(spec.pkg_name)/@(subfolder)/dds_opensplice/ccpp_Sample_@(spec.srv_name)_Request_.h"
