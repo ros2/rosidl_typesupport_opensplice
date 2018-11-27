@@ -24,7 +24,14 @@
 #include <cassert>
 #include <limits>
 
+#if defined(_MSC_VER)
+# pragma warning(push)
+# pragma warning(disable: 4099)
+#endif
 #include <u_instanceHandle.h>
+#if defined(_MSC_VER)
+# pragma warning(pop)
+#endif
 
 // Provides the rosidl_typesupport_opensplice_c__identifier symbol declaration.
 #include "rosidl_typesupport_opensplice_c/identifier.h"
