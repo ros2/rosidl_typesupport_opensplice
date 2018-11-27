@@ -48,7 +48,7 @@ typedef struct message_type_support_callbacks_t
     void * untyped_serialized_message);
   const char *
   (*deserialize)(
-    const char * buffer,
+    const uint8_t * buffer,
     unsigned length,
     void * ros_message);
   // Functions for converting between DDS and ROS messages of this type.

@@ -84,7 +84,7 @@ serialize__@(spec.base_type.type)(
 ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(spec.base_type.pkg_name)
 const char *
 deserialize__@(spec.base_type.type)(
-  const char * buffer,
+  const uint8_t * buffer,
   unsigned length,
   void * untyped_ros_message);
 

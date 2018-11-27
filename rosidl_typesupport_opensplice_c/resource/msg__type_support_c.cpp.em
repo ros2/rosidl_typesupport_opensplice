@@ -597,7 +597,7 @@ serialize(
 
 static const char *
 deserialize(
-  const char * buffer,
+  const uint8_t * buffer,
   unsigned length,
   void * untyped_ros_message)
 {
