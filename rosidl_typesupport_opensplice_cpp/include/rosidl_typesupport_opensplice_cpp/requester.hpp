@@ -15,20 +15,20 @@
 #ifndef ROSIDL_TYPESUPPORT_OPENSPLICE_CPP__REQUESTER_HPP_
 #define ROSIDL_TYPESUPPORT_OPENSPLICE_CPP__REQUESTER_HPP_
 
-#if defined(_MSC_VER)
-# pragma warning(push)
-# pragma warning(disable: 4099)
-#endif
 #ifdef __clang__
 # pragma GCC diagnostic push
 # pragma GCC diagnostic ignored "-Wmismatched-tags"
 #endif
-#include <ccpp_dds_dcps.h>
-#ifdef __clang__
-# pragma GCC diagnostic pop
+#if defined(_MSC_VER)
+# pragma warning(push)
+# pragma warning(disable: 4099)
 #endif
+#include <ccpp_dds_dcps.h>
 #if defined(_MSC_VER)
 # pragma warning(pop)
+#endif
+#ifdef __clang__
+# pragma GCC diagnostic pop
 #endif
 
 #include <atomic>

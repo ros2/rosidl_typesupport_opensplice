@@ -19,14 +19,7 @@
 #include <limits>
 #include <stdexcept>
 
-#if defined(_MSC_VER)
-# pragma warning(push)
-# pragma warning(disable: 4099)
-#endif
 #include <u_instanceHandle.h>
-#if defined(_MSC_VER)
-# pragma warning(pop)
-#endif
 
 #include "rosidl_typesupport_cpp/message_type_support.hpp"
 

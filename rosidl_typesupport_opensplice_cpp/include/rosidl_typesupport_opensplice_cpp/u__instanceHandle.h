@@ -27,15 +27,8 @@ extern "C"
 {
 #endif
 
-#if defined(_MSC_VER)
-# pragma warning(push)
-# pragma warning(disable: 4099)
-#endif
 #include "u_instanceHandle.h"  // NOLINT
 #include "v_collection.h"  // NOLINT
-#if defined(_MSC_VER)
-# pragma warning(pop)
-#endif
 
 ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC
 v_gid
