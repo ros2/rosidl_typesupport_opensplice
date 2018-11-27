@@ -15,7 +15,14 @@
 #ifndef ROSIDL_TYPESUPPORT_OPENSPLICE_CPP__RESPONDER_HPP_
 #define ROSIDL_TYPESUPPORT_OPENSPLICE_CPP__RESPONDER_HPP_
 
+#ifdef __clang__
+# pragma GCC diagnostic push
+# pragma GCC diagnostic ignored "-Wmismatched-tags"
+#endif
 #include <ccpp_dds_dcps.h>
+#ifdef __clang__
+# pragma GCC diagnostic pop
+#endif
 #include <u_entity.h>
 
 #include <cstring>
