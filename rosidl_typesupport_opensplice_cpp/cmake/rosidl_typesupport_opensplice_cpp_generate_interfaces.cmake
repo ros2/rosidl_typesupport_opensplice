@@ -12,35 +12,11 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# rosidl_generate_dds_interfaces(
-#   ${rosidl_generate_interfaces_TARGET}__dds_opensplice_idl
-#   IDL_FILES ${rosidl_generate_interfaces_IDL_FILES}
-#   DEPENDENCY_PACKAGE_NAMES ${rosidl_generate_interfaces_DEPENDENCY_PACKAGE_NAMES}
-#   OUTPUT_SUBFOLDERS "dds_opensplice"
-#   EXTENSION "rosidl_typesupport_opensplice_cpp.rosidl_generator_dds_idl_extension"
-# )
-
 set(_target_suffix "__rosidl_typesupport_opensplice_cpp")
 
 set(_output_path "${CMAKE_CURRENT_BINARY_DIR}/rosidl_typesupport_opensplice_cpp/${PROJECT_NAME}")
 
-# set(_dds_idl_files "")
-# set(_dds_idl_base_path "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_dds_idl")
-# foreach(_idl_file ${rosidl_generate_interfaces_IDL_FILES})
-#   get_filename_component(_parent_folder "${_idl_file}" DIRECTORY)
-#   get_filename_component(_parent_folder "${_parent_folder}" NAME)
-#   get_filename_component(_extension "${_idl_file}" EXT)
-#   get_filename_component(_name "${_idl_file}" NAME_WE)
-#   if(_extension STREQUAL ".msg")
-#     list(APPEND _dds_idl_files
-#       "${_dds_idl_base_path}/${PROJECT_NAME}/${_parent_folder}/dds_opensplice/${_name}_.idl")
-#   elseif(_extension STREQUAL ".srv")
-#     list(APPEND _dds_idl_files
-#       "${_dds_idl_base_path}/${PROJECT_NAME}/${_parent_folder}/dds_opensplice/Sample_${_name}_Request_.idl")
-#     list(APPEND _dds_idl_files
-#       "${_dds_idl_base_path}/${PROJECT_NAME}/${_parent_folder}/dds_opensplice/Sample_${_name}_Response_.idl")
-#   endif()
-# endforeach()
+set(_dds_idl_base_path "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_dds_idl")
 
 set(_generated_files "")
 set(_generated_external_files "")
@@ -138,29 +114,6 @@ foreach(_pkg_name ${rosidl_generate_interfaces_DEPENDENCY_PACKAGE_NAMES})
     normalize_path(_abs_idl_file "${_abs_idl_file}")
     list(APPEND _dependency_files "${_abs_idl_file}")
     list(APPEND _dependencies "${_pkg_name}:${_abs_idl_file}")
-
-    # get_filename_component(_extension "${_idl_file}" EXT)
-    # get_filename_component(_parent_folder "${_idl_file}" DIRECTORY)
-    # get_filename_component(_parent_folder "${_parent_folder}" NAME)
-    # get_filename_component(_name "${_idl_file}" NAME_WE)
-    # if(_extension STREQUAL ".msg")
-    #   set(_abs_idl_file "${${_pkg_name}_DIR}/../${_parent_folder}/dds_opensplice/${_name}_.idl")
-    #   normalize_path(_abs_idl_file "${_abs_idl_file}")
-    #   list(APPEND _dependency_files "${_abs_idl_file}")
-    #   set(_abs_idl_file "${${_pkg_name}_DIR}/../${_idl_file}")
-    #   normalize_path(_abs_idl_file "${_abs_idl_file}")
-    #   list(APPEND _dependencies "${_pkg_name}:${_abs_idl_file}")
-    # elseif(_extension STREQUAL ".srv")
-    #   set(_abs_idl_file "${${_pkg_name}_DIR}/../${_parent_folder}/dds_opensplice/Sample_${_name}_Request_.idl")
-    #   normalize_path(_abs_idl_file "${_abs_idl_file}")
-    #   list(APPEND _dependency_files "${_abs_idl_file}")
-    #   list(APPEND _dependencies "${_pkg_name}:${_abs_idl_file}")
-
-    #   set(_abs_idl_file "${${_pkg_name}_DIR}/../${_parent_folder}/dds_opensplice/Sample_${_name}_Response_.idl")
-    #   normalize_path(_abs_idl_file "${_abs_idl_file}")
-    #   list(APPEND _dependency_files "${_abs_idl_file}")
-    #   list(APPEND _dependencies "${_pkg_name}:${_abs_idl_file}")
-    # endif()
   endforeach()
 endforeach()
 
@@ -188,7 +141,6 @@ rosidl_write_generator_arguments(
   "${generator_arguments_file}"
   PACKAGE_NAME "${PROJECT_NAME}"
   IDL_TUPLES "${rosidl_generate_interfaces_IDL_TUPLES}"
-  # ROS_INTERFACE_FILES "${rosidl_generate_interfaces_IDL_FILES}"
   ROS_INTERFACE_DEPENDENCIES "${_dependencies}"
   OUTPUT_DIR "${_output_path}"
   TEMPLATE_DIR "${rosidl_typesupport_opensplice_cpp_TEMPLATE_DIR}"
