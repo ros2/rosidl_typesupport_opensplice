@@ -14,14 +14,15 @@
 
 import os
 import subprocess
+import sys  # TODO remove
 
 from rosidl_cmake import generate_files
 
 
 def generate_dds_opensplice_cpp(
-    pkg_name, dds_interface_files, dds_interface_base_path, deps, output_basepath, idl_pp
+    pkg_name, dds_interface_files, deps, opensplice_idl_output_path, output_basepath, idl_pp
 ):
-    include_dirs = [dds_interface_base_path]
+    include_dirs = []
     for dep in deps:
         # only take the first : for separation, as Windows follows with a C:\
         dep_parts = dep.split(':', 1)
@@ -34,8 +35,16 @@ def generate_dds_opensplice_cpp(
     if 'OSPL_TMPL_PATH' in os.environ:
         include_dirs.append(os.environ['OSPL_TMPL_PATH'])
 
+    # Ensure output directory for converted IDL files exists
+    try:
+        print("OPENSPLICE IDL PATH: {}".format(opensplice_idl_output_path), file=sys.stderr)
+        os.makedirs(opensplice_idl_output_path)
+    except FileExistsError:
+        pass
+
     for idl_file in dds_interface_files:
         assert os.path.exists(idl_file), 'Could not find IDL file: ' + idl_file
+        print("Processing IDL {}".format(idl_file), file=sys.stderr)
 
         # get two level of parent folders for idl file
         folder = os.path.dirname(idl_file)
@@ -48,6 +57,9 @@ def generate_dds_opensplice_cpp(
             os.makedirs(output_path)
         except FileExistsError:
             pass
+
+        # Convert IDL file for OpenSplice compatibility
+        # TODO
 
         # idlpp doesn't like long path arguments over 256 chars, get just the filename
         filename = os.path.basename(idl_file)
