@@ -15,13 +15,15 @@
 import os
 import subprocess
 
-from rosidl_cmake import convert_camel_case_to_lower_case_underscore
-from rosidl_cmake import expand_template
-from rosidl_cmake import extract_message_types
-from rosidl_cmake import get_newest_modification_time
-from rosidl_parser import parse_message_file
-from rosidl_parser import parse_service_file
-from rosidl_parser import validate_field_types
+from rosidl_cmake import generate_files
+
+#from rosidl_cmake import convert_camel_case_to_lower_case_underscore
+#from rosidl_cmake import expand_template
+#from rosidl_cmake import extract_message_types
+#from rosidl_cmake import get_newest_modification_time
+#from rosidl_parser import parse_message_file
+#from rosidl_parser import parse_service_file
+#from rosidl_parser import validate_field_types
 
 
 def generate_dds_opensplice_cpp(
@@ -120,75 +122,81 @@ def _replace_path_and_timestamp(lines, msg_name, idl_path):
     return lines
 
 
-def generate_typesupport_opensplice_cpp(args):
-    template_dir = args['template_dir']
-    mapping_msgs = {
-        os.path.join(template_dir, 'msg__rosidl_typesupport_opensplice_cpp.hpp.em'):
-        '%s__rosidl_typesupport_opensplice_cpp.hpp',
-        os.path.join(template_dir, 'msg__type_support.cpp.em'):
-        '%s__type_support.cpp',
+def generate_typesupport_opensplice_cpp(arguments_file):
+    mapping = {
+       'idl__rosidl_typesupport_opensplice_cpp.hpp.em': '%s__rosidl_typesupport_opensplice_cpp.hpp',
+       'idl__dds_opensplice__type_support.cpp.em': 'dds_opensplice/%s__type_support.cpp',
     }
 
-    mapping_srvs = {
-        os.path.join(template_dir, 'srv__rosidl_typesupport_opensplice_cpp.hpp.em'):
-        '%s__rosidl_typesupport_opensplice_cpp.hpp',
-        os.path.join(template_dir, 'srv__type_support.cpp.em'):
-        '%s__type_support.cpp',
-    }
+    generate_files(arguments_file, mapping)
 
-    for template_file in mapping_msgs.keys():
-        assert os.path.exists(template_file), 'Could not find template: ' + template_file
+    # mapping_msgs = {
+    #     os.path.join(template_dir, 'msg__rosidl_typesupport_opensplice_cpp.hpp.em'):
+    #     '%s__rosidl_typesupport_opensplice_cpp.hpp',
+    #     os.path.join(template_dir, 'msg__type_support.cpp.em'):
+    #     '%s__type_support.cpp',
+    # }
 
-    for template_file in mapping_srvs.keys():
-        assert os.path.exists(template_file), 'Could not find template: ' + template_file
+    # mapping_srvs = {
+    #     os.path.join(template_dir, 'srv__rosidl_typesupport_opensplice_cpp.hpp.em'):
+    #     '%s__rosidl_typesupport_opensplice_cpp.hpp',
+    #     os.path.join(template_dir, 'srv__type_support.cpp.em'):
+    #     '%s__type_support.cpp',
+    # }
 
-    pkg_name = args['package_name']
-    known_msg_types = extract_message_types(
-        pkg_name, args['ros_interface_files'], args.get('ros_interface_dependencies', []))
+    # for template_file in mapping_msgs.keys():
+    #     assert os.path.exists(template_file), 'Could not find template: ' + template_file
 
-    functions = {
-        'get_header_filename_from_msg_name': convert_camel_case_to_lower_case_underscore,
-    }
+    # for template_file in mapping_srvs.keys():
+    #     assert os.path.exists(template_file), 'Could not find template: ' + template_file
+
+    # pkg_name = args['package_name']
+    # known_msg_types = extract_message_types(
+    #     pkg_name, args['ros_interface_files'], args.get('ros_interface_dependencies', []))
+
+    # functions = {
+    #     'get_header_filename_from_msg_name': convert_camel_case_to_lower_case_underscore,
+    # }
     # generate_dds_opensplice_cpp() and therefore the make target depend on the additional files
     # therefore they must be listed here even if the generated type support files are independent
-    latest_target_timestamp = get_newest_modification_time(
-        args['target_dependencies'] + args.get('additional_files', []))
+    # latest_target_timestamp = get_newest_modification_time(
+    #     args['target_dependencies'] + args.get('additional_files', []))
 
-    for idl_file in args['ros_interface_files']:
-        extension = os.path.splitext(idl_file)[1]
-        subfolder = os.path.basename(os.path.dirname(idl_file))
-        if extension == '.msg':
-            spec = parse_message_file(pkg_name, idl_file)
-            validate_field_types(spec, known_msg_types)
-            for template_file, generated_filename in mapping_msgs.items():
-                generated_file = os.path.join(args['output_dir'], subfolder)
-                if generated_filename.endswith('.cpp'):
-                    generated_file = os.path.join(generated_file, 'dds_opensplice')
-                generated_file = os.path.join(
-                    generated_file, generated_filename %
-                    convert_camel_case_to_lower_case_underscore(spec.base_type.type))
+    # for idl_file in args['ros_interface_files']:
+    #     extension = os.path.splitext(idl_file)[1]
+    #     subfolder = os.path.basename(os.path.dirname(idl_file))
+    #     if extension == '.msg':
+    #         spec = parse_message_file(pkg_name, idl_file)
+    #         validate_field_types(spec, known_msg_types)
+    #         for template_file, generated_filename in mapping_msgs.items():
+    #             generated_file = os.path.join(args['output_dir'], subfolder)
+    #             if generated_filename.endswith('.cpp'):
+    #                 generated_file = os.path.join(generated_file, 'dds_opensplice')
+    #             generated_file = os.path.join(
+    #                 generated_file, generated_filename %
+    #                 convert_camel_case_to_lower_case_underscore(spec.base_type.type))
 
-                data = {'spec': spec, 'subfolder': subfolder}
-                data.update(functions)
-                expand_template(
-                    template_file, data, generated_file,
-                    minimum_timestamp=latest_target_timestamp)
+    #             data = {'spec': spec, 'subfolder': subfolder}
+    #             data.update(functions)
+    #             expand_template(
+    #                 template_file, data, generated_file,
+    #                 minimum_timestamp=latest_target_timestamp)
 
-        elif extension == '.srv':
-            spec = parse_service_file(pkg_name, idl_file)
-            validate_field_types(spec, known_msg_types)
-            for template_file, generated_filename in mapping_srvs.items():
-                generated_file = os.path.join(args['output_dir'], subfolder)
-                if generated_filename.endswith('.cpp'):
-                    generated_file = os.path.join(generated_file, 'dds_opensplice')
-                generated_file = os.path.join(
-                    generated_file, generated_filename %
-                    convert_camel_case_to_lower_case_underscore(spec.srv_name))
+    #     elif extension == '.srv':
+    #         spec = parse_service_file(pkg_name, idl_file)
+    #         validate_field_types(spec, known_msg_types)
+    #         for template_file, generated_filename in mapping_srvs.items():
+    #             generated_file = os.path.join(args['output_dir'], subfolder)
+    #             if generated_filename.endswith('.cpp'):
+    #                 generated_file = os.path.join(generated_file, 'dds_opensplice')
+    #             generated_file = os.path.join(
+    #                 generated_file, generated_filename %
+    #                 convert_camel_case_to_lower_case_underscore(spec.srv_name))
 
-                data = {'spec': spec, 'subfolder': subfolder}
-                data.update(functions)
-                expand_template(
-                    template_file, data, generated_file,
-                    minimum_timestamp=latest_target_timestamp)
+    #             data = {'spec': spec, 'subfolder': subfolder}
+    #             data.update(functions)
+    #             expand_template(
+    #                 template_file, data, generated_file,
+    #                 minimum_timestamp=latest_target_timestamp)
 
     return 0

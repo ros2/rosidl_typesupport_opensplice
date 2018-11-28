@@ -13,8 +13,23 @@
 @#  - get_header_filename_from_msg_name (function)
 @#######################################################################
 @
-@{header_file_name = get_header_filename_from_msg_name(spec.base_type.type)}@
-#include "@(spec.base_type.pkg_name)/@(subfolder)/@(header_file_name)__rosidl_typesupport_opensplice_cpp.hpp"
+@# Included from rosidl_typesupport_opensplice_cpp/resource/idl__dds_opensplice__type_support.cpp.em
+@{
+from rosidl_cmake import convert_camel_case_to_lower_case_underscore
+include_parts = [package_name] + list(interface_path.parents[0].parts)
+include_dir = '/'.join(include_parts)
+include_parts = include_parts.append(
+    convert_camel_case_to_lower_case_underscore(interface_path.stem))
+include_base = '/'.join(include_parts)
+header_file = include_base +'__rosidl_typesupport_opensplice_cpp.hpp'
+}@
+@[if header_file in include_directives]@
+// already included above
+// @
+@[else]@
+@{include_directives.add(header_file)}@
+@[end if]@
+#include "@(header_file)"
 
 #include <limits>
 #include <stdexcept>
@@ -25,58 +40,62 @@
 #include "rosidl_typesupport_cpp/message_type_support.hpp"
 
 @{
-header_filename = get_header_filename_from_msg_name(spec.base_type.type)
-if header_filename.endswith('__request'):
-    header_filename = header_filename[:-9]
-elif header_filename.endswith('__response'):
-    header_filename = header_filename[:-10]
-if header_filename.endswith('__goal'):
-    header_filename = header_filename[:-6]
-elif header_filename.endswith('__result'):
-    header_filename = header_filename[:-8]
-elif header_filename.endswith('__feedback'):
-    header_filename = header_filename[:-10]
+header_files = [
+  include_base + '__struct.hpp',
+  include_dir + '/dds_opensplice/ccpp_' + message.structure.type.name + '_.h',
+  'rosidl_typesupport_opensplice_cpp/identifier.hpp'
+  'rosidl_typesupport_opensplice_cpp/message_type_support.h'
+  'rosidl_typesupport_opensplice_cpp/message_type_support_decl.hpp'
+  'rosidl_typesupport_opensplice_cpp/u__instanceHandle.h'
+  'rmw/rmw.h'
+]
 }@
-#include "@(spec.base_type.pkg_name)/@(subfolder)/@(header_filename)__struct.hpp"
-#include "@(spec.base_type.pkg_name)/@(subfolder)/dds_opensplice/ccpp_@(spec.base_type.type)_.h"
-#include "rosidl_typesupport_opensplice_cpp/identifier.hpp"
-#include "rosidl_typesupport_opensplice_cpp/message_type_support.h"
-#include "rosidl_typesupport_opensplice_cpp/message_type_support_decl.hpp"
-#include "rosidl_typesupport_opensplice_cpp/u__instanceHandle.h"
-#include "rmw/rmw.h"
+@[for header_file in header_files]@
+@[    if header_file in include_directives]@
+// already included above
+// @
+@[    else]@
+@{include_directives.add(header_file)}@
+@[    end if]@
+#include "@(header_file)"
+@[end for]@
 
+@{
+__ros_msg_pkg_prefix = '::'.join(message.structure.type.namespaces)
+__ros_msg_type_prefix = __ros_msg_pkg_prefix + '::' + message.structure.type.name
+__dds_msg_type_prefix = __ros_msg_pkg_prefix + '::dds_::' +  message.structure.type.name + '_'
+}@
 
 // forward declaration of message dependencies and their conversion functions
-@[for field in spec.fields]@
-@[  if not field.type.is_primitive_type()]@
-namespace @(field.type.pkg_name)
+@[for member in message.structure.members]@
+@[    if isinstance(member.type, NamespacedType)]@
+@[        for ns in member.type.namespaces]@
+namespace @(ns)
 {
-namespace msg
-{
+@[        end for]@
 namespace dds_
 {
-struct @(field.type.type)_;
+struct @(member.type.name)_;
 }  // namespace dds_
 namespace typesupport_opensplice_cpp
 {
 void convert_ros_message_to_dds(
-  const @(field.type.pkg_name)::msg::@(field.type.type) &,
-  @(field.type.pkg_name)::msg::dds_::@(field.type.type)_ &);
+  const @(__ros_msg_type_prefix) &,
+  dds_::@(__dds_msg_type_prefix) &);
 void convert_dds_message_to_ros(
-  const @(field.type.pkg_name)::msg::dds_::@(field.type.type)_ &,
-  @(field.type.pkg_name)::msg::@(field.type.type) &);
+  const dds_::@(__dds_msg_type_prefix) &,
+  @(__ros_msg_type_prefix) &);
 }  // namespace typesupport_opensplice_cpp
-}  // namespace msg
-}  // namespace @(field.type.pkg_name)
-
-@[  end if]@
+@[        for ns in reversed(member.type.namespaces)]@
+}  // namespace @(ns)
+@[        end for]@
+@[    end if]@
 @[end for]@
 
-namespace @(spec.base_type.pkg_name)
+@[for ns in message.structure.type.namespaces]@
+namespace @(ns)
 {
-
-namespace @(subfolder)
-{
+@[end for]@
 
 namespace typesupport_opensplice_cpp
 {
@@ -86,13 +105,13 @@ __dds_msg_type_prefix = "{}::{}::dds_::{}_".format(
   spec.base_type.pkg_name, subfolder, spec.base_type.type)
 }@
 using __dds_msg_type = @(__dds_msg_type_prefix);
-using __ros_msg_type = @(spec.base_type.pkg_name)::@(subfolder)::@(spec.base_type.type);
+using __ros_msg_type = @(__ros_msg_type_prefix);
 
 static @(__dds_msg_type_prefix)TypeSupport __type_support;
 
-ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(spec.base_type.pkg_name)
+ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
 const char *
-register_type__@(spec.base_type.type)(
+register_type__@(message.structure.type.name)(
   void * untyped_participant,
   const char * type_name)
 {
@@ -126,7 +145,7 @@ register_type__@(spec.base_type.type)(
   }
 }
 
-ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(spec.base_type.pkg_name)
+ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
 void
 convert_ros_message_to_dds(const __ros_msg_type & ros_message, __dds_msg_type & dds_message)
 {
@@ -172,9 +191,9 @@ convert_ros_message_to_dds(const __ros_msg_type & ros_message, __dds_msg_type & 
 @[end for]@
 }
 
-ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(spec.base_type.pkg_name)
+ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
 const char *
-publish__@(spec.base_type.type)(
+publish__@(message.structure.type.name)(
   void * untyped_topic_writer,
   const void * untyped_ros_message)
 {
@@ -217,7 +236,7 @@ publish__@(spec.base_type.type)(
   }
 }
 
-ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(spec.base_type.pkg_name)
+ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
 void
 convert_dds_message_to_ros(const __dds_msg_type & dds_message, __ros_msg_type & ros_message)
 {
@@ -257,9 +276,9 @@ convert_dds_message_to_ros(const __dds_msg_type & dds_message, __ros_msg_type & 
 @[end for]@
 }
 
-ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(spec.base_type.pkg_name)
+ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
 const char *
-take__@(spec.base_type.type)(
+take__@(message.structure.type.name)(
   void * untyped_topic_reader,
   bool ignore_local_publications,
   void * untyped_ros_message,
@@ -385,9 +404,9 @@ finally:
   return errs;
 }
 
-ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(spec.base_type.pkg_name)
+ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
 const char *
-serialize__@(spec.base_type.type)(
+serialize__@(message.structure.type.name)(
   const void * untyped_ros_message,
   void * untyped_serialized_data)
 {
@@ -443,9 +462,9 @@ serialize__@(spec.base_type.type)(
   return nullptr;
 }
 
-ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(spec.base_type.pkg_name)
+ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
 const char *
-deserialize__@(spec.base_type.type)(
+deserialize__@(message.structure.type.name)(
   const uint8_t * buffer,
   unsigned length,
   void * untyped_ros_message)
@@ -483,13 +502,13 @@ deserialize__@(spec.base_type.type)(
 }
 
 static message_type_support_callbacks_t callbacks = {
-  "@(spec.base_type.pkg_name)",
-  "@(spec.base_type.type)",
-  &register_type__@(spec.base_type.type),
-  &publish__@(spec.base_type.type),
-  &take__@(spec.base_type.type),
-  &serialize__@(spec.base_type.type),
-  &deserialize__@(spec.base_type.type),
+  "@(package_name)",
+  "@(message.structure.type.name)",
+  &register_type__@(message.structure.type.name),
+  &publish__@(message.structure.type.name),
+  &take__@(message.structure.type.name),
+  &serialize__@(message.structure.type.name),
+  &deserialize__@(message.structure.type.name),
   nullptr,  // convert ros to dds (handled differently for C++)
   nullptr,  // convert dds to ros (handled differently for C++)
 };
@@ -502,21 +521,19 @@ static rosidl_message_type_support_t handle = {
 
 }  // namespace typesupport_opensplice_cpp
 
-}  // namespace @(subfolder)
-
-}  // namespace @(spec.base_type.pkg_name)
+@[for ns in reversed(message.structure.type.namespaces)]@
+}  // namespace @(ns)
+@[end for]@
 
 namespace rosidl_typesupport_opensplice_cpp
 {
 
 template<>
-ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(spec.base_type.pkg_name)
+ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
 const rosidl_message_type_support_t *
-get_message_type_support_handle<
-  @(spec.base_type.pkg_name)::@(subfolder)::@(spec.base_type.type)
->()
+get_message_type_support_handle<@(__ros_msg_type_prefix)>()
 {
-  return &@(spec.base_type.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::handle;
+  return &@(__ros_msg_pkg_prefix)::typesupport_opensplice_cpp::handle;
 }
 
 }  // namespace rosidl_typesupport_opensplice_cpp
@@ -527,8 +544,12 @@ extern "C"
 #endif
 
 const rosidl_message_type_support_t *
-ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_cpp, @(spec.base_type.pkg_name), @(subfolder), @(spec.base_type.type))() {
-  return &@(spec.base_type.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::handle;
+ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
+  rosidl_typesupport_opensplice_cpp,
+  @(', '.join([package_name] + list(interface_path.parents[0].parts))),
+  @(message.structure.type.name))()
+{
+  return &@(__ros_msg_pkg_prefix)::typesupport_opensplice_cpp::handle;
 }
 
 #ifdef __cplusplus
