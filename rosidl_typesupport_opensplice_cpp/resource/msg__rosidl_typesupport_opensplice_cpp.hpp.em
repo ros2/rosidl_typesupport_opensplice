@@ -19,8 +19,7 @@
 from rosidl_cmake import convert_camel_case_to_lower_case_underscore
 include_parts = [package_name] + list(interface_path.parents[0].parts)
 include_dir = '/'.join(include_parts)
-include_parts = include_parts.append(
-    convert_camel_case_to_lower_case_underscore(interface_path.stem))
+include_parts.append(convert_camel_case_to_lower_case_underscore(interface_path.stem))
 header_guard_parts = include_parts + ['__rosidl_typesupport_opensplice_cpp_hpp']
 header_guard_variable = '__'.join([x.upper() for x in header_guard_parts]) + '_'
 }@
