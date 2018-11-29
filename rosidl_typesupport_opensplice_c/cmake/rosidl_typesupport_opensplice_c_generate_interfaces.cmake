@@ -38,56 +38,23 @@ set(_generated_files "")
 set(_generated_external_files "")
 set(_dds_output_path "${CMAKE_CURRENT_BINARY_DIR}/rosidl_typesupport_opensplice_cpp/${PROJECT_NAME}")
 foreach(_idl_tuple ${rosidl_generate_interfaces_IDL_TUPLES})
-  string(REGEX REPLACE ":([^:]*)$" "/\\1" _rel_idl_file "${_idl_tuple}")
-  get_filename_component(_parent_folder "${_rel_idl_file}" DIRECTORY)
+  string(REGEX REPLACE ":([^:]*)$" "/\\1" _abs_idl_file "${_idl_tuple}")
+  get_filename_component(_parent_folder "${_abs_idl_file}" DIRECTORY)
   get_filename_component(_parent_folder "${_parent_folder}" NAME)
-  # get_filename_component(_extension "${_idl_file}" EXT)
-  get_filename_component(_msg_name "${_rel_idl_file}" NAME_WE)
-  string_camel_case_to_lower_case_underscore("${_msg_name}" _header_name)
+  get_filename_component(_idl_name "${_abs_idl_file}" NAME_WE)
+  string_camel_case_to_lower_case_underscore("${_idl_name}" _header_name)
   list(APPEND _generated_files "${_output_path}/${_parent_folder}/${_header_name}__rosidl_typesupport_opensplice_c.h")
   list(APPEND _generated_files "${_output_path}/${_parent_folder}/dds_opensplice_c/${_header_name}__type_support_c.cpp")
-
-  # if(_extension STREQUAL ".msg")
-  #   set(_allowed_parent_folders "msg" "srv" "action")
-  #   if(NOT _parent_folder IN_LIST _allowed_parent_folders)
-  #     message(FATAL_ERROR "Interface file with unknown parent folder: ${_idl_file}")
-  #   endif()
-  #   list(APPEND _generated_external_files
-  #     "${_dds_output_path}/${_parent_folder}/dds_opensplice/${_msg_name}_.h"
-  #     "${_dds_output_path}/${_parent_folder}/dds_opensplice/${_msg_name}_.cpp"
-  #     "${_dds_output_path}/${_parent_folder}/dds_opensplice/${_msg_name}_Dcps.h"
-  #     "${_dds_output_path}/${_parent_folder}/dds_opensplice/${_msg_name}_Dcps.cpp"
-  #     "${_dds_output_path}/${_parent_folder}/dds_opensplice/${_msg_name}_Dcps_impl.h"
-  #     "${_dds_output_path}/${_parent_folder}/dds_opensplice/${_msg_name}_Dcps_impl.cpp"
-  #     "${_dds_output_path}/${_parent_folder}/dds_opensplice/${_msg_name}_SplDcps.h"
-  #     "${_dds_output_path}/${_parent_folder}/dds_opensplice/${_msg_name}_SplDcps.cpp"
-  #     "${_dds_output_path}/${_parent_folder}/dds_opensplice/ccpp_${_msg_name}_.h")
-  #   list(APPEND _generated_files
-  #     "${_output_path}/${_parent_folder}/${_header_name}__rosidl_typesupport_opensplice_c.h"
-  #     "${_output_path}/${_parent_folder}/dds_opensplice_c/${_header_name}__type_support_c.cpp")
-  # elseif(_extension STREQUAL ".srv")
-  #   set(_allowed_parent_folders "srv" "action")
-  #   if(NOT _parent_folder IN_LIST _allowed_parent_folders)
-  #     message(FATAL_ERROR "Interface file with unknown parent folder: ${_idl_file}")
-  #   endif()
-  #   list(APPEND _generated_files "${_output_path}/${_parent_folder}/${_header_name}__rosidl_typesupport_opensplice_c.h")
-  #   list(APPEND _generated_files "${_output_path}/${_parent_folder}/dds_opensplice_c/${_header_name}__type_support_c.cpp")
-
-  #   foreach(_suffix "_Request" "_Response")
-  #     list(APPEND _generated_external_files
-  #       "${_dds_output_path}/${_parent_folder}/dds_opensplice/Sample_${_msg_name}${_suffix}_.h"
-  #       "${_dds_output_path}/${_parent_folder}/dds_opensplice/Sample_${_msg_name}${_suffix}_.cpp"
-  #       "${_dds_output_path}/${_parent_folder}/dds_opensplice/Sample_${_msg_name}${_suffix}_Dcps.h"
-  #       "${_dds_output_path}/${_parent_folder}/dds_opensplice/Sample_${_msg_name}${_suffix}_Dcps.cpp"
-  #       "${_dds_output_path}/${_parent_folder}/dds_opensplice/Sample_${_msg_name}${_suffix}_Dcps_impl.h"
-  #       "${_dds_output_path}/${_parent_folder}/dds_opensplice/Sample_${_msg_name}${_suffix}_Dcps_impl.cpp"
-  #       "${_dds_output_path}/${_parent_folder}/dds_opensplice/Sample_${_msg_name}${_suffix}_SplDcps.h"
-  #       "${_dds_output_path}/${_parent_folder}/dds_opensplice/Sample_${_msg_name}${_suffix}_SplDcps.cpp"
-  #       "${_dds_output_path}/${_parent_folder}/dds_opensplice/ccpp_Sample_${_msg_name}${_suffix}_.h")
-  #   endforeach()
-  # else()
-  #   message(FATAL_ERROR "Interface file with unknown extension: ${_idl_file}")
-  # endif()
+  list(APPEND _generated_external_files
+    "${_dds_output_path}/${_parent_folder}/${_idl_name}.h"
+    "${_dds_output_path}/${_parent_folder}/${_idl_name}.cpp"
+    "${_dds_output_path}/${_parent_folder}/${_idl_name}Dcps.h"
+    "${_dds_output_path}/${_parent_folder}/${_idl_name}Dcps.cpp"
+    "${_dds_output_path}/${_parent_folder}/${_idl_name}Dcps_impl.h"
+    "${_dds_output_path}/${_parent_folder}/${_idl_name}Dcps_impl.cpp"
+    "${_dds_output_path}/${_parent_folder}/${_idl_name}SplDcps.h"
+    "${_dds_output_path}/${_parent_folder}/${_idl_name}SplDcps.cpp"
+    "${_dds_output_path}/${_parent_folder}/ccpp_${_idl_name}.h")
 endforeach()
 
 set(_dependency_files "")
@@ -100,39 +67,14 @@ foreach(_pkg_name ${rosidl_generate_interfaces_DEPENDENCY_PACKAGE_NAMES})
     normalize_path(_abs_idl_file "${_abs_idl_file}")
     list(APPEND _dependency_files "${_abs_idl_file}")
     list(APPEND _dependencies "${_pkg_name}:${_abs_idl_file}")
-
-    # get_filename_component(_extension "${_idl_file}" EXT)
-    # get_filename_component(_parent_folder "${_idl_file}" DIRECTORY)
-    # get_filename_component(_parent_folder "${_parent_folder}" NAME)
-    # if(_extension STREQUAL ".msg")
-    #   get_filename_component(_name "${_idl_file}" NAME_WE)
-    #   set(_abs_idl_file "${${_pkg_name}_DIR}/../${_parent_folder}/dds_opensplice/${_name}_.idl")
-    #   normalize_path(_abs_idl_file "${_abs_idl_file}")
-    #   list(APPEND _dependency_files "${_abs_idl_file}")
-    #   set(_abs_idl_file "${${_pkg_name}_DIR}/../${_idl_file}")
-    #   normalize_path(_abs_idl_file "${_abs_idl_file}")
-    #   list(APPEND _dependencies "${_pkg_name}:${_abs_idl_file}")
-    # elseif(_extension STREQUAL ".srv")
-    #   get_filename_component(_name "${_idl_file}" NAME_WE)
-
-    #   set(_abs_idl_file "${${_pkg_name}_DIR}/../${_parent_folder}/dds_opensplice/Sample_${_name}_Request_.idl")
-    #   normalize_path(_abs_idl_file "${_abs_idl_file}")
-    #   list(APPEND _dependency_files "${_abs_idl_file}")
-    #   list(APPEND _dependencies "${_pkg_name}:${_abs_idl_file}")
-
-    #   set(_abs_idl_file "${${_pkg_name}_DIR}/../${_parent_folder}/dds_opensplice/Sample_${_name}_Response_.idl")
-    #   normalize_path(_abs_idl_file "${_abs_idl_file}")
-    #   list(APPEND _dependency_files "${_abs_idl_file}")
-    #   list(APPEND _dependencies "${_pkg_name}:${_abs_idl_file}")
-    # endif()
   endforeach()
 endforeach()
 
 set(target_dependencies
   "${rosidl_typesupport_opensplice_c_BIN}"
   ${rosidl_typesupport_opensplice_c_GENERATOR_FILES}
-  "${rosidl_typesupport_opensplice_cpp_TEMPLATE_DIR}/idl__rosidl_typesupport_opensplice_c.h.em"
-  "${rosidl_typesupport_opensplice_cpp_TEMPLATE_DIR}/idl__dds_opensplice__type_support.c.em"
+  "${rosidl_typesupport_opensplice_c_TEMPLATE_DIR}/idl__rosidl_typesupport_opensplice_c.h.em"
+  "${rosidl_typesupport_opensplice_c_TEMPLATE_DIR}/idl__dds_opensplice__type_support.c.em"
   "${rosidl_typesupport_opensplice_c_TEMPLATE_DIR}/msg__rosidl_typesupport_opensplice_c.h.em"
   "${rosidl_typesupport_opensplice_c_TEMPLATE_DIR}/msg__type_support_c.cpp.em"
   "${rosidl_typesupport_opensplice_c_TEMPLATE_DIR}/srv__rosidl_typesupport_opensplice_c.h.em"
@@ -157,8 +99,7 @@ rosidl_write_generator_arguments(
   OUTPUT_DIR "${_output_path}"
   TEMPLATE_DIR "${rosidl_typesupport_opensplice_c_TEMPLATE_DIR}"
   TARGET_DEPENDENCIES ${target_dependencies}
-  # ADDITIONAL_FILES
-  # ${_dds_idl_files}
+  ADDITIONAL_FILES ${_dds_idl_files}
 )
 
 add_custom_command(
@@ -166,9 +107,7 @@ add_custom_command(
   ${_generated_files}
   COMMAND ${PYTHON_EXECUTABLE} ${rosidl_typesupport_opensplice_c_BIN}
   --generator-arguments-file "${generator_arguments_file}"
-  DEPENDS
-  ${target_dependencies}
-  # ${_dds_idl_files}
+  DEPENDS ${target_dependencies} ${_dds_idl_files}
   COMMENT "Generating C type support for PrismTech OpenSplice"
   VERBATIM
 )
@@ -243,23 +182,23 @@ ament_target_dependencies(
   "rosidl_typesupport_opensplice_c")
 foreach(_pkg_name ${rosidl_generate_interfaces_DEPENDENCY_PACKAGE_NAMES})
   # TODO(jacobperron): do it
-  # set(_msg_include_dir "${${_pkg_name}_DIR}/../../../include/${_pkg_name}/msg/dds_opensplice_c")
+  set(_msg_include_dir "${${_pkg_name}_DIR}/../../../include/${_pkg_name}/msg/dds_opensplice_c")
   # set(_srv_include_dir "${${_pkg_name}_DIR}/../../../include/${_pkg_name}/srv/dds_opensplice_c")
   # set(_action_include_dir "${${_pkg_name}_DIR}/../../../include/${_pkg_name}/action/dds_opensplice_c")
-  # normalize_path(_msg_include_dir "${_msg_include_dir}")
+  normalize_path(_msg_include_dir "${_msg_include_dir}")
   # normalize_path(_srv_include_dir "${_srv_include_dir}")
   # normalize_path(_action_include_dir "${_action_include_dir}")
-  # target_include_directories(${rosidl_generate_interfaces_TARGET}${_target_suffix}
-  #   PUBLIC
-  #   "${_msg_include_dir}"
+  target_include_directories(${rosidl_generate_interfaces_TARGET}${_target_suffix}
+    PUBLIC
+    "${_msg_include_dir}"
   #   "${_srv_include_dir}"
   #   "${_action_include_dir}"
-  # )
+  )
   ament_target_dependencies(
     ${rosidl_generate_interfaces_TARGET}${_target_suffix}
     ${_pkg_name})
-  # target_link_libraries(${rosidl_generate_interfaces_TARGET}${_target_suffix}
-  #   ${${_pkg_name}_LIBRARIES${_target_suffix}})
+  target_link_libraries(${rosidl_generate_interfaces_TARGET}${_target_suffix}
+    ${${_pkg_name}_LIBRARIES${_target_suffix}})
 endforeach()
 
 add_dependencies(
