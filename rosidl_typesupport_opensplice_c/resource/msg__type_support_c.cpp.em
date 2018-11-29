@@ -1,24 +1,7 @@
 // generated from rosidl_typesupport_opensplice_c/resource/msg__type_support_c.cpp.em
 // generated code does not contain a copyright notice
 
-@##########################################################################
-@# EmPy template for generating <msg>__type_support_c.cpp files for OpenSplice
-@#
-@# Context:
-@#  - spec (rosidl_parser.MessageSpecification)
-@#    Parsed specification of the .msg file
-@#  - pkg (string)
-@#    name of the containing package; equivalent to spec.base_type.pkg_name
-@#  - msg (string)
-@#    name of the message; equivalent to spec.msg_name
-@#  - type (string)
-@#    full type of the message; equivalent to spec.base_type.type
-@#  - subfolder (string)
-@#    The subfolder / subnamespace of the message
-@#    Either 'msg', 'srv' or 'action'
-@#  - get_header_filename_from_msg_name (function)
-@##########################################################################
-@
+@# Included from rosidl_typesupport_opensplice_c/resource/idl__dds_opensplice_type_support.c.em
 @{
 from rosidl_cmake import convert_camel_case_to_lower_case_underscore
 from rosidl_parser.definition import Array
@@ -56,7 +39,7 @@ header_files = [
     package_name + '/msg/rosidl_typesupport_opensplice_c__visibility_control.h',
     include_base + '__struct.h',
     include_base + '__functions.h',
-    include_dir + '/dds_opensplice/ccpp_@(message.structure.type.name)_.h',
+    include_dir + '/dds_opensplice/ccpp_' + message.structure.type.name + '.h',
 ]
 }@
 @[for header_file in header_files]@
