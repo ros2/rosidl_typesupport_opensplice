@@ -49,13 +49,11 @@ def generate_dds_opensplice_cpp(
 
 
     for idl_file in dds_interface_files:
-        # get two level of parent folders for idl file
-        # folder = os.path.dirname(idl_file)
         parent_folder = os.path.dirname(idl_file)
         output_path = os.path.join(
             output_basepath,
-            os.path.basename(parent_folder))
-            # os.path.basename(folder))
+            os.path.basename(parent_folder),
+            'dds_opensplice')
         try:
             os.makedirs(output_path)
         except FileExistsError:
