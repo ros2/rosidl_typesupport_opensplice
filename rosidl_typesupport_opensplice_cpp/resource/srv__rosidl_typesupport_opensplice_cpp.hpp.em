@@ -51,7 +51,7 @@ ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_@(package_name)
 const rosidl_service_type_support_t *
 ROSIDL_TYPESUPPORT_INTERFACE__SERVICE_SYMBOL_NAME(
   rosidl_typesupport_opensplice_cpp,
-  @(', '.join([package_name] + list(interface_path.parents[0].parts))),
+  @(', '.join(service.structure.type.namespaces)),
   @(service.structure.type.name))();
 
 #ifdef __cplusplus
