@@ -35,13 +35,12 @@ header_file = include_base +'__rosidl_typesupport_opensplice_cpp.hpp'
 #include <sstream>
 #include <string>
 
-#include "rosidl_generator_c/service_type_support_struct.h"
-#include "rosidl_typesupport_cpp/message_type_support.hpp"
-#include "rosidl_typesupport_opensplice_cpp/visibility_control.h"
-#include "rmw/rmw.h"
-
 @{
 header_files = [
+    'rosidl_generator_c/service_type_support_struct.h',
+    'rosidl_typesupport_cpp/message_type_support.hpp',
+    'rosidl_typesupport_opensplice_cpp/visibility_control.h',
+    'rmw/rmw.h',
     include_base + '__struct.hpp',
     include_base + '__Request__rosidl_typesupport_opensplice_cpp.hpp',
     include_base + '__Response__rosidl_typesupport_opensplice_cpp.hpp',
