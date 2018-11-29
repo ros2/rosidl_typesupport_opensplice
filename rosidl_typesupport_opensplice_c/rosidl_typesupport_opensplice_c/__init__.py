@@ -17,7 +17,7 @@ import os
 from rosidl_cmake import generate_files
 
 
-def generate_typesupport_opensplice_c(args):
+def generate_typesupport_opensplice_c(arguments_file):
     mapping = {
        'idl__rosidl_typesupport_opensplice_c.h.em': '%s__rosidl_typesupport_opensplice_c.h',
        'idl__dds_opensplice__type_support.c.em': 'dds_opensplice/%s__type_support.c',
