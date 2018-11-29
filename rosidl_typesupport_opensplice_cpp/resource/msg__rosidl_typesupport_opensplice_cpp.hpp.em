@@ -2,19 +2,7 @@
 // rosidl_typesupport_opensplice_cpp/resource/msg__rosidl_typesupport_opensplice_cpp.hpp.em
 // generated code does not contain a copyright notice
 
-@#######################################################################
-@# EmPy template for generating
-@# <msg>__rosidl_typesupport_opensplice_cpp.hpp files
-@#
-@# Context:
-@#  - spec (rosidl_parser.MessageSpecifiwcation)
-@#    Parsed specification of the .msg file
-@#  - subfolder (string)
-@#    The subfolder / subnamespace of the message
-@#    Either 'msg', 'srv' or 'action'
-@#  - get_header_filename_from_msg_name (function)
-@#######################################################################
-@
+@# Included from rosidl_typesupport_fastrtps_cpp/resource/idl__rosidl_typesupport_opensplice_cpp.hpp.em
 @{
 from rosidl_cmake import convert_camel_case_to_lower_case_underscore
 include_parts = [package_name] + list(interface_path.parents[0].parts)
@@ -30,7 +18,7 @@ header_guard_variable = '__'.join([x.upper() for x in header_guard_parts]) + '_'
 include_base = '/'.join(include_parts)
 header_files = [
     include_base +'__struct.hpp',
-    include_dir + '/dds_opensplice/ccpp_' + message.structure.type.name + '_.h',
+    include_dir + '/dds_opensplice/ccpp_' + message.structure.type.name + '.h',
     'rosidl_generator_c/message_type_support_struct.h',
     'rosidl_typesupport_interface/macros.h',
     package_name + '/msg/rosidl_typesupport_opensplice_cpp__visibility_control.h',
@@ -53,7 +41,7 @@ class DataReader;
 class DataWriter;
 }  // namespace DDS
 
-@[for ns in message.structure.namespaces]@
+@[for ns in message.structure.type.namespaces]@
 namespace @(ns)
 {
 @[end for]@
@@ -66,7 +54,7 @@ extern void register_type__@(message.structure.type.name)(
   const char * type_name);
 
 @{
-__ros_msg_pkg_prefix = '::'.join(message.structure.namespaces)
+__ros_msg_pkg_prefix = '::'.join(message.structure.type.namespaces)
 __ros_msg_type_prefix = __ros_msg_pkg_prefix + '::' + message.structure.type.name
 __dds_msg_type_prefix = __ros_msg_pkg_prefix + '::dds_::' + message.structure.type.name + '_'
 }@
@@ -108,7 +96,7 @@ deserialize__@(spec.base_type.type)(
 
 }  // namespace typesupport_opensplice_cpp
 
-@[for ns in reversed(message.structure.namespaces)]@
+@[for ns in reversed(message.structure.type.namespaces)]@
 }  // namespace @(ns)
 @[end for]@
 

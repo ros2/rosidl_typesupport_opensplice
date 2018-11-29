@@ -1,18 +1,6 @@
 // generated from rosidl_typesupport_opensplice_cpp/resource/msg__type_support.cpp.em
 // generated code does not contain a copyright notice
 
-@#######################################################################
-@# EmPy template for generating <msg>__type_support.cpp files
-@#
-@# Context:
-@#  - spec (rosidl_parser.MessageSpecification)
-@#    Parsed specification of the .msg file
-@#  - subfolder (string)
-@#    The subfolder / subnamespace of the message
-@#    Either 'msg', 'srv' or 'action'
-@#  - get_header_filename_from_msg_name (function)
-@#######################################################################
-@
 @# Included from rosidl_typesupport_opensplice_cpp/resource/idl__dds_opensplice__type_support.cpp.em
 @{
 from rosidl_cmake import convert_camel_case_to_lower_case_underscore
@@ -41,15 +29,14 @@ header_file = include_base +'__rosidl_typesupport_opensplice_cpp.hpp'
 #include <u_instanceHandle.h>
 #include <CdrTypeSupport.h>
 
-#include "rosidl_typesupport_cpp/message_type_support.hpp"
-
 @{
 header_files = [
+  'rosidl_typesupport_cpp/message_type_support.hpp',
   include_base + '__struct.hpp',
-  include_dir + '/dds_opensplice/ccpp_' + message.structure.type.name + '_.h',
-  'rosidl_typesupport_opensplice_cpp/identifier.hpp'
-  'rosidl_typesupport_opensplice_cpp/message_type_support.h'
-  'rosidl_typesupport_opensplice_cpp/message_type_support_decl.hpp'
+  include_dir + '/dds_opensplice/ccpp_' + message.structure.type.name + '.h',
+  'rosidl_typesupport_opensplice_cpp/identifier.hpp',
+  'rosidl_typesupport_opensplice_cpp/message_type_support.h',
+  'rosidl_typesupport_opensplice_cpp/message_type_support_decl.hpp',
   'rosidl_typesupport_opensplice_cpp/u__instanceHandle.h'
   'rmw/rmw.h'
 ]
