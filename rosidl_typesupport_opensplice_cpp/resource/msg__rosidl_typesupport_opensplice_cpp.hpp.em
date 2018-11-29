@@ -75,6 +75,20 @@ extern bool take__@(spec.base_type.type)(
   void * untyped_ros_message,
   bool * taken);
 
+ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(spec.base_type.pkg_name)
+const char *
+serialize__@(spec.base_type.type)(
+  const void * untyped_ros_message,
+  void * serialized_data);
+
+ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(spec.base_type.pkg_name)
+const char *
+deserialize__@(spec.base_type.type)(
+  const uint8_t * buffer,
+  unsigned length,
+  void * untyped_ros_message);
+
+
 }  // namespace typesupport_opensplice_cpp
 
 }  // namespace @(subfolder)

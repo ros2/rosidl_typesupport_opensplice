@@ -16,6 +16,7 @@
 #define ROSIDL_TYPESUPPORT_OPENSPLICE_CPP__MESSAGE_TYPE_SUPPORT_H_
 
 #include <stdbool.h>
+#include <ccpp.h>
 
 #include "rosidl_generator_c/message_type_support_struct.h"
 
@@ -41,6 +42,15 @@ typedef struct message_type_support_callbacks_t
     void * ros_message,
     bool * taken,
     void * sending_publication_handle);
+  const char *
+  (*serialize)(
+    const void * ros_message,
+    void * untyped_serialized_message);
+  const char *
+  (*deserialize)(
+    const uint8_t * buffer,
+    unsigned length,
+    void * ros_message);
   // Functions for converting between DDS and ROS messages of this type.
   // Returns NULL if successful, otherwise an error string.
   const char *

@@ -25,6 +25,7 @@
 #include <limits>
 
 #include <u_instanceHandle.h>
+#include <CdrTypeSupport.h>
 
 // Provides the rosidl_typesupport_opensplice_c__identifier symbol declaration.
 #include "rosidl_typesupport_opensplice_c/identifier.h"
@@ -32,6 +33,7 @@
 // Provides the definition of the message_type_support_callbacks_t struct.
 #include "rosidl_typesupport_opensplice_cpp/message_type_support.h"
 #include "rosidl_typesupport_opensplice_cpp/u__instanceHandle.h"
+#include "rmw/rmw.h"
 
 #include "@(pkg)/msg/rosidl_typesupport_opensplice_c__visibility_control.h"
 @{header_file_name = get_header_filename_from_msg_name(type)}@
@@ -96,6 +98,8 @@ __dds_msg_type_prefix = "{0}::{1}::dds_::{2}_".format(
 using __dds_msg_type = @(__dds_msg_type_prefix);
 using __ros_msg_type = @(pkg)__@(subfolder)__@(type);
 
+static @(__dds_msg_type_prefix)TypeSupport _type_support;
+
 static const char *
 register_type(void * untyped_participant, const char * type_name)
 {
@@ -108,8 +112,7 @@ register_type(void * untyped_participant, const char * type_name)
   using DDS::DomainParticipant;
   DomainParticipant * participant = static_cast<DomainParticipant *>(untyped_participant);
 
-  @(__dds_msg_type_prefix)TypeSupport type_support;
-  DDS::ReturnCode_t status = type_support.register_type(participant, type_name);
+  DDS::ReturnCode_t status = _type_support.register_type(participant, type_name);
   switch (status) {
     case DDS::RETCODE_ERROR:
       return "@(__dds_msg_type_prefix)TypeSupport.register_type: "
@@ -525,6 +528,115 @@ finally:
 
   return errs;
 }
+
+static const char *
+serialize(
+  const void * untyped_ros_message,
+  void * untyped_serialized_data)
+{
+  if (!untyped_ros_message) {
+    return "ros message handle is null";
+  }
+  if (!untyped_serialized_data) {
+    return "serialized_data handle is null";
+  }
+
+  __dds_msg_type dds_message;
+  const char * err_msg = convert_ros_to_dds(untyped_ros_message, &dds_message);
+  if (err_msg != 0) {
+    return err_msg;
+  }
+
+  DDS::OpenSplice::CdrTypeSupport cdr_ts(_type_support);
+
+  DDS::OpenSplice::CdrSerializedData * serdata = nullptr;
+
+  DDS::ReturnCode_t status = cdr_ts.serialize(&dds_message, &serdata);
+  switch (status) {
+    case DDS::RETCODE_ERROR:
+      return "@(__dds_msg_type_prefix)TypeSupport.serialize: "
+             "an internal error has occurred";
+    case DDS::RETCODE_BAD_PARAMETER:
+      return "@(__dds_msg_type_prefix)TypeSupport.serialize: "
+             "bad parameter";
+    case DDS::RETCODE_ALREADY_DELETED:
+      return "@(__dds_msg_type_prefix)TypeSupport.serialize: "
+             "this @(__dds_msg_type_prefix)TypeSupport has already been deleted";
+    case DDS::RETCODE_OUT_OF_RESOURCES:
+      return "@(__dds_msg_type_prefix)TypeSupport.serialize: "
+             "out of resources";
+    case DDS::RETCODE_OK:
+      break;
+    default:
+      return "@(__dds_msg_type_prefix)TypeSupport.serialize failed with "
+             "unknown return code";
+  }
+
+  rmw_serialized_message_t * serialized_data =
+    static_cast<rmw_serialized_message_t *>(untyped_serialized_data);
+
+  auto data_length = serdata->get_size();
+
+  if (serialized_data->buffer_capacity < data_length) {
+    if (rmw_serialized_message_resize(serialized_data, data_length) == RMW_RET_OK) {
+      serialized_data->buffer_capacity = data_length;
+    } else {
+      delete serdata;
+      return "@(__dds_msg_type_prefix)TypeSupport.serialize: "
+             "unable to dynamically resize serialized message";
+    }
+  }
+
+  serialized_data->buffer_length = data_length;
+  serdata->get_data(serialized_data->buffer);
+
+  delete serdata;
+
+  return nullptr;
+}
+
+static const char *
+deserialize(
+  const uint8_t * buffer,
+  unsigned length,
+  void * untyped_ros_message)
+{
+  const char * errs = nullptr;
+
+  if (untyped_ros_message == 0) {
+    return "invalid ros message pointer";
+  }
+
+  DDS::OpenSplice::CdrTypeSupport cdr_ts(_type_support);
+
+  __dds_msg_type dds_message;
+  DDS::ReturnCode_t status = cdr_ts.deserialize(buffer, length, &dds_message);
+
+  switch (status) {
+    case DDS::RETCODE_ERROR:
+      return "@(__dds_msg_type_prefix)TypeSupport.deserialize: "
+             "an internal error has occurred";
+    case DDS::RETCODE_BAD_PARAMETER:
+      return "@(__dds_msg_type_prefix)TypeSupport.deserialize: "
+             "bad parameter";
+    case DDS::RETCODE_ALREADY_DELETED:
+      return "@(__dds_msg_type_prefix)TypeSupport.deserialize: "
+             "this @(__dds_msg_type_prefix)TypeSupport has already been deleted";
+    case DDS::RETCODE_OUT_OF_RESOURCES:
+      return "@(__dds_msg_type_prefix)TypeSupport.deserialize: "
+             "out of resources";
+    case DDS::RETCODE_OK:
+      break;
+    default:
+      return "@(__dds_msg_type_prefix)TypeSupport.deserialize failed with "
+             "unknown return code";
+  }
+
+  errs = convert_dds_to_ros(&dds_message, untyped_ros_message);
+
+  return errs;
+}
+
 @
 @# // Collect the callback functions and provide a function to get the type support struct.
 
@@ -534,6 +646,8 @@ static message_type_support_callbacks_t __callbacks = {
   register_type,  // register_type
   publish,  // publish
   take,  // take
+  serialize,  // serialize message
+  deserialize,  // deserialize message
   convert_ros_to_dds,  // convert_ros_to_dds
   convert_dds_to_ros,  // convert_dds_to_ros
 };
