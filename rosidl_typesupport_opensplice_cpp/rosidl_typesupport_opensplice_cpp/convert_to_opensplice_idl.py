@@ -14,7 +14,6 @@
 
 import os
 import re
-import sys
 
 
 def convert_to_opensplice_idl(input_idl, output_basepath):
@@ -37,7 +36,7 @@ def convert_to_opensplice_idl(input_idl, output_basepath):
 
     # Regexes for find and replace
     regex_substitutions = []
-    # Replace unsupported types 
+    # Replace unsupported types
     regex_substitutions.append((re.compile(r'([<>,\s])int8([<>,\s])'), r'\1octet\2'))
     regex_substitutions.append((re.compile(r'([<>,\s])uint8([<>,\s])'), r'\1octet\2'))
     regex_substitutions.append((re.compile(r'([<>,\s])int16([<>,\s])'), r'\1short\2'))

@@ -81,8 +81,7 @@ def generate_dds_opensplice_cpp(
                     pkg_name,
                     '%s/msg/rosidl_typesupport_opensplice_cpp__visibility_control.h' % pkg_name)]
 
-        subprocess.check_call(
-            cmd, cwd=opensplice_idl_output_path, stdout=tmp_file, stderr=tmp_file)
+        subprocess.check_call(cmd, cwd=opensplice_idl_output_path)
 
         # modify generated code to
         # remove path information of the building machine as well as timestamps
