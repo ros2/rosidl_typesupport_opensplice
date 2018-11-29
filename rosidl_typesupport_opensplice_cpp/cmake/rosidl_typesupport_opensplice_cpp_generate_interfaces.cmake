@@ -32,15 +32,15 @@ foreach(_idl_tuple ${rosidl_generate_interfaces_IDL_TUPLES})
     "${_output_path}/${_parent_folder}/${_header_name}__rosidl_typesupport_opensplice_cpp.hpp"
   )
   list(APPEND _generated_external_files
-    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_.h"
-    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_.cpp"
-    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_Dcps.h"
-    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_Dcps.cpp"
-    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_Dcps_impl.h"
-    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_Dcps_impl.cpp"
-    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_SplDcps.h"
-    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_SplDcps.cpp"
-    "${_output_path}/${_parent_folder}/dds_opensplice/ccpp_${_idl_name}_.h")
+    "${_output_path}/${_parent_folder}/${_idl_name}.h"
+    "${_output_path}/${_parent_folder}/${_idl_name}.cpp"
+    "${_output_path}/${_parent_folder}/${_idl_name}Dcps.h"
+    "${_output_path}/${_parent_folder}/${_idl_name}Dcps.cpp"
+    "${_output_path}/${_parent_folder}/${_idl_name}Dcps_impl.h"
+    "${_output_path}/${_parent_folder}/${_idl_name}Dcps_impl.cpp"
+    "${_output_path}/${_parent_folder}/${_idl_name}SplDcps.h"
+    "${_output_path}/${_parent_folder}/${_idl_name}SplDcps.cpp"
+    "${_output_path}/${_parent_folder}/ccpp_${_idl_name}.h")
 endforeach()
 
 # If not on Windows, disable some warnings with OpenSplice's generated code

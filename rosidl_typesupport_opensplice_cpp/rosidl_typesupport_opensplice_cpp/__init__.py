@@ -1,4 +1,4 @@
-# Copyright 2014 Open Source Robotics Foundation, Inc.
+# Copyright 2014-2018 Open Source Robotics Foundation, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -14,9 +14,10 @@
 
 import os
 import subprocess
-import sys  # TODO remove
 
 from rosidl_cmake import generate_files
+
+from .convert_to_opensplice_idl import convert_to_opensplice_idl
 
 
 def generate_dds_opensplice_cpp(
@@ -37,29 +38,28 @@ def generate_dds_opensplice_cpp(
 
     # Ensure output directory for converted IDL files exists
     try:
-        print("OPENSPLICE IDL PATH: {}".format(opensplice_idl_output_path), file=sys.stderr)
         os.makedirs(opensplice_idl_output_path)
     except FileExistsError:
         pass
 
+    # Convert IDL files for OpenSplice compatibility
     for idl_file in dds_interface_files:
         assert os.path.exists(idl_file), 'Could not find IDL file: ' + idl_file
-        print("Processing IDL {}".format(idl_file), file=sys.stderr)
+        convert_to_opensplice_idl(idl_file, opensplice_idl_output_path)
 
+
+    for idl_file in dds_interface_files:
         # get two level of parent folders for idl file
-        folder = os.path.dirname(idl_file)
-        parent_folder = os.path.dirname(folder)
+        # folder = os.path.dirname(idl_file)
+        parent_folder = os.path.dirname(idl_file)
         output_path = os.path.join(
             output_basepath,
-            os.path.basename(parent_folder),
-            os.path.basename(folder))
+            os.path.basename(parent_folder))
+            # os.path.basename(folder))
         try:
             os.makedirs(output_path)
         except FileExistsError:
             pass
-
-        # Convert IDL file for OpenSplice compatibility
-        # TODO
 
         # idlpp doesn't like long path arguments over 256 chars, get just the filename
         filename = os.path.basename(idl_file)
@@ -80,14 +80,15 @@ def generate_dds_opensplice_cpp(
                 'ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_%s,%s' % (
                     pkg_name,
                     '%s/msg/rosidl_typesupport_opensplice_cpp__visibility_control.h' % pkg_name)]
-        subprocess.check_call(cmd, cwd=folder)
+
+        subprocess.check_call(
+            cmd, cwd=opensplice_idl_output_path, stdout=tmp_file, stderr=tmp_file)
 
         # modify generated code to
         # remove path information of the building machine as well as timestamps
         msg_name = os.path.splitext(filename)[0]
         idl_path = os.path.join(
-            pkg_name, os.path.basename(parent_folder), os.path.basename(folder),
-            filename)
+            pkg_name, os.path.basename(parent_folder), filename)
         h_filename = os.path.join(output_path, '%s.h' % msg_name)
         _modify(h_filename, msg_name, _replace_path_and_timestamp, idl_path=idl_path)
         cpp_filename = os.path.join(output_path, '%s.cpp' % msg_name)
@@ -128,7 +129,8 @@ def _replace_path_and_timestamp(lines, msg_name, idl_path):
 
 def generate_typesupport_opensplice_cpp(arguments_file):
     mapping = {
-       'idl__rosidl_typesupport_opensplice_cpp.hpp.em': '%s__rosidl_typesupport_opensplice_cpp.hpp',
+       'idl__rosidl_typesupport_opensplice_cpp.hpp.em':  # noqa
+           '%s__rosidl_typesupport_opensplice_cpp.hpp',
        'idl__dds_opensplice__type_support.cpp.em': 'dds_opensplice/%s__type_support.cpp',
     }
 
