@@ -2,7 +2,6 @@
 
 import argparse
 import os
-import sys
 
 from rosidl_cmake import read_generator_arguments
 from rosidl_parser import UnknownMessageType
