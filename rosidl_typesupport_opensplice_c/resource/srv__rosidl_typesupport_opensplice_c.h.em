@@ -2,41 +2,44 @@
 // rosidl_typesupport_opensplice_c/resource/srv__rosidl_typesupport_opensplice_c.h.em
 // generated code does not contain a copyright notice
 
-@#######################################################################
-@# EmPy template for generating
-@# <srv>__rosidl_typesupport_opensplice_c.h files
-@#
-@# Context:
-@#  - spec (rosidl_parser.MessageSpecification)
-@#    Parsed specification of the .srv file
-@#  - subfolder (string)
-@#    The subfolder / subnamespace of the message
-@#    Either 'srv' or 'action'
-@#  - get_header_filename_from_srv_name (function)
-@#######################################################################
-@
+@# Included from rosidl_typesupport_opensplice_c/resource/idl__rosidl_typesupport_opensplice_c.h.em
 @{
-header_guard_parts = [
-    spec.pkg_name, subfolder,
-    get_header_filename_from_msg_name(spec.srv_name) + '__rosidl_typesupport_opensplice_c_h']
+header_guard_parts = [package_name] + list(interface_path.parents[0].parts) + \
+   [convert_camel_case_to_lower_case_underscore(interface_path.stem)] + \
+   ['__rosidl_typesupport_opensplice_c_h']
 header_guard_variable = '__'.join([x.upper() for x in header_guard_parts]) + '_'
 }@
 #ifndef @(header_guard_variable)
 #define @(header_guard_variable)
 
-#include "rosidl_generator_c/service_type_support_struct.h"
-#include "rosidl_typesupport_interface/macros.h"
-
-#include "@(spec.pkg_name)/msg/rosidl_typesupport_opensplice_c__visibility_control.h"
+@{
+header_files = [
+    'rosidl_generator_c/service_type_support_struct.h',
+    'rosidl_typesupport_interface/macros.h',
+    package_name + '/msg/rosidl_typesupport_opensplice_c__visibility_control.h',
+]
+}@
+@[for header_file in header_files]@
+@[  if header_file in include_directives]@
+// already included above
+// @
+@[  else]@
+@{include_directives.add(header_file)}@
+@[  end if]@
+#include "@(header_file)"
+@[end for]@
 
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
-ROSIDL_TYPESUPPORT_OPENSPLICE_C_PUBLIC_@(spec.pkg_name)
+ROSIDL_TYPESUPPORT_OPENSPLICE_C_PUBLIC_@(package_name)
 const rosidl_service_type_support_t *
-  ROSIDL_TYPESUPPORT_INTERFACE__SERVICE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(spec.pkg_name), @(subfolder), @(spec.srv_name))();
+ROSIDL_TYPESUPPORT_INTERFACE__SERVICE_SYMBOL_NAME(
+  rosidl_typesupport_opensplice_c,
+  @(', '.join(service.structure_type.namespaces)),
+  @(service.structure_type.name))();
 
 #ifdef __cplusplus
 }

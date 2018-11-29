@@ -1,44 +1,57 @@
 // generated from rosidl_typesupport_opensplice_c/resource/srv__type_support_c.cpp.em
 // generated code does not contain a copyright notice
 
-@#########################################e#############################
-@# EmPy template for generating <srv>__type_support_c.cpp files
-@#
-@# Context:
-@#  - spec (rosidl_parser.ServiceSpecification)
-@#    Parsed specification of the .srv file
-@#  - subfolder (string)
-@#    The subfolder / subnamespace of the message
-@#    Either 'srv' or 'action'
-@#  - get_header_filename_from_msg_name (function)
-@#######################################################################
-@
-#include "@(spec.pkg_name)/@(subfolder)/@(get_header_filename_from_msg_name(spec.srv_name))__rosidl_typesupport_opensplice_c.h"
+@# Included from rosidl_typesupport_opensplice_c/resource/idl__dds_opensplice_type_support.c.em
+@{
+from rosidl_cmake import convert_camel_case_to_lower_case_underscore
+include_parts = [package_name] + list(interface_path.parents[0].parts)
+include_dir = '/'.join(include_parts)
+include_parts.append(convert_camel_case_to_lower_case_underscore(interface_path.stem))
+include_base = '/'.join(include_parts)
+header_file = include_base + '__rosidl_typesupport_opensplice_c.h'
+}@
+@[if header_file in include_directives]@
+// already included above
+// @
+@[else]@
+@{include_directives.add(header_file)}@
+@[end if]@
+#include "@(header_file)"
 
 #include <cstring>
 #include <iostream>
 #include <sstream>
 
-#include "rmw/rmw.h"
-
-#include "@(spec.pkg_name)/msg/rosidl_typesupport_opensplice_c__visibility_control.h"
-@{header_file_name = get_header_filename_from_msg_name(spec.srv_name)}@
-#include "@(spec.pkg_name)/@(subfolder)/@(header_file_name).h"
-#include "@(spec.pkg_name)/@(subfolder)/dds_opensplice/ccpp_@(spec.srv_name)_Request_.h"
-#include "@(spec.pkg_name)/@(subfolder)/dds_opensplice/ccpp_@(spec.srv_name)_Response_.h"
-#include "@(spec.pkg_name)/@(subfolder)/dds_opensplice/ccpp_Sample_@(spec.srv_name)_Request_.h"
-#include "@(spec.pkg_name)/@(subfolder)/dds_opensplice/ccpp_Sample_@(spec.srv_name)_Response_.h"
-#include "rosidl_typesupport_opensplice_c/identifier.h"
-
-// TODO(dirk-thomas) including another cpp file is just nasty
-#include "@(spec.pkg_name)/@(subfolder)/dds_opensplice/@(get_header_filename_from_msg_name(spec.srv_name))__type_support.cpp"
-#include "@(spec.pkg_name)/msg/rosidl_generator_c__visibility_control.h"
+@{
+service_name = service.structure_type.name
+header_files = [
+    'rmw/rmw.h',
+    package_name + '/msg/rosidl_typesupport_opensplice_c__visibility_control.h',
+    include_base + '.h',
+    include_dir + '/dds_opensplice/ccpp_' + service_name + '_Request_.h',
+    include_dir + '/dds_opensplice/ccpp_' + service_name + '_Response_.h',
+    include_dir + '/dds_opensplice/ccpp_Sample_' + service_name + '_Request_.h',
+    include_dir + '/dds_opensplice/ccpp_Sample_' + service_name + '_Response_.h',
+    'rosidl_typesupport_opensplice_c/identifier.h',
+    # TODO(dirk-thomas) including another cpp file is just nasty
+    include_dir + '/dds_opensplice/' + convert_camel_case_to_lower_case_underscore(service_name) + '__type_support.cpp',
+    package_name + '/msg/rosidl_generator_c__visibility_control.h',
+]
+}@
+@[for header_file in header_files]@
+@[  if header_file in include_directives]@
+// already included above
+// @
+@[  else]@
+@{include_directives.add(header_file)}@
+@[  end if]@
+#include "@(header_file)"
+@[end for]@
 
 @{
-# Same as @(spec.pkg_name)::@(subfolder)::dds_::@(spec.srv_name)
-__dds_msg_type_prefix = "{spec.pkg_name}::{subfolder}::dds_::{spec.srv_name}".format(spec=spec, subfolder=subfolder)
-# Same as @(spec.pkg_name)::@(subfolder)::dds_::Sample_@(spec.srv_name)
-__dds_sample_type_prefix = "{spec.pkg_name}::{subfolder}::dds_::Sample_{spec.srv_name}".format(spec=spec, subfolder=subfolder)
+package_namespaces = '::'.join(service.structure_type.namespaces)
+__dds_msg_type_prefix = "{ns}::dds_::{typename}".format(ns=package_namespaces, typename=service.structure_type.name)
+__dds_sample_type_prefix = "{ns}::dds_::Sample_{typename}".format(ns=package_namespaces, typename=service.structure_type.name)
 }@
 #if defined(__cplusplus)
 extern "C"
@@ -47,20 +60,20 @@ extern "C"
 
 // forward declare type support functions
 const rosidl_message_type_support_t *
-  ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(spec.pkg_name), @(subfolder), @(spec.srv_name)_Request)();
+  ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.structure_type.namespaces)), @(service.structure_type.name)_Request)();
 const rosidl_message_type_support_t *
-  ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(spec.pkg_name), @(subfolder), @(spec.srv_name)_Response)();
+  ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.structure_type.namespaces)), @(service.structure_type.name)_Response)();
 
 const char *
-register_types__@(subfolder)__@(spec.srv_name)(
+register_types__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name)(
   void * untyped_participant, const char * request_type_name, const char * response_type_name)
 {
-  return @(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::register_types__@(spec.srv_name)(
+  return @('::'.join(service.structure_type.namespaces))::typesupport_opensplice_cpp::register_types__@(service.structure_type.name)(
     untyped_participant, request_type_name, response_type_name);
 }
 
 const char *
-create_requester__@(subfolder)__@(spec.srv_name)(
+create_requester__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name)(
   void * untyped_participant, const char * service_name,
   void ** untyped_requester, void ** untyped_reader,
   const void * untyped_datareader_qos,
@@ -68,7 +81,7 @@ create_requester__@(subfolder)__@(spec.srv_name)(
   bool avoid_ros_namespace_conventions,
   void * (*allocator)(size_t))
 {
-  return @(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::create_requester__@(spec.srv_name)(
+  return @('::'.join(service.structure_type.namespaces))::typesupport_opensplice_cpp::create_requester__@(service.structure_type.name)(
     untyped_participant, service_name,
     untyped_requester, untyped_reader,
     untyped_datareader_qos,
@@ -78,7 +91,7 @@ create_requester__@(subfolder)__@(spec.srv_name)(
 }
 
 const char *
-create_responder__@(subfolder)__@(spec.srv_name)(
+create_responder__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name)(
   void * untyped_participant, const char * service_name,
   void ** untyped_responder, void ** untyped_reader,
   const void * untyped_datareader_qos,
@@ -86,7 +99,7 @@ create_responder__@(subfolder)__@(spec.srv_name)(
   bool avoid_ros_namespace_conventions,
   void * (*allocator)(size_t))
 {
-  return @(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::create_responder__@(spec.srv_name)(
+  return @('::'.join(service.structure_type.namespaces))::typesupport_opensplice_cpp::create_responder__@(service.structure_type.name)(
     untyped_participant, service_name,
     untyped_responder, untyped_reader,
     untyped_datareader_qos,
@@ -96,14 +109,14 @@ create_responder__@(subfolder)__@(spec.srv_name)(
 }
 
 const char *
-send_request__@(subfolder)__@(spec.srv_name)(
+send_request__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name)(
   void * untyped_requester, const void * untyped_ros_request, int64_t * sequence_number)
 {
   using SampleT = rosidl_typesupport_opensplice_cpp::Sample<@(__dds_msg_type_prefix)_Request_>;
 
   SampleT request;
   const rosidl_message_type_support_t * ts =
-    ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(spec.pkg_name), @(subfolder), @(spec.srv_name)_Request)();
+    ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.structure_type.namespaces)), @(service.structure_type.name)_Request)();
   const message_type_support_callbacks_t * callbacks =
     static_cast<const message_type_support_callbacks_t *>(ts->data);
   callbacks->convert_ros_to_dds(untyped_ros_request, static_cast<void *>(&request.data()));
@@ -125,7 +138,7 @@ send_request__@(subfolder)__@(spec.srv_name)(
 }
 
 const char *
-take_request__@(subfolder)__@(spec.srv_name)(
+take_request__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name)(
   void * untyped_responder, rmw_request_id_t * request_header, void * untyped_ros_request,
   bool * taken)
 {
@@ -144,7 +157,7 @@ take_request__@(subfolder)__@(spec.srv_name)(
 
   if (*taken) {
     const rosidl_message_type_support_t * ts =
-      ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(spec.pkg_name), @(subfolder), @(spec.srv_name)_Request)();
+      ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.structure_type.namespaces)), @(service.structure_type.name)_Request)();
     const message_type_support_callbacks_t * callbacks =
       static_cast<const message_type_support_callbacks_t *>(ts->data);
     callbacks->convert_dds_to_ros(static_cast<void *>(&request.data()), untyped_ros_request);
@@ -164,13 +177,13 @@ take_request__@(subfolder)__@(spec.srv_name)(
 }
 
 const char *
-send_response__@(subfolder)__@(spec.srv_name)(
+send_response__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name)(
   void * untyped_responder, const rmw_request_id_t * request_header,
   const void * untyped_ros_response)
 {
   rosidl_typesupport_opensplice_cpp::Sample<@(__dds_msg_type_prefix)_Response_> response;
   const rosidl_message_type_support_t * ts =
-    ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(spec.pkg_name), @(subfolder), @(spec.srv_name)_Response)();
+    ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.structure_type.namespaces)), @(service.structure_type.name)_Response)();
   const message_type_support_callbacks_t * callbacks =
     static_cast<const message_type_support_callbacks_t *>(ts->data);
   callbacks->convert_ros_to_dds(untyped_ros_response, static_cast<void *>(&response.data()));
@@ -189,7 +202,7 @@ send_response__@(subfolder)__@(spec.srv_name)(
 }
 
 const char *
-take_response__@(subfolder)__@(spec.srv_name)(
+take_response__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name)(
   void * untyped_requester, rmw_request_id_t * request_header, void * untyped_ros_response,
   bool * taken)
 {
@@ -208,7 +221,7 @@ take_response__@(subfolder)__@(spec.srv_name)(
     request_header->sequence_number = response.sequence_number_;
 
     const rosidl_message_type_support_t * ts =
-      ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(spec.pkg_name), @(subfolder), @(spec.srv_name)_Response)();
+      ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.structure_type.namespaces)), @(service.structure_type.name)_Response)();
     const message_type_support_callbacks_t * callbacks =
       static_cast<const message_type_support_callbacks_t *>(ts->data);
     callbacks->convert_dds_to_ros(
@@ -220,39 +233,39 @@ take_response__@(subfolder)__@(spec.srv_name)(
 }
 
 const char *
-destroy_requester__@(subfolder)__@(spec.srv_name)(void * untyped_requester, void (* deallocator)(void *))
+destroy_requester__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name)(void * untyped_requester, void (* deallocator)(void *))
 {
-  return @(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::destroy_requester__@(spec.srv_name)(
+  return @('::'.join(service.structure_type.namespaces))::typesupport_opensplice_cpp::destroy_requester__@(service.structure_type.name)(
     untyped_requester, deallocator);
 }
 
 const char *
-destroy_responder__@(subfolder)__@(spec.srv_name)(void * untyped_responder, void (* deallocator)(void *))
+destroy_responder__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name)(void * untyped_responder, void (* deallocator)(void *))
 {
-  return @(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::destroy_responder__@(spec.srv_name)(
+  return @('::'.join(service.structure_type.namespaces))::typesupport_opensplice_cpp::destroy_responder__@(service.structure_type.name)(
     untyped_responder, deallocator);
 }
 
 const char *
-server_is_available__@(subfolder)__@(spec.srv_name)(
+server_is_available__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name)(
   void * requester, const rmw_node_t * node, bool * is_available)
 {
-  return @(spec.pkg_name)::@(subfolder)::typesupport_opensplice_cpp::server_is_available__@(spec.srv_name)(
+  return @('::'.join(service.structure_type.namespaces))::typesupport_opensplice_cpp::server_is_available__@(service.structure_type.name)(
     requester, node, is_available);
 }
 
 static service_type_support_callbacks_t __callbacks = {
-  "@(spec.pkg_name)",
-  "@(spec.srv_name)",
-  &create_requester__@(subfolder)__@(spec.srv_name),
-  &destroy_requester__@(subfolder)__@(spec.srv_name),
-  &create_responder__@(subfolder)__@(spec.srv_name),
-  &destroy_responder__@(subfolder)__@(spec.srv_name),
-  &send_request__@(subfolder)__@(spec.srv_name),
-  &take_request__@(subfolder)__@(spec.srv_name),
-  &send_response__@(subfolder)__@(spec.srv_name),
-  &take_response__@(subfolder)__@(spec.srv_name),
-  &server_is_available__@(subfolder)__@(spec.srv_name),
+  "@(package_name)",
+  "@(service.structure_type.name)",
+  &create_requester__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name),
+  &destroy_requester__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name),
+  &create_responder__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name),
+  &destroy_responder__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name),
+  &send_request__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name),
+  &take_request__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name),
+  &send_response__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name),
+  &take_response__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name),
+  &server_is_available__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name),
 };
 
 static rosidl_service_type_support_t __type_support = {
@@ -262,7 +275,7 @@ static rosidl_service_type_support_t __type_support = {
 };
 
 const rosidl_service_type_support_t *
-ROSIDL_TYPESUPPORT_INTERFACE__SERVICE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(spec.pkg_name), @(subfolder), @(spec.srv_name))() {
+ROSIDL_TYPESUPPORT_INTERFACE__SERVICE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.structure_type.namespaces)), @(service.structure_type.name))() {
   return &__type_support;
 }
 
