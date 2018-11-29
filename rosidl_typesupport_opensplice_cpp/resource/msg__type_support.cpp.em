@@ -165,12 +165,12 @@ convert_ros_message_to_dds(const __ros_msg_type & ros_message, __dds_msg_type & 
     size_t size = @(member.type.size);
 @[    else]@
     size_t size = ros_message.@(member.name).size();
-@[    end if]@
     if (size > (std::numeric_limits<DDS::Long>::max)()) {
       throw std::runtime_error("array size exceeds maximum DDS sequence size");
     }
     DDS::Long length = static_cast<DDS::Long>(size);
     dds_message.@(member.name)_.length(length);
+@[    end if]@
     for (DDS::ULong i = 0; i < size; i++) {
 @[    if isinstance(member.type.basetype, BaseString)]@
       dds_message.@(member.name)_[i] = ros_message.@(member.name)[i].c_str();
