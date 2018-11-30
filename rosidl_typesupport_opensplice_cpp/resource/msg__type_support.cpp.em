@@ -37,7 +37,7 @@ header_files = [
   'rosidl_typesupport_opensplice_cpp/identifier.hpp',
   'rosidl_typesupport_opensplice_cpp/message_type_support.h',
   'rosidl_typesupport_opensplice_cpp/message_type_support_decl.hpp',
-  'rosidl_typesupport_opensplice_cpp/u__instanceHandle.h'
+  'rosidl_typesupport_opensplice_cpp/u__instanceHandle.h',
   'rmw/rmw.h'
 ]
 }@
@@ -91,10 +91,6 @@ namespace @(ns)
 namespace typesupport_opensplice_cpp
 {
 
-@{
-__dds_msg_type_prefix = "{}::{}::dds_::{}_".format(
-  spec.base_type.pkg_name, subfolder, spec.base_type.type)
-}@
 using __dds_msg_type = @(__dds_msg_type_prefix);
 using __ros_msg_type = @(__ros_msg_type_prefix);
 
