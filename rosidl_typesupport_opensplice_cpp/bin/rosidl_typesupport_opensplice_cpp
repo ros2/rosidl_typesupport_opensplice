@@ -28,9 +28,9 @@ def main(argv=sys.argv[1:]):
         required=True,
         help='The location of the file containing the generator arguments')
     parser.add_argument(
-        '--opensplice-idl-output-path',
+        '--dds-interface-base-path',
         required=True,
-        help='The base location of the DDS interface files converted for OpenSplice')
+        help='The base location of the DDS interface files')
     parser.add_argument(
         '--idl-pp',
         required=True,
@@ -49,8 +49,8 @@ def main(argv=sys.argv[1:]):
     return generate_dds_opensplice_cpp(
         generator_args['package_name'],
         generator_args.get('additional_files', []),
+        args.dds_interface_base_path,
         generator_args.get('ros_interface_dependencies', []),
-        args.opensplice_idl_output_path,
         generator_args['output_dir'],
         args.idl_pp,
     )

@@ -33,7 +33,7 @@ header_file = include_base +'__rosidl_typesupport_opensplice_cpp.hpp'
 header_files = [
   'rosidl_typesupport_cpp/message_type_support.hpp',
   include_base + '__struct.hpp',
-  include_dir + '/dds_opensplice/ccpp_' + message.structure.type.name + '.h',
+  include_dir + '/dds_opensplice/ccpp_' + message.structure.type.name + '_.h',
   'rosidl_typesupport_opensplice_cpp/identifier.hpp',
   'rosidl_typesupport_opensplice_cpp/message_type_support.h',
   'rosidl_typesupport_opensplice_cpp/message_type_support_decl.hpp',
@@ -72,9 +72,9 @@ namespace typesupport_opensplice_cpp
 {
 void convert_ros_message_to_dds(
   const @(__ros_msg_type_prefix) &,
-  dds_::@(__dds_msg_type_prefix) &);
+  @(__dds_msg_type_prefix) &);
 void convert_dds_message_to_ros(
-  const dds_::@(__dds_msg_type_prefix) &,
+  const @(__dds_msg_type_prefix) &,
   @(__ros_msg_type_prefix) &);
 }  // namespace typesupport_opensplice_cpp
 @[        for ns in reversed(member.type.namespaces)]@

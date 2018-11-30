@@ -17,13 +17,11 @@ import subprocess
 
 from rosidl_cmake import generate_files
 
-from .convert_to_opensplice_idl import convert_to_opensplice_idl
-
 
 def generate_dds_opensplice_cpp(
-    pkg_name, dds_interface_files, deps, opensplice_idl_output_path, output_basepath, idl_pp
+    pkg_name, dds_interface_files, dds_interface_base_path, deps, output_basepath, idl_pp
 ):
-    include_dirs = []
+    include_dirs = [dds_interface_base_path]
     for dep in deps:
         # only take the first : for separation, as Windows follows with a C:\
         dep_parts = dep.split(':', 1)
@@ -36,24 +34,17 @@ def generate_dds_opensplice_cpp(
     if 'OSPL_TMPL_PATH' in os.environ:
         include_dirs.append(os.environ['OSPL_TMPL_PATH'])
 
-    # Ensure output directory for converted IDL files exists
-    try:
-        os.makedirs(opensplice_idl_output_path)
-    except FileExistsError:
-        pass
-
-    # Convert IDL files for OpenSplice compatibility
     for idl_file in dds_interface_files:
         assert os.path.exists(idl_file), 'Could not find IDL file: ' + idl_file
-        convert_to_opensplice_idl(idl_file, opensplice_idl_output_path)
 
-
-    for idl_file in dds_interface_files:
-        parent_folder = os.path.dirname(idl_file)
+        # get two level of parent folders for idl file
+        folder = os.path.dirname(idl_file)
+        parent_folder = os.path.dirname(folder)
         output_path = os.path.join(
             output_basepath,
             os.path.basename(parent_folder),
-            'dds_opensplice')
+            os.path.basename(folder))
+
         try:
             os.makedirs(output_path)
         except FileExistsError:
@@ -79,7 +70,7 @@ def generate_dds_opensplice_cpp(
                     pkg_name,
                     '%s/msg/rosidl_typesupport_opensplice_cpp__visibility_control.h' % pkg_name)]
 
-        subprocess.check_call(cmd, cwd=opensplice_idl_output_path)
+        subprocess.check_call(cmd, cwd=folder)
 
         # modify generated code to
         # remove path information of the building machine as well as timestamps

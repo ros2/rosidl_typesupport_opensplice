@@ -11,10 +11,20 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+# Convert .idl files for compatibility with OpenSplice
+rosidl_generate_dds_interfaces(
+  ${rosidl_generate_interfaces_TARGET}__dds_opensplice_idl
+  IDL_TUPLES ${rosidl_generate_interfaces_IDL_TUPLES}
+  DEPENDENCY_PACKAGE_NAMES ${rosidl_generate_interfaces_DEPENDENCY_PACKAGE_NAMES}
+  OUTPUT_SUBFOLDERS "dds_opensplice"
+  EXTENSION "rosidl_typesupport_opensplice_cpp.rosidl_generator_dds_idl_extension"
+)
+
 set(_target_suffix "__rosidl_typesupport_opensplice_cpp")
 
 set(_output_path "${CMAKE_CURRENT_BINARY_DIR}/rosidl_typesupport_opensplice_cpp/${PROJECT_NAME}")
-set(_opensplice_idl_output_path "${CMAKE_CURRENT_BINARY_DIR}/converted_opensplice_idl")
+set(_dds_idl_base_path "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_dds_idl")
 
 set(_dds_idl_files "")
 set(_generated_files "")
@@ -26,21 +36,22 @@ foreach(_idl_tuple ${rosidl_generate_interfaces_IDL_TUPLES})
   get_filename_component(_parent_folder "${_parent_folder}" NAME)
   get_filename_component(_idl_name "${_abs_idl_file}" NAME_WE)
   string_camel_case_to_lower_case_underscore("${_idl_name}" _header_name)
-  list(APPEND _dds_idl_files "${_abs_idl_file}")
+  list(APPEND _dds_idl_files
+    "${_dds_idl_base_path}/${PROJECT_NAME}/${_parent_folder}/dds_opensplice/${_idl_name}_.idl")
   list(APPEND _generated_files
     "${_output_path}/${_parent_folder}/dds_opensplice/${_header_name}__type_support.cpp"
     "${_output_path}/${_parent_folder}/${_header_name}__rosidl_typesupport_opensplice_cpp.hpp"
   )
   list(APPEND _generated_external_files
-    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}.h"
-    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}.cpp"
-    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}Dcps.h"
-    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}Dcps.cpp"
-    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}Dcps_impl.h"
-    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}Dcps_impl.cpp"
-    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}SplDcps.h"
-    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}SplDcps.cpp"
-    "${_output_path}/${_parent_folder}/dds_opensplice/ccpp_${_idl_name}.h")
+    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_.h"
+    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_.cpp"
+    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_Dcps.h"
+    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_Dcps.cpp"
+    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_Dcps_impl.h"
+    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_Dcps_impl.cpp"
+    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_SplDcps.h"
+    "${_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_SplDcps.cpp"
+    "${_output_path}/${_parent_folder}/dds_opensplice/ccpp_${_idl_name}_.h")
 endforeach()
 
 # If not on Windows, disable some warnings with OpenSplice's generated code
@@ -110,11 +121,16 @@ add_custom_command(
   ${_generated_external_files}
   COMMAND ${PYTHON_EXECUTABLE} ${rosidl_typesupport_opensplice_cpp_BIN}
   --generator-arguments-file "${generator_arguments_file}"
-  --opensplice-idl-output-path "${_opensplice_idl_output_path}"
+  --dds-interface-base-path "${_dds_idl_base_path}"
   --idl-pp "${OpenSplice_IDLPP}"
   DEPENDS ${target_dependencies} ${_dds_idl_files}
   COMMENT "Generating C++ type support for PrismTech OpenSplice"
   VERBATIM
+)
+
+add_dependencies(
+  ${rosidl_generate_interfaces_TARGET}__dds_opensplice_idl
+  ${rosidl_generate_interfaces_TARGET}${_target_suffix}
 )
 
 # generate header to switch between export and import for a specific package on Windows
