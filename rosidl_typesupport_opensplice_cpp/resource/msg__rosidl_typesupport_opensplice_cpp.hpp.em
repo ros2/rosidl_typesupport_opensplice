@@ -18,7 +18,7 @@ header_guard_variable = '__'.join([x.upper() for x in header_guard_parts]) + '_'
 include_base = '/'.join(include_parts)
 header_files = [
     include_base +'__struct.hpp',
-    include_dir + '/dds_opensplice/ccpp_' + message.structure.type.name + '.h',
+    include_dir + '/dds_opensplice/ccpp_' + message.structure.type.name + '_.h',
     'rosidl_generator_c/message_type_support_struct.h',
     'rosidl_typesupport_interface/macros.h',
     package_name + '/msg/rosidl_typesupport_opensplice_cpp__visibility_control.h',
