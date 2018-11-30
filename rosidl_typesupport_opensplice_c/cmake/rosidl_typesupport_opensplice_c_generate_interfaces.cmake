@@ -46,15 +46,15 @@ foreach(_idl_tuple ${rosidl_generate_interfaces_IDL_TUPLES})
   list(APPEND _generated_files "${_output_path}/${_parent_folder}/${_header_name}__rosidl_typesupport_opensplice_c.h")
   list(APPEND _generated_files "${_output_path}/${_parent_folder}/dds_opensplice_c/${_header_name}__type_support_c.cpp")
   list(APPEND _generated_external_files
-    "${_dds_output_path}/${_parent_folder}/${_idl_name}.h"
-    "${_dds_output_path}/${_parent_folder}/${_idl_name}.cpp"
-    "${_dds_output_path}/${_parent_folder}/${_idl_name}Dcps.h"
-    "${_dds_output_path}/${_parent_folder}/${_idl_name}Dcps.cpp"
-    "${_dds_output_path}/${_parent_folder}/${_idl_name}Dcps_impl.h"
-    "${_dds_output_path}/${_parent_folder}/${_idl_name}Dcps_impl.cpp"
-    "${_dds_output_path}/${_parent_folder}/${_idl_name}SplDcps.h"
-    "${_dds_output_path}/${_parent_folder}/${_idl_name}SplDcps.cpp"
-    "${_dds_output_path}/${_parent_folder}/ccpp_${_idl_name}.h")
+    "${_dds_output_path}/${_parent_folder}/${_idl_name}_.h"
+    "${_dds_output_path}/${_parent_folder}/${_idl_name}_.cpp"
+    "${_dds_output_path}/${_parent_folder}/${_idl_name}_Dcps.h"
+    "${_dds_output_path}/${_parent_folder}/${_idl_name}_Dcps.cpp"
+    "${_dds_output_path}/${_parent_folder}/${_idl_name}_Dcps_impl.h"
+    "${_dds_output_path}/${_parent_folder}/${_idl_name}_Dcps_impl.cpp"
+    "${_dds_output_path}/${_parent_folder}/${_idl_name}_SplDcps.h"
+    "${_dds_output_path}/${_parent_folder}/${_idl_name}_SplDcps.cpp"
+    "${_dds_output_path}/${_parent_folder}/ccpp_${_idl_name}_.h")
 endforeach()
 
 set(_dependency_files "")
