@@ -71,11 +71,11 @@ struct @(member.type.name)_;
 namespace typesupport_opensplice_cpp
 {
 void convert_ros_message_to_dds(
-  const @(__ros_msg_type_prefix) &,
-  @(__dds_msg_type_prefix) &);
+  const @('::'.join(member.type.namespaces))::@(member.type.name) &,
+  @('::'.join(member.type.namespaces))::dds_::@(member.type.name)_ &);
 void convert_dds_message_to_ros(
-  const @(__dds_msg_type_prefix) &,
-  @(__ros_msg_type_prefix) &);
+  const @('::'.join(member.type.namespaces))::dds_::@(member.type.name)_ &,
+  @('::'.join(member.type.namespaces))::@(member.type.name) &);
 }  // namespace typesupport_opensplice_cpp
 @[        for ns in reversed(member.type.namespaces)]@
 }  // namespace @(ns)
