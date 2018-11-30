@@ -15,25 +15,9 @@
 set(_target_suffix "__rosidl_typesupport_opensplice_c")
 
 set(_output_path "${CMAKE_CURRENT_BINARY_DIR}/rosidl_typesupport_opensplice_c/${PROJECT_NAME}")
+set(_dds_idl_base_path "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_dds_idl")
 
-# set(_dds_idl_files "")
-# set(_dds_idl_base_path "${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_dds_idl")
-# foreach(_idl_file ${rosidl_generate_interfaces_IDL_FILES})
-#   get_filename_component(_extension "${_idl_file}" EXT)
-#   get_filename_component(_name "${_idl_file}" NAME_WE)
-#   get_filename_component(_parent_folder "${_idl_file}" DIRECTORY)
-#   get_filename_component(_parent_folder "${_parent_folder}" NAME)
-#   if(_extension STREQUAL ".msg")
-#     list(APPEND _dds_idl_files
-#       "${_dds_idl_base_path}/${PROJECT_NAME}/${_parent_folder}/dds_opensplice/${_name}_.idl")
-#   elseif(_extension STREQUAL ".srv")
-#     list(APPEND _dds_idl_files
-#       "${_dds_idl_base_path}/${PROJECT_NAME}/${_parent_folder}/dds_opensplice/Sample_${_name}_Request_.idl")
-#     list(APPEND _dds_idl_files
-#       "${_dds_idl_base_path}/${PROJECT_NAME}/${_parent_folder}/dds_opensplice/Sample_${_name}_Response_.idl")
-#   endif()
-# endforeach()
-
+set(_dds_idl_files "")
 set(_generated_files "")
 set(_generated_external_files "")
 set(_dds_output_path "${CMAKE_CURRENT_BINARY_DIR}/rosidl_typesupport_opensplice_cpp/${PROJECT_NAME}")
@@ -43,18 +27,20 @@ foreach(_idl_tuple ${rosidl_generate_interfaces_IDL_TUPLES})
   get_filename_component(_parent_folder "${_parent_folder}" NAME)
   get_filename_component(_idl_name "${_abs_idl_file}" NAME_WE)
   string_camel_case_to_lower_case_underscore("${_idl_name}" _header_name)
+  list(APPEND _dds_idl_files
+    "${_dds_idl_base_path}/${PROJECT_NAME}/${_parent_folder}/dds_opensplice/${_idl_name}_.idl")
   list(APPEND _generated_files "${_output_path}/${_parent_folder}/${_header_name}__rosidl_typesupport_opensplice_c.h")
   list(APPEND _generated_files "${_output_path}/${_parent_folder}/dds_opensplice_c/${_header_name}__type_support_c.cpp")
   list(APPEND _generated_external_files
-    "${_dds_output_path}/${_parent_folder}/${_idl_name}_.h"
-    "${_dds_output_path}/${_parent_folder}/${_idl_name}_.cpp"
-    "${_dds_output_path}/${_parent_folder}/${_idl_name}_Dcps.h"
-    "${_dds_output_path}/${_parent_folder}/${_idl_name}_Dcps.cpp"
-    "${_dds_output_path}/${_parent_folder}/${_idl_name}_Dcps_impl.h"
-    "${_dds_output_path}/${_parent_folder}/${_idl_name}_Dcps_impl.cpp"
-    "${_dds_output_path}/${_parent_folder}/${_idl_name}_SplDcps.h"
-    "${_dds_output_path}/${_parent_folder}/${_idl_name}_SplDcps.cpp"
-    "${_dds_output_path}/${_parent_folder}/ccpp_${_idl_name}_.h")
+    "${_dds_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_.h"
+    "${_dds_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_.cpp"
+    "${_dds_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_Dcps.h"
+    "${_dds_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_Dcps.cpp"
+    "${_dds_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_Dcps_impl.h"
+    "${_dds_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_Dcps_impl.cpp"
+    "${_dds_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_SplDcps.h"
+    "${_dds_output_path}/${_parent_folder}/dds_opensplice/${_idl_name}_SplDcps.cpp"
+    "${_dds_output_path}/${_parent_folder}/dds_opensplice/ccpp_${_idl_name}_.h")
 endforeach()
 
 set(_dependency_files "")
@@ -105,6 +91,7 @@ rosidl_write_generator_arguments(
 add_custom_command(
   OUTPUT
   ${_generated_files}
+  # ${_generated_external_files}
   COMMAND ${PYTHON_EXECUTABLE} ${rosidl_typesupport_opensplice_c_BIN}
   --generator-arguments-file "${generator_arguments_file}"
   DEPENDS ${target_dependencies} ${_dds_idl_files}
@@ -137,7 +124,8 @@ endif()
 
 link_directories(${OpenSplice_LIBRARY_DIRS})
 add_library(${rosidl_generate_interfaces_TARGET}${_target_suffix} SHARED
-  ${_generated_files})
+  ${_generated_files}
+  ${_generated_external_files})
 if(rosidl_generate_interfaces_LIBRARY_NAME)
   set_target_properties(${rosidl_generate_interfaces_TARGET}${_target_suffix}
     PROPERTIES OUTPUT_NAME "${rosidl_generate_interfaces_LIBRARY_NAME}${_target_suffix}")
