@@ -42,12 +42,8 @@ header_files = [
     'rosidl_typesupport_opensplice_cpp/visibility_control.h',
     'rmw/rmw.h',
     include_base + '__struct.hpp',
-    include_base + '__Request__rosidl_typesupport_opensplice_cpp.hpp',
-    include_base + '__Response__rosidl_typesupport_opensplice_cpp.hpp',
-    include_dir + '/dds_opensplice/ccpp_' + service.structure_type.name + '_Request_.h',
-    include_dir + '/dds_opensplice/ccpp_' + service.structure_type.name + '_Response_.h',
-    include_dir + '/dds_opensplice/ccpp_Sample_' + service.structure_type.name + '_Request_.h',
-    include_dir + '/dds_opensplice/ccpp_Sample_' + service.structure_type.name + '_Response_.h',
+    include_base + '__rosidl_typesupport_opensplice_cpp.hpp',
+    include_dir + '/dds_opensplice/ccpp_' + service.structure_type.name + '_.h',
     'rosidl_typesupport_opensplice_cpp/identifier.hpp',
     'rosidl_typesupport_opensplice_cpp/service_type_support.h',
     'rosidl_typesupport_opensplice_cpp/service_type_support_decl.hpp',
@@ -67,8 +63,8 @@ header_files = [
 
 @{
 __msg_pkg_prefix = '::'.join(service.structure_type.namespaces)
-__dds_msg_type_prefix = __msg_pkg_prefix + '::dds_::' +  service.structure_type.name + '_'
-__dds_sample_type_prefix = __msg_pkg_prefix + '::dds_::Sample_' +  service.structure_type.name + '_'
+__dds_msg_type_prefix = __msg_pkg_prefix + '::dds_::' +  service.structure_type.name
+__dds_sample_type_prefix = __msg_pkg_prefix + '::dds_::Sample_' +  service.structure_type.name
 }@
 
 namespace rosidl_typesupport_opensplice_cpp
@@ -82,11 +78,7 @@ class Sample<@(__dds_msg_type_prefix)@(suffix)_>
 public:
   @(__dds_msg_type_prefix)@(suffix)_ & data()
   {
-@[  if suffix == '_Request']@
-    return request_;
-@[  else]@
-    return response_;
-@[  end if]@
+    return wrapped_message_;
   }
 
   operator @(__dds_msg_type_prefix)@(suffix)_() {

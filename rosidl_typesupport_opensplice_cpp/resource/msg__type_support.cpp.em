@@ -59,28 +59,33 @@ __dds_msg_type_prefix = __ros_msg_pkg_prefix + '::dds_::' +  message.structure.t
 
 // forward declaration of message dependencies and their conversion functions
 @[for member in message.structure.members]@
-@[    if isinstance(member.type, NamespacedType)]@
-@[        for ns in member.type.namespaces]@
+@{
+_type = member.type
+if isinstance(_type, NestedType):
+   _type = member.type.basetype
+}@
+@[  if isinstance(_type, NamespacedType)]@
+@[    for ns in _type.namespaces]@
 namespace @(ns)
 {
-@[        end for]@
+@[    end for]@
 namespace dds_
 {
-struct @(member.type.name)_;
+struct @(_type.name)_;
 }  // namespace dds_
 namespace typesupport_opensplice_cpp
 {
 void convert_ros_message_to_dds(
-  const @('::'.join(member.type.namespaces))::@(member.type.name) &,
-  @('::'.join(member.type.namespaces))::dds_::@(member.type.name)_ &);
+  const @('::'.join(_type.namespaces))::@(_type.name) &,
+  @('::'.join(_type.namespaces))::dds_::@(_type.name)_ &);
 void convert_dds_message_to_ros(
-  const @('::'.join(member.type.namespaces))::dds_::@(member.type.name)_ &,
-  @('::'.join(member.type.namespaces))::@(member.type.name) &);
+  const @('::'.join(_type.namespaces))::dds_::@(_type.name)_ &,
+  @('::'.join(_type.namespaces))::@(_type.name) &);
 }  // namespace typesupport_opensplice_cpp
-@[        for ns in reversed(member.type.namespaces)]@
+@[    for ns in reversed(_type.namespaces)]@
 }  // namespace @(ns)
-@[        end for]@
-@[    end if]@
+@[    end for]@
+@[  end if]@
 @[end for]@
 
 @[for ns in message.structure.type.namespaces]@
