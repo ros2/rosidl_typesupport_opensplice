@@ -28,10 +28,7 @@ header_files = [
     'rmw/rmw.h',
     package_name + '/msg/rosidl_typesupport_opensplice_c__visibility_control.h',
     include_base + '.h',
-    include_dir + '/dds_opensplice/ccpp_' + service_name + '_Request_.h',
-    include_dir + '/dds_opensplice/ccpp_' + service_name + '_Response_.h',
-    include_dir + '/dds_opensplice/ccpp_Sample_' + service_name + '_Request_.h',
-    include_dir + '/dds_opensplice/ccpp_Sample_' + service_name + '_Response_.h',
+    include_dir + '/dds_opensplice/ccpp_' + service_name + '_.h',
     'rosidl_typesupport_opensplice_c/identifier.h',
     # TODO(dirk-thomas) including another cpp file is just nasty
     include_dir + '/dds_opensplice/' + convert_camel_case_to_lower_case_underscore(service_name) + '__type_support.cpp',

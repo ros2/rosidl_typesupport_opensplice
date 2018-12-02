@@ -39,8 +39,7 @@ header_files = [
     'rosidl_typesupport_opensplice_cpp/u__instanceHandle.h',
     'rmw/rmw.h',
     package_name + '/msg/rosidl_typesupport_opensplice_c__visibility_control.h',
-    include_base + '__struct.h',
-    include_base + '__functions.h',
+    include_base + '.h',
     include_dir + '/dds_opensplice/ccpp_' + message.structure.type.name + '_.h',
 ]
 }@
@@ -67,14 +66,18 @@ includes = {}
 for member in message.structure.members:
     keys = set([])
     if isinstance(member.type, NestedType):
-        keys.add('rosidl_generator_c/primitives_sequence.h')
-        keys.add('rosidl_generator_c/primitives_sequence_functions.h')
-        if isinstance(member.type.basetype, String):
+        if isinstance(member.type.basetype, BasicType):
+            keys.add('rosidl_generator_c/primitives_sequence.h')
+            keys.add('rosidl_generator_c/primitives_sequence_functions.h')
+        elif isinstance(member.type.basetype, String):
             keys.add('rosidl_generator_c/string.h')
             keys.add('rosidl_generator_c/string_functions.h')
         elif isinstance(member.type.basetype, WString):
             keys.add('rosidl_generator_c/u16string.h')
             keys.add('rosidl_generator_c/u16string_functions.h')
+        elif isinstance(member.type.basetype, NamespacedType):
+            header_file_name = convert_camel_case_to_lower_case_underscore(member.type.basetype.name)
+            keys.add('%s/%s.h' % ('/'.join(member.type.basetype.namespaces), header_file_name))
     elif isinstance(member.type, String):
         keys.add('rosidl_generator_c/string.h')
         keys.add('rosidl_generator_c/string_functions.h')
@@ -97,8 +100,12 @@ for member in message.structure.members:
 @{
 forward_declares = {}
 for member in message.structure.members:
-    if isinstance(member.type, NamespacedType):
-        key = (', '.join(member.type.namespaces), member.type.name)
+    _type = member.type
+    if isinstance(_type, NestedType):
+       _type = member.type.basetype
+
+    if isinstance(_type, NamespacedType):
+        key = (', '.join(_type.namespaces), _type.name)
         if key not in includes:
             forward_declares[key] = set([])
         forward_declares[key].add(member.name)
