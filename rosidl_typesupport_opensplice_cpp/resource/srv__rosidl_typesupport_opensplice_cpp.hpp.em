@@ -2,31 +2,23 @@
 // rosidl_typesupport_opensplice_cpp/resource/srv__rosidl_typesupport_opensplice_cpp.hpp.em
 // generated code does not contain a copyright notice
 
-@#######################################################################
-@# EmPy template for generating
-@# <srv>__rosidl_typesupport_opensplice_cpp.hpp files
-@#
-@# Context:
-@#  - spec (rosidl_parser.MessageSpecification)
-@#    Parsed specification of the .srv file
-@#  - subfolder (string)
-@#    The subfolder / subnamespace of the message
-@#    Either 'srv' or 'action'
-@#  - get_header_filename_from_srv_name (function)
-@#######################################################################
-@
+@# Included from rosidl_typesupport_fastrtps_cpp/resource/idl__rosidl_typesupport_opensplice_cpp.hpp.em
 @{
 from rosidl_cmake import convert_camel_case_to_lower_case_underscore
-header_guard_parts = [package_name] + list(interface_path.parents[0].parts) + \
-    [convert_camel_case_to_lower_case_underscore(interface_path.stem)] + \
-    ['__rosidl_typesupport_opensplice_cpp_hpp']
+include_parts = [package_name] + list(interface_path.parents[0].parts)
+include_dir = '/'.join(include_parts)
+include_parts.append(convert_camel_case_to_lower_case_underscore(interface_path.stem))
+header_guard_parts = include_parts + ['__rosidl_typesupport_opensplice_cpp_hpp']
 header_guard_variable = '__'.join([x.upper() for x in header_guard_parts]) + '_'
 }@
 #ifndef @(header_guard_variable)
 #define @(header_guard_variable)
 
 @{
+include_base = '/'.join(include_parts)
 header_files = [
+    include_base +'__struct.hpp',
+    include_dir + '/dds_opensplice/ccpp_' + service.structure_type.name + '_.h',
     'rosidl_typesupport_cpp/service_type_support.hpp',
     'rosidl_typesupport_interface/macros.h',
     package_name + '/msg/rosidl_typesupport_opensplice_cpp__visibility_control.h',
@@ -40,6 +32,43 @@ header_files = [
 @{include_directives.add(header_file)}@
 @[    end if]@
 #include "@(header_file)"
+@[end for]@
+
+@[for ns in service.structure_type.namespaces]@
+namespace @(ns)
+{
+@[end for]@
+namespace typesupport_opensplice_cpp
+{
+@{
+__ros_msg_pkg_prefix = '::'.join(service.structure_type.namespaces)
+__dds_msg_pkg_prefix = __ros_msg_pkg_prefix + '::dds_'
+}@
+
+ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_@(package_name)
+extern void convert_ros_message_to_dds(
+  const @(__ros_msg_pkg_prefix)::@(service.request_message.structure.type.name) & ros_message,
+  @(__dds_msg_pkg_prefix)::@(service.request_message.structure.type.name)_ & dds_message);
+
+ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_@(package_name)
+extern void convert_ros_message_to_dds(
+  const @(__ros_msg_pkg_prefix)::@(service.response_message.structure.type.name) & ros_message,
+  @(__dds_msg_pkg_prefix)::@(service.response_message.structure.type.name)_ & dds_message);
+
+ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_@(package_name)
+extern void convert_dds_message_to_ros(
+  const @(__dds_msg_pkg_prefix)::@(service.request_message.structure.type.name)_ & dds_message,
+  @(__ros_msg_pkg_prefix)::@(service.request_message.structure.type.name) & ros_message);
+
+ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_@(package_name)
+extern void convert_dds_message_to_ros(
+  const @(__dds_msg_pkg_prefix)::@(service.response_message.structure.type.name)_ & dds_message,
+  @(__ros_msg_pkg_prefix)::@(service.response_message.structure.type.name) & ros_message);
+
+}  // namespace typesupport_opensplice_cpp
+
+@[for ns in reversed(service.structure_type.namespaces)]@
+}  // namespace @(ns)
 @[end for]@
 
 #ifdef __cplusplus
