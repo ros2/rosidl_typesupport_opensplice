@@ -10,7 +10,6 @@ header_guard_variable = '__'.join([x.upper() for x in include_parts]) + \
 #ifndef @(header_guard_variable)
 #define @(header_guard_variable)
 @{
-import sys
 #######################################################################
 # EmPy template for generating <idl>__rosidl_typesupport_cpp.hpp files
 #
@@ -27,7 +26,6 @@ include_directives = set()
 #######################################################################
 from rosidl_parser.definition import Message
 for message in content.get_elements_of_type(Message):
-    print("TEMPLATE for message {}".format(message.structure.type.name), file=sys.stderr)
     TEMPLATE(
         'msg__rosidl_typesupport_opensplice_cpp.hpp.em',
         package_name=package_name, interface_path=interface_path, message=message,
@@ -38,7 +36,6 @@ for message in content.get_elements_of_type(Message):
 #######################################################################
 from rosidl_parser.definition import Service
 for service in content.get_elements_of_type(Service):
-    print("TEMPLATE for service {}".format(service.structure_type.name), file=sys.stderr)
     TEMPLATE(
         'srv__rosidl_typesupport_opensplice_cpp.hpp.em',
         package_name=package_name, interface_path=interface_path, service=service,
@@ -49,7 +46,6 @@ for service in content.get_elements_of_type(Service):
 #######################################################################
 from rosidl_parser.definition import Action
 for action in content.get_elements_of_type(Action):
-    print("TEMPLATE for action {}".format(action.structure_type.name), file=sys.stderr)
     TEMPLATE(
         'srv__rosidl_typesupport_opensplice_cpp.hpp.em',
         package_name=package_name, interface_path=interface_path, service=action.goal_service,
