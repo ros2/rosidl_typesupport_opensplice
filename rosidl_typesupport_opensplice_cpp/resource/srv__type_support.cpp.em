@@ -1,18 +1,7 @@
 // generated from rosidl_typesupport_opensplice_cpp/resource/srv__type_support.cpp.em
 // generated code does not contain a copyright notice
 
-@#######################################################################
-@# EmPy template for generating <srv>__type_support.cpp files
-@#
-@# Context:
-@#  - spec (rosidl_parser.ServiceSpecification)
-@#    Parsed specification of the .srv file
-@#  - subfolder (string)
-@#    The subfolder / subnamespace of the message
-@#    Either 'srv' or 'action'
-@#  - get_header_filename_from_msg_name (function)
-@#######################################################################
-@
+@# Included from rosidl_typesupport_opensplice_cpp/resource/idl__dds_opensplice__type_support.cpp.em
 @{
 from rosidl_cmake import convert_camel_case_to_lower_case_underscore
 include_parts = [package_name] + list(interface_path.parents[0].parts)
@@ -43,7 +32,7 @@ header_files = [
     'rmw/rmw.h',
     include_base + '__struct.hpp',
     include_base + '__rosidl_typesupport_opensplice_cpp.hpp',
-    include_dir + '/dds_opensplice/ccpp_' + service.structure_type.name + '_.h',
+    include_dir + '/dds_opensplice/ccpp_' + interface_path.stem + '_.h',
     'rosidl_typesupport_opensplice_cpp/identifier.hpp',
     'rosidl_typesupport_opensplice_cpp/service_type_support.h',
     'rosidl_typesupport_opensplice_cpp/service_type_support_decl.hpp',
@@ -597,7 +586,7 @@ server_is_available__@(service.structure_type.name)(
   return typed_requester->server_is_available(node, is_available);
 }
 
-static service_type_support_callbacks_t callbacks = {
+static service_type_support_callbacks_t @(service.structure_type.name)_callbacks = {
   "@(package_name)",
   "@(service.structure_type.name)",
   &create_requester__@(service.structure_type.name),
@@ -611,9 +600,9 @@ static service_type_support_callbacks_t callbacks = {
   &server_is_available__@(service.structure_type.name),
 };
 
-static rosidl_service_type_support_t handle = {
+static rosidl_service_type_support_t @(service.structure_type.name)_handle = {
   rosidl_typesupport_opensplice_cpp::typesupport_identifier,
-  &callbacks,
+  &@(service.structure_type.name)_callbacks,
   get_service_typesupport_handle_function,
 };
 
@@ -631,7 +620,7 @@ ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
 const rosidl_service_type_support_t *
 get_service_type_support_handle<@('::'.join(service.structure_type.namespaces + [service.structure_type.name]))>()
 {
-  return &@('::'.join(service.structure_type.namespaces))::typesupport_opensplice_cpp::handle;
+  return &@('::'.join(service.structure_type.namespaces))::typesupport_opensplice_cpp::@(service.structure_type.name)_handle;
 }
 
 }  // namespace rosidl_typesupport_opensplice_cpp
@@ -646,7 +635,7 @@ ROSIDL_TYPESUPPORT_INTERFACE__SERVICE_SYMBOL_NAME(
   rosidl_typesupport_opensplice_cpp,
   @(', '.join(service.structure_type.namespaces)),
   @(service.structure_type.name))() {
-  return &@('::'.join(service.structure_type.namespaces))::typesupport_opensplice_cpp::handle;
+  return &@('::'.join(service.structure_type.namespaces))::typesupport_opensplice_cpp::@(service.structure_type.name)_handle;
 }
 
 #ifdef __cplusplus

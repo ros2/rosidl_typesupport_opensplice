@@ -40,7 +40,7 @@ header_files = [
     'rmw/rmw.h',
     package_name + '/msg/rosidl_typesupport_opensplice_c__visibility_control.h',
     include_base + '.h',
-    include_dir + '/dds_opensplice/ccpp_' + message.structure.type.name + '_.h',
+    include_dir + '/dds_opensplice/ccpp_' + interface_path.stem + '_.h',
 ]
 }@
 @[for header_file in header_files]@
@@ -718,7 +718,7 @@ deserialize(
 @
 @# // Collect the callback functions and provide a function to get the type support struct.
 
-static message_type_support_callbacks_t __callbacks = {
+static message_type_support_callbacks_t @(message.structure.type.name)__callbacks = {
   "@(package_name)",  // package_name
   "@(message.structure.type.name)",  // message_name
   register_type,  // register_type
@@ -730,9 +730,9 @@ static message_type_support_callbacks_t __callbacks = {
   convert_dds_to_ros,  // convert_dds_to_ros
 };
 
-static rosidl_message_type_support_t __type_support = {
+static rosidl_message_type_support_t @(message.structure.type.name)__type_support = {
   rosidl_typesupport_opensplice_c__identifier,
-  &__callbacks,  // data
+  &@(message.structure.type.name)__callbacks,  // data
   get_message_typesupport_handle_function,
 };
 
@@ -742,7 +742,7 @@ ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
   @(', '.join(message.structure.type.namespaces)),
   @(message.structure.type.name))()
 {
-  return &__type_support;
+  return &@(message.structure.type.name)__type_support;
 }
 
 #if defined(__cplusplus)

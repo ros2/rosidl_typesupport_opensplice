@@ -31,9 +31,10 @@ header_file = include_base +'__rosidl_typesupport_opensplice_cpp.hpp'
 
 @{
 header_files = [
+  include_base + '__rosidl_typesupport_opensplice_cpp.hpp',
   'rosidl_typesupport_cpp/message_type_support.hpp',
   include_base + '__struct.hpp',
-  include_dir + '/dds_opensplice/ccpp_' + message.structure.type.name + '_.h',
+  include_dir + '/dds_opensplice/ccpp_' + interface_path.stem + '_.h',
   'rosidl_typesupport_opensplice_cpp/identifier.hpp',
   'rosidl_typesupport_opensplice_cpp/message_type_support.h',
   'rosidl_typesupport_opensplice_cpp/message_type_support_decl.hpp',
@@ -500,7 +501,7 @@ deserialize__@(message.structure.type.name)(
   return nullptr;
 }
 
-static message_type_support_callbacks_t callbacks = {
+static message_type_support_callbacks_t @(message.structure.type.name)_callbacks = {
   "@(package_name)",
   "@(message.structure.type.name)",
   &register_type__@(message.structure.type.name),
@@ -512,9 +513,9 @@ static message_type_support_callbacks_t callbacks = {
   nullptr,  // convert dds to ros (handled differently for C++)
 };
 
-static rosidl_message_type_support_t handle = {
+static rosidl_message_type_support_t @(message.structure.type.name)_handle = {
   rosidl_typesupport_opensplice_cpp::typesupport_identifier,
-  &callbacks,
+  &@(message.structure.type.name)_callbacks,
   get_message_typesupport_handle_function,
 };
 
@@ -532,7 +533,7 @@ ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
 const rosidl_message_type_support_t *
 get_message_type_support_handle<@(__ros_msg_type_prefix)>()
 {
-  return &@(__ros_msg_pkg_prefix)::typesupport_opensplice_cpp::handle;
+  return &@(__ros_msg_pkg_prefix)::typesupport_opensplice_cpp::@(message.structure.type.name)_handle;
 }
 
 }  // namespace rosidl_typesupport_opensplice_cpp
@@ -548,7 +549,7 @@ ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
   @(', '.join([package_name] + list(interface_path.parents[0].parts))),
   @(message.structure.type.name))()
 {
-  return &@(__ros_msg_pkg_prefix)::typesupport_opensplice_cpp::handle;
+  return &@(__ros_msg_pkg_prefix)::typesupport_opensplice_cpp::@(message.structure.type.name)_handle;
 }
 
 #ifdef __cplusplus

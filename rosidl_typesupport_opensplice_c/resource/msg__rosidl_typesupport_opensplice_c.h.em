@@ -4,16 +4,6 @@
 
 @# Included from rosidl_typesupport_opensplice_c/resource/idl__rosidl_typesupport_opensplice_c.h.em
 @{
-from rosidl_cmake import convert_camel_case_to_lower_case_underscore
-header_guard_parts = [package_name] + list(interface_path.parents[0].parts) + \
-   [convert_camel_case_to_lower_case_underscore(interface_path.stem)] + \
-   ['__rosidl_typesupport_opensplice_c_h']
-header_guard_variable = '__'.join([x.upper() for x in header_guard_parts]) + '_'
-}@
-#ifndef @(header_guard_variable)
-#define @(header_guard_variable)
-
-@{
 header_files = [
     'rosidl_generator_c/message_type_support_struct.h',
     'rosidl_typesupport_interface/macros.h',
@@ -45,5 +35,3 @@ ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
 #ifdef __cplusplus
 }
 #endif
-
-#endif  // @(header_guard_variable)

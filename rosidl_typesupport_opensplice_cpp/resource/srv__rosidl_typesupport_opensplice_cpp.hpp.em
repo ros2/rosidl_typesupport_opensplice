@@ -8,17 +8,12 @@ from rosidl_cmake import convert_camel_case_to_lower_case_underscore
 include_parts = [package_name] + list(interface_path.parents[0].parts)
 include_dir = '/'.join(include_parts)
 include_parts.append(convert_camel_case_to_lower_case_underscore(interface_path.stem))
-header_guard_parts = include_parts + ['__rosidl_typesupport_opensplice_cpp_hpp']
-header_guard_variable = '__'.join([x.upper() for x in header_guard_parts]) + '_'
 }@
-#ifndef @(header_guard_variable)
-#define @(header_guard_variable)
-
 @{
 include_base = '/'.join(include_parts)
 header_files = [
     include_base +'__struct.hpp',
-    include_dir + '/dds_opensplice/ccpp_' + service.structure_type.name + '_.h',
+    include_dir + '/dds_opensplice/ccpp_' + interface_path.stem + '_.h',
     'rosidl_typesupport_cpp/service_type_support.hpp',
     'rosidl_typesupport_interface/macros.h',
     package_name + '/msg/rosidl_typesupport_opensplice_cpp__visibility_control.h',
@@ -86,5 +81,3 @@ ROSIDL_TYPESUPPORT_INTERFACE__SERVICE_SYMBOL_NAME(
 #ifdef __cplusplus
 }
 #endif
-
-#endif  // @(header_guard_variable)
