@@ -39,6 +39,7 @@ header_files = [
     include_base + '__rosidl_typesupport_opensplice_cpp.hpp',
     include_dir + '/dds_opensplice/ccpp_' + interface_path.stem + '_.h',
     'rosidl_typesupport_opensplice_cpp/identifier.hpp',
+    'rosidl_typesupport_opensplice_cpp/message_type_support_decl.hpp',
     'rosidl_typesupport_opensplice_cpp/service_type_support.h',
     'rosidl_typesupport_opensplice_cpp/service_type_support_decl.hpp',
     'rosidl_typesupport_opensplice_cpp/requester.hpp',
@@ -56,44 +57,28 @@ header_files = [
 @[end for]@
 
 @{
+TEMPLATE(
+    'msg__type_support.cpp.em',
+    package_name=package_name,
+    interface_path=interface_path,
+    message=service.request_message,
+    include_directives=include_directives,
+)
+TEMPLATE(
+    'msg__type_support.cpp.em',
+    package_name=package_name,
+    interface_path=interface_path,
+    message=service.response_message,
+    include_directives=include_directives,
+)
+}@
+
+@{
 __ros_msg_pkg_prefix = '::'.join(service.structure_type.namespaces)
 __dds_msg_pkg_prefix = __ros_msg_pkg_prefix + '::dds_'
 __dds_msg_type_prefix = __dds_msg_pkg_prefix + '::' +  service.structure_type.name
 __dds_sample_type_prefix = __dds_msg_pkg_prefix + '::Sample_' +  service.structure_type.name
 }@
-
-// forward declaration of message dependencies and their conversion functions
-@[for message in (service.request_message, service.response_message)]@
-@[  for member in message.structure.members]@
-@{
-_type = member.type
-if isinstance(_type, NestedType):
-   _type = member.type.basetype
-}@
-@[    if isinstance(_type, NamespacedType)]@
-@[      for ns in _type.namespaces]@
-namespace @(ns)
-{
-@[      end for]@
-namespace dds_
-{
-struct @(_type.name)_;
-}  // namespace dds_
-namespace typesupport_opensplice_cpp
-{
-void convert_ros_message_to_dds(
-  const @('::'.join(_type.namespaces))::@(_type.name) &,
-  @('::'.join(_type.namespaces))::dds_::@(_type.name)_ &);
-void convert_dds_message_to_ros(
-  const @('::'.join(_type.namespaces))::dds_::@(_type.name)_ &,
-  @('::'.join(_type.namespaces))::@(_type.name) &);
-}  // namespace typesupport_opensplice_cpp
-@[      for ns in reversed(_type.namespaces)]@
-}  // namespace @(ns)
-@[      end for]@
-@[    end if]@
-@[  end for]@
-@[end for]@
 
 namespace rosidl_typesupport_opensplice_cpp
 {
@@ -439,106 +424,6 @@ create_responder__@(service.structure_type.name)(
   return nullptr;
 }
 
-@[for message in (service.request_message, service.response_message)]@
-ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
-void
-convert_ros_message_to_dds(
-  const @(__ros_msg_pkg_prefix)::@(message.structure.type.name) & ros_message,
-  @(__dds_msg_pkg_prefix)::@(message.structure.type.name)_ & dds_message)
-{
-@[  if not message.structure.members]@
-  (void)ros_message;
-  (void)dds_message;
-@[  end if]@
-@[  for member in message.structure.members]@
-  // member.name @(member.name)
-@[    if isinstance(member.type, NestedType)]@
-  {
-@[      if isinstance(member.type, Array)]@
-    size_t size = @(member.type.size);
-@[      else]@
-    size_t size = ros_message.@(member.name).size();
-    if (size > (std::numeric_limits<DDS::Long>::max)()) {
-      throw std::runtime_error("array size exceeds maximum DDS sequence size");
-    }
-    DDS::Long length = static_cast<DDS::Long>(size);
-    dds_message.@(member.name)_.length(length);
-@[      end if]@
-    for (DDS::ULong i = 0; i < size; i++) {
-@[      if isinstance(member.type.basetype, BaseString)]@
-      dds_message.@(member.name)_[i] = ros_message.@(member.name)[i].c_str();
-@[      elif isinstance(member.type.basetype, BasicType)]@
-@[        if member.type.basetype.type == 'boolean']@
-      dds_message.@(member.name)_[i] = 1 ? ros_message.@(member.name)[i] : 0;
-@[        else]@
-      dds_message.@(member.name)_[i] = ros_message.@(member.name)[i];
-@[        end if]@
-@[      else]@
-        @('::'.join(member.type.basetype.namespaces))::typesupport_opensplice_cpp::convert_ros_message_to_dds(
-        ros_message.@(member.name)[i], dds_message.@(member.name)_[i]);
-@[      end if]@
-    }
-  }
-@[    elif isinstance(member.type, BaseString)]@
-  dds_message.@(member.name)_ = ros_message.@(member.name).c_str();
-@[    elif isinstance(member.type, BasicType)]@
-  dds_message.@(member.name)_ = ros_message.@(member.name);
-@[    else]@
-  @('::'.join(member.type.namespaces))::typesupport_opensplice_cpp::convert_ros_message_to_dds(
-    ros_message.@(member.name), dds_message.@(member.name)_);
-@[    end if]@
-@[  end for]@
-}
-
-ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
-void
-convert_dds_message_to_ros(
-  const @(__dds_msg_pkg_prefix)::@(message.structure.type.name)_ & dds_message,
-  @(__ros_msg_pkg_prefix)::@(message.structure.type.name) & ros_message)
-{
-@[  if not message.structure.members]@
-  (void)ros_message;
-  (void)dds_message;
-@[  end if]@
-@[  for member in message.structure.members]@
-  // member.name @(member.name)
-@[    if isinstance(member.type, NestedType)]@
-  {
-@[      if isinstance(member.type, Array)]@
-    size_t size = @(member.type.size);
-@[      else]@
-    size_t size = dds_message.@(member.name)_.length();
-    ros_message.@(member.name).resize(size);
-@[      end if]@
-    for (DDS::ULong i = 0; i < size; i++) {
-@[      if isinstance(member.type.basetype, BaseString)]@
-      ros_message.@(member.name)[i] = dds_message.@(member.name)_[i];
-@[      elif isinstance(member.type.basetype, BasicType)]@
-@[        if member.type.basetype.type == 'boolean']@
-      ros_message.@(member.name)[i] = (dds_message.@(member.name)_[i] != 0);
-@[        else]@
-      ros_message.@(member.name)[i] = dds_message.@(member.name)_[i];
-@[        end if]@
-@[      else]@
-      @('::'.join(member.type.basetype.namespaces))::typesupport_opensplice_cpp::convert_dds_message_to_ros(
-        dds_message.@(member.name)_[i], ros_message.@(member.name)[i]);
-@[      end if]@
-    }
-  }
-@[    elif isinstance(member.type, BaseString)]@
-  ros_message.@(member.name) = dds_message.@(member.name)_;
-@[    elif isinstance(member.type, BasicType)]@
-  ros_message.@(member.name) =
-    @('(' if member.type.type == 'boolean' else '')dds_message.@(member.name)_@(' != 0)' if member.type.type == 'boolean' else '');
-@[    else]@
-  @('::'.join(member.type.namespaces))::typesupport_opensplice_cpp::convert_dds_message_to_ros(
-    dds_message.@(member.name)_, ros_message.@(member.name));
-@[    end if]@
-@[  end for]@
-}
-@[end for]@
-
-
 const char *
 send_request__@(service.structure_type.name)(
   void * untyped_requester, const void * untyped_ros_request, int64_t * sequence_number)
@@ -757,9 +642,9 @@ namespace rosidl_typesupport_opensplice_cpp
 template<>
 ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
 const rosidl_service_type_support_t *
-get_service_type_support_handle<@('::'.join(service.structure_type.namespaces + [service.structure_type.name]))>()
+get_service_type_support_handle<@(__ros_msg_pkg_prefix)::@(service.structure_type.name)>()
 {
-  return &@('::'.join(service.structure_type.namespaces))::typesupport_opensplice_cpp::@(service.structure_type.name)_handle;
+  return &@(__ros_msg_pkg_prefix)::typesupport_opensplice_cpp::@(service.structure_type.name)_handle;
 }
 
 }  // namespace rosidl_typesupport_opensplice_cpp
