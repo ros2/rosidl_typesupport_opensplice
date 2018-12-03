@@ -40,25 +40,17 @@ __ros_msg_pkg_prefix = '::'.join(service.structure_type.namespaces)
 __dds_msg_pkg_prefix = __ros_msg_pkg_prefix + '::dds_'
 }@
 
+@[for message in (service.request_message, service.response_message)]@
 ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_@(package_name)
 extern void convert_ros_message_to_dds(
-  const @(__ros_msg_pkg_prefix)::@(service.request_message.structure.type.name) & ros_message,
-  @(__dds_msg_pkg_prefix)::@(service.request_message.structure.type.name)_ & dds_message);
-
-ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_@(package_name)
-extern void convert_ros_message_to_dds(
-  const @(__ros_msg_pkg_prefix)::@(service.response_message.structure.type.name) & ros_message,
-  @(__dds_msg_pkg_prefix)::@(service.response_message.structure.type.name)_ & dds_message);
+  const @(__ros_msg_pkg_prefix)::@(message.structure.type.name) & ros_message,
+  @(__dds_msg_pkg_prefix)::@(message.structure.type.name)_ & dds_message);
 
 ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_@(package_name)
 extern void convert_dds_message_to_ros(
-  const @(__dds_msg_pkg_prefix)::@(service.request_message.structure.type.name)_ & dds_message,
-  @(__ros_msg_pkg_prefix)::@(service.request_message.structure.type.name) & ros_message);
-
-ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_@(package_name)
-extern void convert_dds_message_to_ros(
-  const @(__dds_msg_pkg_prefix)::@(service.response_message.structure.type.name)_ & dds_message,
-  @(__ros_msg_pkg_prefix)::@(service.response_message.structure.type.name) & ros_message);
+  const @(__dds_msg_pkg_prefix)::@(message.structure.type.name)_ & dds_message,
+  @(__ros_msg_pkg_prefix)::@(message.structure.type.name) & ros_message);
+@[end for]@
 
 }  // namespace typesupport_opensplice_cpp
 
