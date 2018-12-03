@@ -97,10 +97,10 @@ namespace @(ns)
 namespace typesupport_opensplice_cpp
 {
 
-using __dds_msg_type = @(__dds_msg_type_prefix);
-using __ros_msg_type = @(__ros_msg_type_prefix);
+using __dds_msg_type_@(message.structure.type.name) = @(__dds_msg_type_prefix);
+using __ros_msg_type_@(message.structure.type.name) = @(__ros_msg_type_prefix);
 
-static @(__dds_msg_type_prefix)TypeSupport __type_support;
+static @(__dds_msg_type_prefix)TypeSupport __type_support_@(message.structure.type.name);
 
 ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
 const char *
@@ -117,7 +117,7 @@ register_type__@(message.structure.type.name)(
   DDS::DomainParticipant * participant =
     static_cast<DDS::DomainParticipant *>(untyped_participant);
 
-  DDS::ReturnCode_t status = __type_support.register_type(participant, type_name);
+  DDS::ReturnCode_t status = __type_support_@(message.structure.type.name).register_type(participant, type_name);
   switch (status) {
     case DDS::RETCODE_ERROR:
       return "@(__dds_msg_type_prefix)TypeSupport.register_type: "
@@ -140,7 +140,9 @@ register_type__@(message.structure.type.name)(
 
 ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
 void
-convert_ros_message_to_dds(const __ros_msg_type & ros_message, __dds_msg_type & dds_message)
+convert_ros_message_to_dds(
+  const __ros_msg_type_@(message.structure.type.name) & ros_message,
+  __dds_msg_type_@(message.structure.type.name) & dds_message)
 {
 @[if not message.structure.members]@
   (void)ros_message;
@@ -194,8 +196,8 @@ publish__@(message.structure.type.name)(
 {
   DDS::DataWriter * topic_writer = static_cast<DDS::DataWriter *>(untyped_topic_writer);
 
-  const __ros_msg_type & ros_message = *static_cast<const __ros_msg_type *>(untyped_ros_message);
-  __dds_msg_type dds_message;
+  const __ros_msg_type_@(message.structure.type.name) & ros_message = *static_cast<const __ros_msg_type_@(message.structure.type.name) *>(untyped_ros_message);
+  __dds_msg_type_@(message.structure.type.name) dds_message;
   convert_ros_message_to_dds(ros_message, dds_message);
 
   @(__dds_msg_type_prefix)DataWriter * data_writer =
@@ -233,7 +235,9 @@ publish__@(message.structure.type.name)(
 
 ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
 void
-convert_dds_message_to_ros(const __dds_msg_type & dds_message, __ros_msg_type & ros_message)
+convert_dds_message_to_ros(
+  const __dds_msg_type_@(message.structure.type.name) & dds_message,
+  __ros_msg_type_@(message.structure.type.name) & ros_message)
 {
 @[if not message.structure.members]@
   (void)ros_message;
@@ -365,7 +369,7 @@ take__@(message.structure.type.name)(
   }
 
   if (!ignore_sample) {
-    __ros_msg_type & ros_message = *static_cast<__ros_msg_type *>(untyped_ros_message);
+    __ros_msg_type_@(message.structure.type.name) & ros_message = *static_cast<__ros_msg_type_@(message.structure.type.name) *>(untyped_ros_message);
     convert_dds_message_to_ros(dds_messages[0], ros_message);
     *taken = true;
   } else {
@@ -410,12 +414,12 @@ serialize__@(message.structure.type.name)(
   const void * untyped_ros_message,
   void * untyped_serialized_data)
 {
-  const __ros_msg_type & ros_message = *static_cast<const __ros_msg_type *>(untyped_ros_message);
-  __dds_msg_type dds_message;
+  const __ros_msg_type_@(message.structure.type.name) & ros_message = *static_cast<const __ros_msg_type_@(message.structure.type.name) *>(untyped_ros_message);
+  __dds_msg_type_@(message.structure.type.name) dds_message;
 
   convert_ros_message_to_dds(ros_message, dds_message);
 
-  DDS::OpenSplice::CdrTypeSupport cdr_ts(__type_support);
+  DDS::OpenSplice::CdrTypeSupport cdr_ts(__type_support_@(message.structure.type.name));
   DDS::OpenSplice::CdrSerializedData * serdata = nullptr;
 
   DDS::ReturnCode_t status = cdr_ts.serialize(&dds_message, &serdata);
@@ -469,9 +473,9 @@ deserialize__@(message.structure.type.name)(
   unsigned length,
   void * untyped_ros_message)
 {
-  __dds_msg_type dds_message;
+  __dds_msg_type_@(message.structure.type.name) dds_message;
 
-  DDS::OpenSplice::CdrTypeSupport cdr_ts(__type_support);
+  DDS::OpenSplice::CdrTypeSupport cdr_ts(__type_support_@(message.structure.type.name));
 
   DDS::ReturnCode_t status = cdr_ts.deserialize(buffer, length, &dds_message);
 
@@ -495,7 +499,7 @@ deserialize__@(message.structure.type.name)(
              "unknown return code";
   }
 
-  __ros_msg_type & ros_message = *static_cast<__ros_msg_type *>(untyped_ros_message);
+  __ros_msg_type_@(message.structure.type.name) & ros_message = *static_cast<__ros_msg_type_@(message.structure.type.name) *>(untyped_ros_message);
   convert_dds_message_to_ros(dds_message, ros_message);
 
   return nullptr;
