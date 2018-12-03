@@ -1,6 +1,14 @@
 // generated from rosidl_typesupport_opensplice_c/resource/idl__rosidl_typesupport_c.h.em
 // generated code does not contain a copyright notice
-
+@{
+from rosidl_cmake import convert_camel_case_to_lower_case_underscore
+include_parts = [package_name] + list(interface_path.parents[0].parts) + \
+    [convert_camel_case_to_lower_case_underscore(interface_path.stem)]
+header_guard_variable = '__'.join([x.upper() for x in include_parts]) + \
+    '__ROSIDL_TYPESUPPORT_OPENSPLICE_C_H_'
+}@
+#ifndef @(header_guard_variable)
+#define @(header_guard_variable)
 @{
 #######################################################################
 # EmPy template for generating <idl>__rosidl_typesupport_c.h files
@@ -51,3 +59,4 @@ for action in content.get_elements_of_type(Action):
         package_name=package_name, interface_path=interface_path, message=action.feedback,
         include_directives=include_directives)
 }@
+#endif  // @(header_guard_variable)

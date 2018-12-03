@@ -28,10 +28,10 @@ header_files = [
     'rmw/rmw.h',
     package_name + '/msg/rosidl_typesupport_opensplice_c__visibility_control.h',
     include_base + '.h',
-    include_dir + '/dds_opensplice/ccpp_' + service_name + '_.h',
+    include_dir + '/dds_opensplice/ccpp_' + interface_path.stem + '_.h',
     'rosidl_typesupport_opensplice_c/identifier.h',
     # TODO(dirk-thomas) including another cpp file is just nasty
-    include_dir + '/dds_opensplice/' + convert_camel_case_to_lower_case_underscore(service_name) + '__type_support.cpp',
+    include_dir + '/dds_opensplice/' + convert_camel_case_to_lower_case_underscore(interface_path.stem) + '__type_support.cpp',
     package_name + '/msg/rosidl_generator_c__visibility_control.h',
 ]
 }@
@@ -251,7 +251,7 @@ server_is_available__@('__'.join(service.structure_type.namespaces))__@(service.
     requester, node, is_available);
 }
 
-static service_type_support_callbacks_t __callbacks = {
+static service_type_support_callbacks_t @(service.structure_type.name)__callbacks = {
   "@(package_name)",
   "@(service.structure_type.name)",
   &create_requester__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name),
@@ -265,15 +265,15 @@ static service_type_support_callbacks_t __callbacks = {
   &server_is_available__@('__'.join(service.structure_type.namespaces))__@(service.structure_type.name),
 };
 
-static rosidl_service_type_support_t __type_support = {
+static rosidl_service_type_support_t @(service.structure_type.name)__type_support = {
   rosidl_typesupport_opensplice_c__identifier,
-  &__callbacks,  // data
+  &@(service.structure_type.name)__callbacks,  // data
   get_service_typesupport_handle_function,
 };
 
 const rosidl_service_type_support_t *
 ROSIDL_TYPESUPPORT_INTERFACE__SERVICE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.structure_type.namespaces)), @(service.structure_type.name))() {
-  return &__type_support;
+  return &@(service.structure_type.name)__type_support;
 }
 
 #if defined(__cplusplus)
