@@ -17,6 +17,9 @@ rosidl_generate_dds_interfaces(
   ${rosidl_generate_interfaces_TARGET}__dds_opensplice_idl
   IDL_TUPLES ${rosidl_generate_interfaces_IDL_TUPLES}
   DEPENDENCY_PACKAGE_NAMES ${rosidl_generate_interfaces_DEPENDENCY_PACKAGE_NAMES}
+  SERVICE_TEMPLATES
+    "${rosidl_typesupport_opensplice_cpp_TEMPLATE_DIR}/service_request_wrapper.idl.em"
+    "${rosidl_typesupport_opensplice_cpp_TEMPLATE_DIR}/service_response_wrapper.idl.em"
   OUTPUT_SUBFOLDERS "dds_opensplice"
   EXTENSION "rosidl_typesupport_opensplice_cpp.rosidl_generator_dds_idl_extension"
 )
