@@ -84,9 +84,6 @@ for member in message.structure.members:
     elif isinstance(member.type, WString):
         keys.add('rosidl_generator_c/u16string.h')
         keys.add('rosidl_generator_c/u16string_functions.h')
-    elif isinstance(member.type, NamespacedType):
-        header_file_name = convert_camel_case_to_lower_case_underscore(member.type.name)
-        keys.add('%s/%s__functions.h' % ('/'.join(member.type.namespaces), header_file_name))
     for key in keys:
         if key not in includes:
             includes[key] = set([])
@@ -123,14 +120,15 @@ ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
 @{
 __dds_msg_type_prefix = '::'.join(message.structure.type.namespaces + ['dds_'] + [message.structure.type.name]) + '_'
 __ros_msg_type_prefix = '__'.join(message.structure.type.namespaces + [message.structure.type.name])
+__static_suffix = '__'.join(message.structure.type.namespaces + [message.structure.type.name])
 }@
-using __dds_msg_type = @(__dds_msg_type_prefix);
-using __ros_msg_type = @(__ros_msg_type_prefix);
+using __dds_msg_type_@(__static_suffix) = @(__dds_msg_type_prefix);
+using __ros_msg_type_@(__static_suffix) = @(__ros_msg_type_prefix);
 
-static @(__dds_msg_type_prefix)TypeSupport _type_support;
+static @(__dds_msg_type_prefix)TypeSupport _type_support_@(__static_suffix);
 
 static const char *
-register_type(void * untyped_participant, const char * type_name)
+register_type_@(__static_suffix)(void * untyped_participant, const char * type_name)
 {
   if (!untyped_participant) {
     return "untyped participant handle is null";
@@ -141,7 +139,7 @@ register_type(void * untyped_participant, const char * type_name)
   using DDS::DomainParticipant;
   DomainParticipant * participant = static_cast<DomainParticipant *>(untyped_participant);
 
-  DDS::ReturnCode_t status = _type_support.register_type(participant, type_name);
+  DDS::ReturnCode_t status = _type_support_@(__static_suffix).register_type(participant, type_name);
   switch (status) {
     case DDS::RETCODE_ERROR:
       return "@(__dds_msg_type_prefix)TypeSupport.register_type: "
@@ -163,7 +161,7 @@ register_type(void * untyped_participant, const char * type_name)
 }
 
 static const char *
-convert_ros_to_dds(const void * untyped_ros_message, void * untyped_dds_message)
+convert_ros_to_dds_@(__static_suffix)(const void * untyped_ros_message, void * untyped_dds_message)
 {
   if (!untyped_ros_message) {
     return "ros message handle is null";
@@ -171,8 +169,8 @@ convert_ros_to_dds(const void * untyped_ros_message, void * untyped_dds_message)
   if (!untyped_dds_message) {
     return "dds message handle is null";
   }
-  const __ros_msg_type * ros_message = static_cast<const __ros_msg_type *>(untyped_ros_message);
-  __dds_msg_type * dds_message = static_cast<__dds_msg_type *>(untyped_dds_message);
+  const __ros_msg_type_@(__static_suffix) * ros_message = static_cast<const __ros_msg_type_@(__static_suffix) *>(untyped_ros_message);
+  __dds_msg_type_@(__static_suffix) * dds_message = static_cast<__dds_msg_type_@(__static_suffix) *>(untyped_dds_message);
 @[if not message.structure.members]@
   (void)dds_message;
   (void)ros_message;
@@ -284,7 +282,7 @@ convert_ros_to_dds(const void * untyped_ros_message, void * untyped_dds_message)
 }
 
 static const char *
-publish(void * dds_data_writer, const void * ros_message)
+publish_@(__static_suffix)(void * dds_data_writer, const void * ros_message)
 {
   if (!dds_data_writer) {
     return "data writer handle is null";
@@ -295,8 +293,8 @@ publish(void * dds_data_writer, const void * ros_message)
 
   DDS::DataWriter * topic_writer = static_cast<DDS::DataWriter *>(dds_data_writer);
 
-  __dds_msg_type dds_message;
-  const char * err_msg = convert_ros_to_dds(ros_message, &dds_message);
+  __dds_msg_type_@(__static_suffix) dds_message;
+  const char * err_msg = convert_ros_to_dds_@(__static_suffix)(ros_message, &dds_message);
   if (err_msg != 0) {
     return err_msg;
   }
@@ -355,7 +353,7 @@ publish(void * dds_data_writer, const void * ros_message)
 }
 
 static const char *
-convert_dds_to_ros(const void * untyped_dds_message, void * untyped_ros_message)
+convert_dds_to_ros_@(__static_suffix)(const void * untyped_dds_message, void * untyped_ros_message)
 {
   if (!untyped_ros_message) {
     return "ros message handle is null";
@@ -363,8 +361,8 @@ convert_dds_to_ros(const void * untyped_dds_message, void * untyped_ros_message)
   if (!untyped_dds_message) {
     return "dds message handle is null";
   }
-  const __dds_msg_type * dds_message = static_cast<const __dds_msg_type *>(untyped_dds_message);
-  __ros_msg_type * ros_message = static_cast<__ros_msg_type *>(untyped_ros_message);
+  const __dds_msg_type_@(__static_suffix) * dds_message = static_cast<const __dds_msg_type_@(__static_suffix) *>(untyped_dds_message);
+  __ros_msg_type_@(__static_suffix) * ros_message = static_cast<__ros_msg_type_@(__static_suffix) *>(untyped_ros_message);
 @[if not message.structure.members]@
   (void)dds_message;
   (void)ros_message;
@@ -479,7 +477,7 @@ else:
 }
 
 static const char *
-take(
+take_@(__static_suffix)(
   void * dds_data_reader,
   bool ignore_local_publications,
   void * untyped_ros_message,
@@ -566,7 +564,7 @@ take(
   }
 
   if (!ignore_sample) {
-    errs = convert_dds_to_ros(&dds_messages[0], untyped_ros_message);
+    errs = convert_dds_to_ros_@(__static_suffix)(&dds_messages[0], untyped_ros_message);
     if (errs != 0) {
       goto finally;
     }
@@ -608,7 +606,7 @@ finally:
 }
 
 static const char *
-serialize(
+serialize_@(__static_suffix)(
   const void * untyped_ros_message,
   void * untyped_serialized_data)
 {
@@ -619,13 +617,13 @@ serialize(
     return "serialized_data handle is null";
   }
 
-  __dds_msg_type dds_message;
-  const char * err_msg = convert_ros_to_dds(untyped_ros_message, &dds_message);
+  __dds_msg_type_@(__static_suffix) dds_message;
+  const char * err_msg = convert_ros_to_dds_@(__static_suffix)(untyped_ros_message, &dds_message);
   if (err_msg != 0) {
     return err_msg;
   }
 
-  DDS::OpenSplice::CdrTypeSupport cdr_ts(_type_support);
+  DDS::OpenSplice::CdrTypeSupport cdr_ts(_type_support_@(__static_suffix));
 
   DDS::OpenSplice::CdrSerializedData * serdata = nullptr;
 
@@ -674,7 +672,7 @@ serialize(
 }
 
 static const char *
-deserialize(
+deserialize_@(__static_suffix)(
   const uint8_t * buffer,
   unsigned length,
   void * untyped_ros_message)
@@ -685,9 +683,9 @@ deserialize(
     return "invalid ros message pointer";
   }
 
-  DDS::OpenSplice::CdrTypeSupport cdr_ts(_type_support);
+  DDS::OpenSplice::CdrTypeSupport cdr_ts(_type_support_@(__static_suffix));
 
-  __dds_msg_type dds_message;
+  __dds_msg_type_@(__static_suffix) dds_message;
   DDS::ReturnCode_t status = cdr_ts.deserialize(buffer, length, &dds_message);
 
   switch (status) {
@@ -710,7 +708,7 @@ deserialize(
              "unknown return code";
   }
 
-  errs = convert_dds_to_ros(&dds_message, untyped_ros_message);
+  errs = convert_dds_to_ros_@(__static_suffix)(&dds_message, untyped_ros_message);
 
   return errs;
 }
@@ -721,13 +719,13 @@ deserialize(
 static message_type_support_callbacks_t @(message.structure.type.name)__callbacks = {
   "@(package_name)",  // package_name
   "@(message.structure.type.name)",  // message_name
-  register_type,  // register_type
-  publish,  // publish
-  take,  // take
-  serialize,  // serialize message
-  deserialize,  // deserialize message
-  convert_ros_to_dds,  // convert_ros_to_dds
-  convert_dds_to_ros,  // convert_dds_to_ros
+  register_type_@(__static_suffix),  // register_type
+  publish_@(__static_suffix),  // publish
+  take_@(__static_suffix),  // take
+  serialize_@(__static_suffix),  // serialize message
+  deserialize_@(__static_suffix),  // deserialize message
+  convert_ros_to_dds_@(__static_suffix),  // convert_ros_to_dds
+  convert_dds_to_ros_@(__static_suffix),  // convert_dds_to_ros
 };
 
 static rosidl_message_type_support_t @(message.structure.type.name)__type_support = {

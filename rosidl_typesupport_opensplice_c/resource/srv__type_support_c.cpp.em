@@ -46,6 +46,23 @@ header_files = [
 @[end for]@
 
 @{
+TEMPLATE(
+    'msg__type_support_c.cpp.em',
+    package_name=package_name,
+    interface_path=interface_path,
+    message=service.request_message,
+    include_directives=include_directives,
+)
+TEMPLATE(
+    'msg__type_support_c.cpp.em',
+    package_name=package_name,
+    interface_path=interface_path,
+    message=service.response_message,
+    include_directives=include_directives,
+)
+}@
+
+@{
 package_namespaces = '::'.join(service.structure_type.namespaces)
 __dds_msg_type_prefix = "{ns}::dds_::{typename}".format(ns=package_namespaces, typename=service.structure_type.name)
 __dds_sample_type_prefix = "{ns}::dds_::Sample_{typename}".format(ns=package_namespaces, typename=service.structure_type.name)
