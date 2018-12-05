@@ -15,22 +15,9 @@ include_parts.append(convert_camel_case_to_lower_case_underscore(interface_path.
 include_base = '/'.join(include_parts)
 header_file = include_base +'__rosidl_typesupport_opensplice_cpp.hpp'
 }@
-@[if header_file in include_directives]@
-// already included above
-// @
-@[else]@
-@{include_directives.add(header_file)}@
-@[end if]@
-#include "@(header_file)"
-
-#include <limits>
-#include <stdexcept>
-
-#include <u_instanceHandle.h>
-#include <CdrTypeSupport.h>
-
 @{
 header_files = [
+  header_file,
   include_base + '__rosidl_typesupport_opensplice_cpp.hpp',
   'rosidl_typesupport_cpp/message_type_support.hpp',
   include_base + '__struct.hpp',
@@ -172,7 +159,7 @@ convert_ros_message_to_dds(
       dds_message.@(member.name)_[i] = ros_message.@(member.name)[i];
 @[      end if]@
 @[    else]@
-        @('::'.join(member.type.basetype.namespaces))::typesupport_opensplice_cpp::convert_ros_message_to_dds(
+      @('::'.join(member.type.basetype.namespaces))::typesupport_opensplice_cpp::convert_ros_message_to_dds(
         ros_message.@(member.name)[i], dds_message.@(member.name)_[i]);
 @[    end if]@
     }

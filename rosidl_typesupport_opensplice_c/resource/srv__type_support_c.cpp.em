@@ -10,21 +10,10 @@ include_parts.append(convert_camel_case_to_lower_case_underscore(interface_path.
 include_base = '/'.join(include_parts)
 header_file = include_base + '__rosidl_typesupport_opensplice_c.h'
 }@
-@[if header_file in include_directives]@
-// already included above
-// @
-@[else]@
-@{include_directives.add(header_file)}@
-@[end if]@
-#include "@(header_file)"
-
-#include <cstring>
-#include <iostream>
-#include <sstream>
-
 @{
 service_name = service.structure_type.name
 header_files = [
+    header_file,
     'rmw/rmw.h',
     package_name + '/msg/rosidl_typesupport_opensplice_c__visibility_control.h',
     include_base + '.h',

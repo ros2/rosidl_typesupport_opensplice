@@ -27,7 +27,7 @@ extern "C"
 
 ROSIDL_TYPESUPPORT_OPENSPLICE_C_PUBLIC_@(package_name)
 const rosidl_message_type_support_t *
-ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
+  ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
   rosidl_typesupport_opensplice_c,
   @(', '.join(message.structure.type.namespaces)),
   @(message.structure.type.name))();

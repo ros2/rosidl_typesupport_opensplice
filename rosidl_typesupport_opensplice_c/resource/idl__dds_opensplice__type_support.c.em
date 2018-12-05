@@ -1,6 +1,15 @@
 // generated from rosidl_typesupport_opensplice_c/resource/idl__dds_opensplice__type_support.c.em
 // generated code does not contain a copyright notice
 
+#include <cassert>
+#include <cstring>
+#include <iostream>
+#include <limits>
+#include <sstream>
+
+#include <CdrTypeSupport.h>
+#include <u_instanceHandle.h>
+
 @{
 #######################################################################
 # EmPy template for generating <idl>__rosidl_typesupport.c files

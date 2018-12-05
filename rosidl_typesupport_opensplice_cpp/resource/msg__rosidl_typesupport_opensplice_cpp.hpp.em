@@ -101,7 +101,7 @@ extern "C"
 
 ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_@(package_name)
 const rosidl_message_type_support_t *
-ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
+  ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
   rosidl_typesupport_opensplice_cpp,
   @(', '.join([package_name] + list(interface_path.parents[0].parts))),
   @(message.structure.type.name))();

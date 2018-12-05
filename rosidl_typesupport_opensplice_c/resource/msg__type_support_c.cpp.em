@@ -17,22 +17,9 @@ include_parts.append(convert_camel_case_to_lower_case_underscore(interface_path.
 include_base = '/'.join(include_parts)
 header_file = include_base + '__rosidl_typesupport_opensplice_c.h'
 }@
-@[if header_file in include_directives]@
-// already included above
-// @
-@[else]@
-@{include_directives.add(header_file)}@
-@[end if]@
-#include "@(header_file)"
-
-#include <cassert>
-#include <limits>
-
-#include <u_instanceHandle.h>
-#include <CdrTypeSupport.h>
-
 @{
 header_files = [
+    header_file,
     'rosidl_typesupport_opensplice_c/identifier.h',
     package_name + '/msg/rosidl_generator_c__visibility_control.h',
     'rosidl_typesupport_opensplice_cpp/message_type_support.h',
@@ -90,6 +77,12 @@ for member in message.structure.members:
         includes[key].add(member.name)
 }@
 @[for key in sorted(includes.keys())]@
+@[  if key in include_directives]@
+// already included above
+// @
+@[  else]@
+@{include_directives.add(key)}@
+@[  end if]@
 #include "@(key)"  // @(', '.join(includes[key]))
 @[end for]@
 
@@ -112,7 +105,7 @@ for member in message.structure.members:
 ROSIDL_TYPESUPPORT_OPENSPLICE_C_IMPORT_@(package_name)
 @[  end if]@
 const rosidl_message_type_support_t *
-ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
+  ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
   rosidl_typesupport_opensplice_c, @(key[0]), @(key[1]))();
 @[end for]@
 

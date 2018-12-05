@@ -15,22 +15,9 @@ include_parts.append(convert_camel_case_to_lower_case_underscore(interface_path.
 include_base = '/'.join(include_parts)
 header_file = include_base +'__rosidl_typesupport_opensplice_cpp.hpp'
 }@
-
-@[if header_file in include_directives]@
-// already included above
-// @
-@[else]@
-@{include_directives.add(header_file)}@
-@[end if]@
-#include "@(header_file)"
-
-#include <cstring>
-#include <iostream>
-#include <sstream>
-#include <string>
-
 @{
 header_files = [
+    header_file,
     'rosidl_generator_c/service_type_support_struct.h',
     'rosidl_typesupport_cpp/message_type_support.hpp',
     'rosidl_typesupport_opensplice_cpp/visibility_control.h',
