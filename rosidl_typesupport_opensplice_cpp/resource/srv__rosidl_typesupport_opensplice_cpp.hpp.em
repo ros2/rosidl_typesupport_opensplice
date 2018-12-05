@@ -4,6 +4,20 @@
 
 @# Included from rosidl_typesupport_fastrtps_cpp/resource/idl__rosidl_typesupport_opensplice_cpp.hpp.em
 @{
+TEMPLATE(
+    'msg__rosidl_typesupport_opensplice_cpp.hpp.em',
+    package_name=package_name, interface_path=interface_path, message=service.request_message,
+    include_directives=include_directives)
+}@
+
+@{
+TEMPLATE(
+    'msg__rosidl_typesupport_opensplice_cpp.hpp.em',
+    package_name=package_name, interface_path=interface_path, message=service.response_message,
+    include_directives=include_directives)
+}@
+
+@{
 from rosidl_cmake import convert_camel_case_to_lower_case_underscore
 include_parts = [package_name] + list(interface_path.parents[0].parts)
 include_dir = '/'.join(include_parts)
@@ -39,19 +53,6 @@ namespace typesupport_opensplice_cpp
 __ros_msg_pkg_prefix = '::'.join(service.structure_type.namespaces)
 __dds_msg_pkg_prefix = __ros_msg_pkg_prefix + '::dds_'
 }@
-
-@[for message in (service.request_message, service.response_message)]@
-ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_@(package_name)
-extern void convert_ros_message_to_dds(
-  const @(__ros_msg_pkg_prefix)::@(message.structure.type.name) & ros_message,
-  @(__dds_msg_pkg_prefix)::@(message.structure.type.name)_ & dds_message);
-
-ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_@(package_name)
-extern void convert_dds_message_to_ros(
-  const @(__dds_msg_pkg_prefix)::@(message.structure.type.name)_ & dds_message,
-  @(__ros_msg_pkg_prefix)::@(message.structure.type.name) & ros_message);
-@[end for]@
-
 }  // namespace typesupport_opensplice_cpp
 
 @[for ns in reversed(service.structure_type.namespaces)]@
