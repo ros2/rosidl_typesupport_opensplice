@@ -2,6 +2,20 @@
 // rosidl_typesupport_opensplice_c/resource/srv__rosidl_typesupport_opensplice_c.h.em
 // generated code does not contain a copyright notice
 
+@{
+TEMPLATE(
+    'msg__rosidl_typesupport_opensplice_c.h.em',
+    package_name=package_name, interface_path=interface_path, message=service.request_message,
+    include_directives=include_directives)
+}@
+
+@{
+TEMPLATE(
+    'msg__rosidl_typesupport_opensplice_c.h.em',
+    package_name=package_name, interface_path=interface_path, message=service.response_message,
+    include_directives=include_directives)
+}@
+
 @# Included from rosidl_typesupport_opensplice_c/resource/idl__rosidl_typesupport_opensplice_c.h.em
 @{
 header_files = [
