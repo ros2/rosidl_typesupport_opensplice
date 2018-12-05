@@ -49,7 +49,7 @@ from rosidl_parser.definition import Action
 for action in content.get_elements_of_type(Action):
     TEMPLATE(
         'msg__type_support_c.cpp.em',
-        package_name=package_name, interface_path=interface_path, message=action.goal.request,
+        package_name=package_name, interface_path=interface_path, message=action.goal_request,
         include_directives=include_directives)
     TEMPLATE(
         'msg__type_support_c.cpp.em',
