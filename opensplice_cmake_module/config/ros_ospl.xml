@@ -21,5 +21,13 @@
             <!-- the following one is necessary only for TwinOaks CoreDX DDS compatibility -->
             <!-- <ExplicitlyPublishQosSetToDefault>true</ExplicitlyPublishQosSetToDefault> -->
         </Compatibility>
+        <Discovery>
+            <!-- By default, OpenSplice only allows up to 9 participants per
+                 machine (see http://download.prismtech.com/docs/Vortex/html/ospl/ConfGuide/guide.html#maxautoparticipantindex)
+                 This means that only 9 nodes can be run on a given machine,
+                 which even moderately complex robots easily achieve.
+            -->
+            <MaxAutoParticipantIndex>99</MaxAutoParticipantIndex>
+        </Discovery>
     </DDSI2Service>
 </OpenSplice>
