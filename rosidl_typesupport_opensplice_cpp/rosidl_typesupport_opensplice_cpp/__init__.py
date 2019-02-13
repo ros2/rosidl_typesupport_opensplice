@@ -24,29 +24,28 @@ from rosidl_parser import parse_message_file
 from rosidl_parser import parse_service_file
 from rosidl_parser import validate_field_types
 
+
 def check_idlpp_supports_include_namespaces(idl_pp):
     res = 0
 
-    try:
-        r = subprocess.getstatusoutput(idl_pp + ' -v')
-        ospl_version = r[1].split(':')[1].strip()
+    r = subprocess.getstatusoutput(idl_pp + ' -v')
+    ospl_version = r[1].split(':')[1].strip()
 
-        if ospl_version.endswith('OSS'):
-            m = re.search('([1-9][0-9]*\.[0-9]+)\.([0-9]*)', ospl_version)
-            if m and m.lastindex == 2:
-                major = m.group(1)
-                minor = m.group(2)
-                res = (major > '6.9' or (major == '6.9' and minor > '181127'))
-        else:
-            m = re.search('([1-9][0-9]*\.[0-9]+)\.([0-9]*)', ospl_version)
-            if m and m.lastindex == 2:
-                major = m.group(1)
-                minor = m.group(2)
-                res = (major > '6.10' or (major == '6.10' and minor > '1'))
-    except:
-        pass
+    if ospl_version.endswith('OSS'):
+        m = re.search('([1-9][0-9]*\.[0-9]+)\.([0-9]*)', ospl_version)
+        if m and m.lastindex == 2:
+            major = m.group(1)
+            minor = m.group(2)
+            res = (major > '6.9' or (major == '6.9' and minor > '181127'))
+    else:
+        m = re.search('([1-9][0-9]*\.[0-9]+)\.([0-9]*)', ospl_version)
+        if m and m.lastindex == 2:
+            major = m.group(1)
+            minor = m.group(2)
+            res = (major > '6.10' or (major == '6.10' and minor > '1'))
 
     return res
+
 
 def generate_dds_opensplice_cpp(
     pkg_name, dds_interface_files, dds_interface_base_path, deps, output_basepath, idl_pp
