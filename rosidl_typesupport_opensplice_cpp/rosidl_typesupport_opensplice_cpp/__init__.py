@@ -26,21 +26,22 @@ from rosidl_parser import validate_field_types
 
 
 def check_idlpp_supports_include_namespaces(idl_pp):
-    res = False
+    version = 0
+    build = 0
 
     r = subprocess.getstatusoutput(idl_pp + ' -v')
     ospl_version = r[1].split(':')[1].strip()
-    m = re.search('([1-9][0-9]*\.[0-9]+)\.([0-9]*)', ospl_version)
-    if m and m.lastindex == 2:
-        major = m.group(1)
-        minor = m.group(2)
+    m = re.search('([1-9][0-9]*)\.([0-9]+)\.([0-9]*)', ospl_version)
+    if m and m.lastindex == 3:
+        major = int(m.group(1))
+        minor = int(m.group(2))
+        build = int(m.group(3))
+        version = major * 100 + minor
 
     if ospl_version.endswith('OSS'):
-        res = (major > '6.9' or (major == '6.9' and minor > '181127'))
+        return version > 609 or (version == 609 and build > 190226)
     else:
-        res = (major > '6.10' or (major == '6.10' and minor > '1'))
-
-    return res
+        return version > 610 or (version == 610 and build > 1)
 
 
 def generate_dds_opensplice_cpp(
