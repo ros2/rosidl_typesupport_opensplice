@@ -26,23 +26,19 @@ from rosidl_parser import validate_field_types
 
 
 def check_idlpp_supports_include_namespaces(idl_pp):
-    res = 0
+    res = False
 
     r = subprocess.getstatusoutput(idl_pp + ' -v')
     ospl_version = r[1].split(':')[1].strip()
+    m = re.search('([1-9][0-9]*\.[0-9]+)\.([0-9]*)', ospl_version)
+    if m and m.lastindex == 2:
+        major = m.group(1)
+        minor = m.group(2)
 
     if ospl_version.endswith('OSS'):
-        m = re.search('([1-9][0-9]*\.[0-9]+)\.([0-9]*)', ospl_version)
-        if m and m.lastindex == 2:
-            major = m.group(1)
-            minor = m.group(2)
-            res = (major > '6.9' or (major == '6.9' and minor > '181127'))
+        res = (major > '6.9' or (major == '6.9' and minor > '181127'))
     else:
-        m = re.search('([1-9][0-9]*\.[0-9]+)\.([0-9]*)', ospl_version)
-        if m and m.lastindex == 2:
-            major = m.group(1)
-            minor = m.group(2)
-            res = (major > '6.10' or (major == '6.10' and minor > '1'))
+        res = (major > '6.10' or (major == '6.10' and minor > '1'))
 
     return res
 
