@@ -83,7 +83,7 @@ for member in message.structure.members:
 @[  else]@
 @{include_directives.add(key)}@
 @[  end if]@
-#include "@(key)"  // @(', '.join(includes[key]))
+#include "@(key)"  // @(', '.join(sorted(includes[key])))
 @[end for]@
 
 // forward declare type support functions
