@@ -13,8 +13,8 @@
 # limitations under the License.
 
 import os
-import subprocess
 import re
+import subprocess
 
 from rosidl_cmake import convert_camel_case_to_lower_case_underscore
 from rosidl_cmake import expand_template
@@ -31,7 +31,7 @@ def check_idlpp_supports_include_namespaces(idl_pp):
 
     r = subprocess.getstatusoutput(idl_pp + ' -v')
     ospl_version = r[1].split(':')[1].strip()
-    m = re.search('([1-9][0-9]*)\.([0-9]+)\.([0-9]*)', ospl_version)
+    m = re.search(r'([1-9][0-9]*)\.([0-9]+)\.([0-9]*)', ospl_version)
     if m and m.lastindex == 3:
         major = int(m.group(1))
         minor = int(m.group(2))
