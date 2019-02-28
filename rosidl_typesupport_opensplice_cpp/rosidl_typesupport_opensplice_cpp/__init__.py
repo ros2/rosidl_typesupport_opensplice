@@ -13,6 +13,7 @@
 # limitations under the License.
 
 import os
+import re
 import subprocess
 
 from rosidl_cmake import convert_camel_case_to_lower_case_underscore
@@ -22,6 +23,25 @@ from rosidl_cmake import get_newest_modification_time
 from rosidl_parser import parse_message_file
 from rosidl_parser import parse_service_file
 from rosidl_parser import validate_field_types
+
+
+def check_idlpp_supports_include_namespaces(idl_pp):
+    version = 0
+    build = 0
+
+    r = subprocess.getstatusoutput(idl_pp + ' -v')
+    ospl_version = r[1].split(':')[1].strip()
+    m = re.search(r'([1-9][0-9]*)\.([0-9]+)\.([0-9]*)', ospl_version)
+    if m and m.lastindex == 3:
+        major = int(m.group(1))
+        minor = int(m.group(2))
+        build = int(m.group(3))
+        version = major * 100 + minor
+
+    if ospl_version.endswith('OSS'):
+        return version > 609 or (version == 609 and build > 190226)
+    else:
+        return version > 610 or (version == 610 and build > 1)
 
 
 def generate_dds_opensplice_cpp(
@@ -61,6 +81,11 @@ def generate_dds_opensplice_cpp(
         cmd = [idl_pp]
         for include_dir in include_dirs:
             cmd += ['-I', include_dir]
+        if check_idlpp_supports_include_namespaces(idl_pp):
+            cmd += [
+                '-o',
+                'maintain-include-namespace'
+            ]
         cmd += [
             '-S',
             '-l', 'cpp',
