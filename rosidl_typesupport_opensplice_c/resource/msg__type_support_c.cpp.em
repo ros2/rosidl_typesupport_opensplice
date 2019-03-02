@@ -4,6 +4,9 @@
 @# Included from rosidl_typesupport_opensplice_c/resource/idl__dds_opensplice_type_support.c.em
 @{
 from rosidl_cmake import convert_camel_case_to_lower_case_underscore
+from rosidl_parser.definition import ACTION_FEEDBACK_SUFFIX
+from rosidl_parser.definition import ACTION_GOAL_SUFFIX
+from rosidl_parser.definition import ACTION_RESULT_SUFFIX
 from rosidl_parser.definition import Array
 from rosidl_parser.definition import BasicType
 from rosidl_parser.definition import BaseString
@@ -66,7 +69,15 @@ for member in message.structure.members:
             keys.add('rosidl_generator_c/u16string.h')
             keys.add('rosidl_generator_c/u16string_functions.h')
         elif isinstance(type_, NamespacedType):
-            header_file_name = convert_camel_case_to_lower_case_underscore(type_.name)
+            if (
+                type_.name.endswith(ACTION_GOAL_SUFFIX) or
+                type_.name.endswith(ACTION_RESULT_SUFFIX) or
+                type_.name.endswith(ACTION_FEEDBACK_SUFFIX)
+            ):
+                typename = type_.name.rsplit('_', 1)[0]
+            else:
+                typename = type_.name
+            header_file_name = convert_camel_case_to_lower_case_underscore(typename)
             keys.add('%s/%s.h' % ('/'.join(type_.namespaces), header_file_name))
     for key in keys:
         if key not in includes:
