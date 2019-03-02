@@ -52,25 +52,22 @@ extern "C"
 includes = {}
 for member in message.structure.members:
     keys = set([])
-    if isinstance(member.type, NestedType):
-        if isinstance(member.type.basetype, BasicType):
-            keys.add('rosidl_generator_c/primitives_sequence.h')
-            keys.add('rosidl_generator_c/primitives_sequence_functions.h')
-        elif isinstance(member.type.basetype, String):
+    if isinstance(member.type, NestedType) and isinstance(member.type.basetype, BasicType):
+        keys.add('rosidl_generator_c/primitives_sequence.h')
+        keys.add('rosidl_generator_c/primitives_sequence_functions.h')
+    else:
+        type_ = member.type
+        if isinstance(type_, NestedType):
+            type_ = type_.basetype
+        if isinstance(type_, String):
             keys.add('rosidl_generator_c/string.h')
             keys.add('rosidl_generator_c/string_functions.h')
-        elif isinstance(member.type.basetype, WString):
+        elif isinstance(type_, WString):
             keys.add('rosidl_generator_c/u16string.h')
             keys.add('rosidl_generator_c/u16string_functions.h')
-        elif isinstance(member.type.basetype, NamespacedType):
-            header_file_name = convert_camel_case_to_lower_case_underscore(member.type.basetype.name)
-            keys.add('%s/%s.h' % ('/'.join(member.type.basetype.namespaces), header_file_name))
-    elif isinstance(member.type, String):
-        keys.add('rosidl_generator_c/string.h')
-        keys.add('rosidl_generator_c/string_functions.h')
-    elif isinstance(member.type, WString):
-        keys.add('rosidl_generator_c/u16string.h')
-        keys.add('rosidl_generator_c/u16string_functions.h')
+        elif isinstance(type_, NamespacedType):
+            header_file_name = convert_camel_case_to_lower_case_underscore(type_.name)
+            keys.add('%s/%s.h' % ('/'.join(type_.namespaces), header_file_name))
     for key in keys:
         if key not in includes:
             includes[key] = set([])
@@ -95,8 +92,8 @@ for member in message.structure.members:
        _type = member.type.basetype
 
     if isinstance(_type, NamespacedType):
-        key = (', '.join(_type.namespaces), _type.name)
-        if key not in includes:
+        key = (*_type.namespaces, _type.name)
+        if key not in forward_declares:
             forward_declares[key] = set([])
         forward_declares[key].add(member.name)
 }@
@@ -106,7 +103,7 @@ ROSIDL_TYPESUPPORT_OPENSPLICE_C_IMPORT_@(package_name)
 @[  end if]@
 const rosidl_message_type_support_t *
   ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
-  rosidl_typesupport_opensplice_c, @(key[0]), @(key[1]))();
+  rosidl_typesupport_opensplice_c, @(', '.join(key)))();
 @[end for]@
 
 @# // Make callback functions specific to this message type.
