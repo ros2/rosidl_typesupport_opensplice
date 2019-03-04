@@ -241,14 +241,10 @@ convert_dds_message_to_ros(
     ros_message.@(member.name).resize(size);
 @[    end if]@
     for (DDS::ULong i = 0; i < size; i++) {
-@[    if isinstance(member.type.basetype, BaseString)]@
-      ros_message.@(member.name)[i] = dds_message.@(member.name)_[i];
-@[    elif isinstance(member.type.basetype, BasicType)]@
-@[      if member.type.basetype.type == 'boolean']@
+@[    if isinstance(member.type.basetype, BasicType) and member.type.basetype.type == 'boolean']@
       ros_message.@(member.name)[i] = (dds_message.@(member.name)_[i] != 0);
-@[      else]@
+@[    if isinstance(member.type.basetype, BasicType) or isinstance(member.type.basetype, BaseString)]@
       ros_message.@(member.name)[i] = dds_message.@(member.name)_[i];
-@[      end if]@
 @[    else]@
       @('::'.join(member.type.basetype.namespaces))::typesupport_opensplice_cpp::convert_dds_message_to_ros(
         dds_message.@(member.name)_[i], ros_message.@(member.name)[i]);
