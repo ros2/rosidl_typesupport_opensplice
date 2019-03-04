@@ -43,22 +43,6 @@ header_files = [
 #include "@(header_file)"
 @[end for]@
 
-@[for ns in service.structure_type.namespaces]@
-namespace @(ns)
-{
-@[end for]@
-namespace typesupport_opensplice_cpp
-{
-@{
-__ros_msg_pkg_prefix = '::'.join(service.structure_type.namespaces)
-__dds_msg_pkg_prefix = __ros_msg_pkg_prefix + '::dds_'
-}@
-}  // namespace typesupport_opensplice_cpp
-
-@[for ns in reversed(service.structure_type.namespaces)]@
-}  // namespace @(ns)
-@[end for]@
-
 #ifdef __cplusplus
 extern "C"
 {
