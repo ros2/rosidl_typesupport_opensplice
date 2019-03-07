@@ -84,10 +84,6 @@ public:
     return response_;
 @[  end if]@
   }
-
-  operator @(__dds_msg_type_prefix)@(suffix)_() {
-    return reinterpret_cast<@(__dds_msg_type_prefix)@(suffix)_ &>(*this);
-  }
 };
 
 template<>
