@@ -130,11 +130,6 @@ add_custom_command(
   VERBATIM
 )
 
-add_dependencies(
-  ${rosidl_generate_interfaces_TARGET}__dds_opensplice_idl
-  ${rosidl_generate_interfaces_TARGET}${_target_suffix}
-)
-
 # generate header to switch between export and import for a specific package on Windows
 set(_visibility_control_file
   "${_output_path}/msg/rosidl_typesupport_opensplice_cpp__visibility_control.h")
@@ -213,6 +208,10 @@ add_dependencies(
 add_dependencies(
   ${rosidl_generate_interfaces_TARGET}${_target_suffix}
   ${rosidl_generate_interfaces_TARGET}__cpp
+)
+add_dependencies(
+  ${rosidl_generate_interfaces_TARGET}${_target_suffix}
+  ${rosidl_generate_interfaces_TARGET}__dds_opensplice_idl
 )
 
 if(NOT rosidl_generate_interfaces_SKIP_INSTALL)
