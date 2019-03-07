@@ -78,7 +78,11 @@ class Sample<@(__dds_msg_type_prefix)@(suffix)_>
 public:
   @(__dds_msg_type_prefix)@(suffix)_ & data()
   {
-    return wrapped_message_;
+@[  if suffix == '_Request']@
+    return request_;
+@[  else]@
+    return response_;
+@[  end if]@
   }
 
   operator @(__dds_msg_type_prefix)@(suffix)_() {
