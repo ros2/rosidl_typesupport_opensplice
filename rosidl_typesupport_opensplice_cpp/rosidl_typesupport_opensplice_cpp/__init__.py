@@ -23,8 +23,8 @@ def check_idlpp_supports_include_namespaces(idl_pp):
     version = 0
     build = 0
 
-    r = subprocess.getstatusoutput(idl_pp + ' -v')
-    ospl_version = r[1].split(':')[1].strip()
+    output = subprocess.check_output([idl_pp, '-v'])
+    ospl_version = output.decode().split(':')[1].strip()
     m = re.search(r'([1-9][0-9]*)\.([0-9]+)\.([0-9]*)', ospl_version)
     if m and m.lastindex == 3:
         major = int(m.group(1))
