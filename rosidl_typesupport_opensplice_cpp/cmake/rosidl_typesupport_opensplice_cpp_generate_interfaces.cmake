@@ -177,9 +177,6 @@ target_include_directories(${rosidl_generate_interfaces_TARGET}${_target_suffix}
   PUBLIC
   ${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_cpp
   ${CMAKE_CURRENT_BINARY_DIR}/rosidl_typesupport_opensplice_cpp
-  "${_output_path}/msg/dds_opensplice"
-  "${_output_path}/srv/dds_opensplice"
-  "${_output_path}/action/dds_opensplice"
 )
 ament_target_dependencies(
   ${rosidl_generate_interfaces_TARGET}${_target_suffix}

@@ -148,12 +148,6 @@ target_include_directories(${rosidl_generate_interfaces_TARGET}${_target_suffix}
   ${CMAKE_CURRENT_BINARY_DIR}/rosidl_generator_cpp
   ${CMAKE_CURRENT_BINARY_DIR}/rosidl_typesupport_opensplice_c
   ${CMAKE_CURRENT_BINARY_DIR}/rosidl_typesupport_opensplice_cpp
-  "${_output_path}/msg/dds_opensplice_c"
-  "${_dds_output_path}/msg/dds_opensplice"
-  "${_output_path}/srv/dds_opensplice_c"
-  "${_dds_output_path}/srv/dds_opensplice_c"
-  "${_output_path}/action/dds_opensplice_c"
-  "${_dds_output_path}/action/dds_opensplice_c"
 )
 ament_target_dependencies(${rosidl_generate_interfaces_TARGET}${_target_suffix}
   "rmw"
