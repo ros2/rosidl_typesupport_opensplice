@@ -4,16 +4,16 @@
 @# Included from rosidl_typesupport_opensplice_c/resource/idl__dds_opensplice_type_support.c.em
 @{
 from rosidl_cmake import convert_camel_case_to_lower_case_underscore
+from rosidl_parser.definition import AbstractGenericString
+from rosidl_parser.definition import AbstractNestedType
+from rosidl_parser.definition import AbstractString
+from rosidl_parser.definition import AbstractWString
 from rosidl_parser.definition import ACTION_FEEDBACK_SUFFIX
 from rosidl_parser.definition import ACTION_GOAL_SUFFIX
 from rosidl_parser.definition import ACTION_RESULT_SUFFIX
 from rosidl_parser.definition import Array
 from rosidl_parser.definition import BasicType
-from rosidl_parser.definition import BaseString
 from rosidl_parser.definition import NamespacedType
-from rosidl_parser.definition import NestedType
-from rosidl_parser.definition import String
-from rosidl_parser.definition import WString
 include_parts = [package_name] + list(interface_path.parents[0].parts)
 include_dir = '/'.join(include_parts)
 include_parts.append(convert_camel_case_to_lower_case_underscore(interface_path.stem))
@@ -55,17 +55,17 @@ extern "C"
 includes = {}
 for member in message.structure.members:
     keys = set([])
-    if isinstance(member.type, NestedType) and isinstance(member.type.basetype, BasicType):
+    if isinstance(member.type, AbstractNestedType) and isinstance(member.type.value_type, BasicType):
         keys.add('rosidl_generator_c/primitives_sequence.h')
         keys.add('rosidl_generator_c/primitives_sequence_functions.h')
     else:
         type_ = member.type
-        if isinstance(type_, NestedType):
-            type_ = type_.basetype
-        if isinstance(type_, String):
+        if isinstance(type_, AbstractNestedType):
+            type_ = type_.value_type
+        if isinstance(type_, AbstractString):
             keys.add('rosidl_generator_c/string.h')
             keys.add('rosidl_generator_c/string_functions.h')
-        elif isinstance(type_, WString):
+        elif isinstance(type_, AbstractWString):
             keys.add('rosidl_generator_c/u16string.h')
             keys.add('rosidl_generator_c/u16string_functions.h')
         elif isinstance(type_, NamespacedType):
@@ -99,8 +99,8 @@ for member in message.structure.members:
 forward_declares = {}
 for member in message.structure.members:
     _type = member.type
-    if isinstance(_type, NestedType):
-       _type = member.type.basetype
+    if isinstance(_type, AbstractNestedType):
+       _type = member.type.value_type
 
     if isinstance(_type, NamespacedType):
         key = (*_type.namespaces, _type.name)
@@ -119,8 +119,8 @@ const rosidl_message_type_support_t *
 
 @# // Make callback functions specific to this message type.
 @{
-__dds_msg_type_prefix = '::'.join(message.structure.type.namespaces + ['dds_'] + [message.structure.type.name]) + '_'
-__ros_msg_type_prefix = '__'.join(message.structure.type.namespaces + [message.structure.type.name])
+__dds_msg_type_prefix = '::'.join(message.structure.namespaced_type.namespaces + ['dds_'] + [message.structure.namespaced_type.name]) + '_'
+__ros_msg_type_prefix = '__'.join(message.structure.namespaced_type.namespaces + [message.structure.namespaced_type.name])
 }@
 using __dds_msg_type_@(__ros_msg_type_prefix) = @(__dds_msg_type_prefix);
 using __ros_msg_type_@(__ros_msg_type_prefix) = @(__ros_msg_type_prefix);
@@ -187,13 +187,13 @@ convert_ros_to_dds_@(__ros_msg_type_prefix)(const void * untyped_ros_message, vo
         @(', '.join(member.type.namespaces)), @(member.type.name)
       )()->data);
 @[  end if]@
-@[  if isinstance(member.type, NestedType)]@
-@[    if isinstance(member.type.basetype, NamespacedType)]@
-    const message_type_support_callbacks_t * @('__'.join(member.type.basetype.namespaces + [member.type.basetype.name] + ['callbacks'])) =
+@[  if isinstance(member.type, AbstractNestedType)]@
+@[    if isinstance(member.type.value_type, NamespacedType)]@
+    const message_type_support_callbacks_t * @('__'.join(member.type.value_type.namespaces + [member.type.value_type.name] + ['callbacks'])) =
       static_cast<const message_type_support_callbacks_t *>(
       ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
         rosidl_typesupport_opensplice_c,
-        @(', '.join(member.type.basetype.namespaces)), @(member.type.basetype.name)
+        @(', '.join(member.type.value_type.namespaces)), @(member.type.value_type.name)
       )()->data);
 @[    end if]@
 @[    if isinstance(member.type, Array)]@
@@ -212,8 +212,8 @@ convert_ros_to_dds_@(__ros_msg_type_prefix)(const void * untyped_ros_message, vo
 @[    else]@
       auto & ros_i = ros_message->@(member.name).data[i];
 @[    end if]@
-@[    if isinstance(member.type.basetype, BaseString)]@
-@[      if isinstance(member.type.basetype, WString)]@
+@[    if isinstance(member.type.value_type, AbstractGenericString)]@
+@[      if isinstance(member.type.value_type, AbstractWString)]@
       const rosidl_generator_c__U16String * str = &ros_i;
 @[       else]@
       const rosidl_generator_c__String * str = &ros_i;
@@ -232,22 +232,22 @@ convert_ros_to_dds_@(__ros_msg_type_prefix)(const void * untyped_ros_message, vo
       }
 
       dds_message->@(member.name)_[i] = DDS::string_dup(str->data);
-@[    elif isinstance(member.type.basetype, BasicType)]@
-@[      if member.type.basetype.type == 'boolean']@
+@[    elif isinstance(member.type.value_type, BasicType)]@
+@[      if member.type.value_type.typename == 'boolean']@
       dds_message->@(member.name)_[i] = 1 ? ros_i : 0;
 @[      else]@
       dds_message->@(member.name)_[i] = ros_i;
 @[      end if]@
 @[    else]@
-      const char * err_msg = @('__'.join(member.type.basetype.namespaces + [member.type.basetype.name] + ['callbacks']))->convert_ros_to_dds(
+      const char * err_msg = @('__'.join(member.type.value_type.namespaces + [member.type.value_type.name] + ['callbacks']))->convert_ros_to_dds(
         &ros_i, &dds_message->@(member.name)_[i]);
       if (err_msg != 0) {
         return err_msg;
       }
 @[    end if]@
     }
-@[  elif isinstance(member.type, BaseString)]@
-@[    if isinstance(member.type, WString)]@
+@[  elif isinstance(member.type, AbstractGenericString)]@
+@[    if isinstance(member.type, AbstractWString)]@
     const rosidl_generator_c__U16String * str = &ros_message->@(member.name);
 @[    else]@
     const rosidl_generator_c__String * str = &ros_message->@(member.name);
@@ -303,8 +303,8 @@ publish_@(__ros_msg_type_prefix)(void * dds_data_writer, const void * ros_messag
     @(__dds_msg_type_prefix)DataWriter::_narrow(topic_writer);
   DDS::ReturnCode_t status = data_writer->write(dds_message, DDS::HANDLE_NIL);
 @[for member in message.structure.members]@
-@[  if isinstance(member.type, NestedType)]@
-@[    if isinstance(member.type.basetype, BaseString)]@
+@[  if isinstance(member.type, AbstractNestedType)]@
+@[    if isinstance(member.type.value_type, AbstractGenericString)]@
   {
 @[      if isinstance(member.type, Array)]@
     size_t size = @(member.type.size);
@@ -317,7 +317,7 @@ publish_@(__ros_msg_type_prefix)(void * dds_data_writer, const void * ros_messag
     }
   }
 @[    end if]@
-@[  elif isinstance(member.type, BaseString)]@
+@[  elif isinstance(member.type, AbstractGenericString)]@
   // This causes the DDS::String_mgr to release the given c string without freeing it.
   dds_message.@(member.name)_._retn();
 @[  end if]@
@@ -371,27 +371,27 @@ convert_dds_to_ros_@(__ros_msg_type_prefix)(const void * untyped_dds_message, vo
 @[for member in message.structure.members]@
   // Field name: @(member.name)
   {
-@[  if isinstance(member.type, NestedType)]@
+@[  if isinstance(member.type, AbstractNestedType)]@
 @[    if isinstance(member.type, Array)]@
     size_t size = @(member.type.size);
 @[    else]@
 @{
-if isinstance(member.type.basetype, String):
+if isinstance(member.type.value_type, AbstractString):
     array_init = 'rosidl_generator_c__String__Sequence__init'
     array_fini = 'rosidl_generator_c__String__Sequence__fini'
-elif isinstance(member.type.basetype, WString):
+elif isinstance(member.type.value_type, AbstractWString):
     array_init = 'rosidl_generator_c__U16String__Sequence__init'
     array_fini = 'rosidl_generator_c__U16String__Sequence__fini'
-elif isinstance(member.type.basetype, BasicType):
-    type_ = member.type.basetype
-    if type_.type == 'char':
-        type_.type = 'uint8'
-    array_init = 'rosidl_generator_c__{type_.type}__Sequence__init'.format(**locals())
-    array_fini = 'rosidl_generator_c__{type_.type}__Sequence__fini'.format(**locals())
+elif isinstance(member.type.value_type, BasicType):
+    type_ = member.type.value_type
+    if type_.typename == 'char':
+        type_.typename = 'uint8'
+    array_init = 'rosidl_generator_c__{type_.typename}__Sequence__init'.format(**locals())
+    array_fini = 'rosidl_generator_c__{type_.typename}__Sequence__fini'.format(**locals())
 else:
-    member_pkg_name = '__'.join(member.type.basetype.namespaces)
-    array_init = '{member_pkg_name}__{member.type.basetype.name}__Sequence__init'.format(**locals())
-    array_fini = '{member_pkg_name}__{member.type.basetype.name}__Sequence__fini'.format(**locals())
+    member_pkg_name = '__'.join(member.type.value_type.namespaces)
+    array_init = '{member_pkg_name}__{member.type.value_type.name}__Sequence__init'.format(**locals())
+    array_fini = '{member_pkg_name}__{member.type.value_type.name}__Sequence__fini'.format(**locals())
 }@
     size_t size = dds_message->@(member.name)_.length();
     if (ros_message->@(member.name).data) {
@@ -407,13 +407,13 @@ else:
 @[    else]@
       auto & ros_i = ros_message->@(member.name).data[i];
 @[    end if]@
-@[    if isinstance(member.type.basetype, BasicType)]@
-@[      if member.type.basetype.type == 'boolean']@
+@[    if isinstance(member.type.value_type, BasicType)]@
+@[      if member.type.value_type.typename == 'boolean']@
       ros_i = (dds_message->@(member.name)_[i] != 0);
 @[      else]@
       ros_i = dds_message->@(member.name)_[i];
 @[      end if]@
-@[    elif isinstance(member.type.basetype, String)]@
+@[    elif isinstance(member.type.value_type, AbstractString)]@
       if (!ros_i.data) {
         rosidl_generator_c__String__init(&ros_i);
       }
@@ -423,7 +423,7 @@ else:
       if (!succeeded) {
         return "failed to assign string into field '@(member.name)'";
       }
-@[    elif isinstance(member.type.basetype, WString)]@
+@[    elif isinstance(member.type.value_type, AbstractWString)]@
       if (!ros_i.data) {
         rosidl_generator_c__U16String__init(&ros_i);
       }
@@ -435,13 +435,13 @@ else:
       }
 @[    else]@
       const rosidl_message_type_support_t * ts =
-        ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(member.type.basetype.namespaces)), @(member.type.basetype.name))();
+        ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(member.type.value_type.namespaces)), @(member.type.value_type.name))();
       const message_type_support_callbacks_t * callbacks =
         static_cast<const message_type_support_callbacks_t *>(ts->data);
       callbacks->convert_dds_to_ros(&dds_message->@(member.name)_[i], &ros_i);
 @[    end if]@
     }
-@[  elif isinstance(member.type, String)]@
+@[  elif isinstance(member.type, AbstractString)]@
     if (!ros_message->@(member.name).data) {
       rosidl_generator_c__String__init(&ros_message->@(member.name));
     }
@@ -451,7 +451,7 @@ else:
     if (!succeeded) {
       return "failed to assign string into field '@(member.name)'";
     }
-@[  elif isinstance(member.type, WString)]@
+@[  elif isinstance(member.type, AbstractWString)]@
     if (!ros_message->@(member.name).data) {
       rosidl_generator_c__U16String__init(&ros_message->@(member.name));
     }
@@ -462,7 +462,7 @@ else:
       return "failed to assign string into field '@(member.name)'";
     }
 @[  elif isinstance(member.type, BasicType)]@
-    ros_message->@(member.name) = @('(' if member.type.type == 'boolean' else '')dds_message->@(member.name)_@(' != 0)' if member.type.type == 'boolean' else '');
+    ros_message->@(member.name) = @('(' if member.type.typename == 'boolean' else '')dds_message->@(member.name)_@(' != 0)' if member.type.typename == 'boolean' else '');
 @[  else]@
     const rosidl_message_type_support_t * ts =
       ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(member.type.namespaces)), @(member.type.name))();
@@ -716,9 +716,9 @@ deserialize_@(__ros_msg_type_prefix)(
 @
 @# // Collect the callback functions and provide a function to get the type support struct.
 
-static message_type_support_callbacks_t @(message.structure.type.name)__callbacks = {
+static message_type_support_callbacks_t @(message.structure.namespaced_type.name)__callbacks = {
   "@(package_name)",  // package_name
-  "@(message.structure.type.name)",  // message_name
+  "@(message.structure.namespaced_type.name)",  // message_name
   register_type_@(__ros_msg_type_prefix),  // register_type
   publish_@(__ros_msg_type_prefix),  // publish
   take_@(__ros_msg_type_prefix),  // take
@@ -728,19 +728,19 @@ static message_type_support_callbacks_t @(message.structure.type.name)__callback
   convert_dds_to_ros_@(__ros_msg_type_prefix),  // convert_dds_to_ros
 };
 
-static rosidl_message_type_support_t @(message.structure.type.name)__type_support = {
+static rosidl_message_type_support_t @(message.structure.namespaced_type.name)__type_support = {
   rosidl_typesupport_opensplice_c__identifier,
-  &@(message.structure.type.name)__callbacks,  // data
+  &@(message.structure.namespaced_type.name)__callbacks,  // data
   get_message_typesupport_handle_function,
 };
 
 const rosidl_message_type_support_t *
 ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
   rosidl_typesupport_opensplice_c,
-  @(', '.join(message.structure.type.namespaces)),
-  @(message.structure.type.name))()
+  @(', '.join(message.structure.namespaced_type.namespaces)),
+  @(message.structure.namespaced_type.name))()
 {
-  return &@(message.structure.type.name)__type_support;
+  return &@(message.structure.namespaced_type.name)__type_support;
 }
 
 #if defined(__cplusplus)
