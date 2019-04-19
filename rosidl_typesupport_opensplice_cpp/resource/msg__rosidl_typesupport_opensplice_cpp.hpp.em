@@ -36,7 +36,7 @@ class DataReader;
 class DataWriter;
 }  // namespace DDS
 
-@[for ns in message.structure.type.namespaces]@
+@[for ns in message.structure.namespaced_type.namespaces]@
 namespace @(ns)
 {
 @[end for]@
@@ -44,14 +44,14 @@ namespace typesupport_opensplice_cpp
 {
 
 ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_@(package_name)
-extern void register_type__@(message.structure.type.name)(
+extern void register_type__@(message.structure.namespaced_type.name)(
   DDS::DomainParticipant * participant,
   const char * type_name);
 
 @{
-__ros_msg_pkg_prefix = '::'.join(message.structure.type.namespaces)
-__ros_msg_type_prefix = __ros_msg_pkg_prefix + '::' + message.structure.type.name
-__dds_msg_type_prefix = __ros_msg_pkg_prefix + '::dds_::' + message.structure.type.name + '_'
+__ros_msg_pkg_prefix = '::'.join(message.structure.namespaced_type.namespaces)
+__ros_msg_type_prefix = __ros_msg_pkg_prefix + '::' + message.structure.namespaced_type.name
+__dds_msg_type_prefix = __ros_msg_pkg_prefix + '::dds_::' + message.structure.namespaced_type.name + '_'
 }@
 ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_@(package_name)
 extern void convert_ros_message_to_dds(
@@ -59,7 +59,7 @@ extern void convert_ros_message_to_dds(
   @(__dds_msg_type_prefix) & dds_message);
 
 ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_@(package_name)
-extern void publish__@(message.structure.type.name)(
+extern void publish__@(message.structure.namespaced_type.name)(
   DDS::DataWriter * topic_writer,
   const void * untyped_ros_message);
 
@@ -69,7 +69,7 @@ extern void convert_dds_message_to_ros(
   @(__ros_msg_type_prefix) & ros_message);
 
 ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_PUBLIC_@(package_name)
-extern bool take__@(message.structure.type.name)(
+extern bool take__@(message.structure.namespaced_type.name)(
   DDS::DataReader * topic_reader,
   bool ignore_local_publications,
   void * untyped_ros_message,
@@ -77,20 +77,20 @@ extern bool take__@(message.structure.type.name)(
 
 ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
 const char *
-serialize__@(message.structure.type.name)(
+serialize__@(message.structure.namespaced_type.name)(
   const void * untyped_ros_message,
   void * serialized_data);
 
 ROSIDL_TYPESUPPORT_OPENSPLICE_CPP_EXPORT_@(package_name)
 const char *
-deserialize__@(message.structure.type.name)(
+deserialize__@(message.structure.namespaced_type.name)(
   const uint8_t * buffer,
   unsigned length,
   void * untyped_ros_message);
 
 }  // namespace typesupport_opensplice_cpp
 
-@[for ns in reversed(message.structure.type.namespaces)]@
+@[for ns in reversed(message.structure.namespaced_type.namespaces)]@
 }  // namespace @(ns)
 @[end for]@
 
@@ -104,7 +104,7 @@ const rosidl_message_type_support_t *
   ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
   rosidl_typesupport_opensplice_cpp,
   @(', '.join([package_name] + list(interface_path.parents[0].parts))),
-  @(message.structure.type.name))();
+  @(message.structure.namespaced_type.name))();
 
 #ifdef __cplusplus
 }

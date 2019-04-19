@@ -18,5 +18,5 @@ from rosidl_generator_dds_idl import get_post_struct_lines as \
 
 def get_post_struct_lines(message):
     lines = get_default_post_struct_lines(message)
-    lines.append('#pragma keylist %s_' % message.structure.type.name)
+    lines.append('#pragma keylist %s_' % message.structure.namespaced_type.name)
     return lines
