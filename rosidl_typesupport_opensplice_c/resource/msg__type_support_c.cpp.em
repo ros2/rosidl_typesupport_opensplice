@@ -120,7 +120,7 @@ const rosidl_message_type_support_t *
 @# // Make callback functions specific to this message type.
 @{
 __dds_msg_type_prefix = '::'.join(message.structure.namespaced_type.namespaces + ['dds_'] + [message.structure.namespaced_type.name]) + '_'
-__ros_msg_type_prefix = '__'.join(message.structure.namespaced_type.namespaces + [message.structure.namespaced_type.name])
+__ros_msg_type_prefix = '__'.join(message.structure.namespaced_type.namespaced_name())
 }@
 using __dds_msg_type_@(__ros_msg_type_prefix) = @(__dds_msg_type_prefix);
 using __ros_msg_type_@(__ros_msg_type_prefix) = @(__ros_msg_type_prefix);
@@ -180,20 +180,20 @@ convert_ros_to_dds_@(__ros_msg_type_prefix)(const void * untyped_ros_message, vo
   // Field name: @(member.name)
   {
 @[  if isinstance(member.type, NamespacedType)]@
-    const message_type_support_callbacks_t * @('__'.join(member.type.namespaces + [member.type.name] + ['callbacks'])) =
+    const message_type_support_callbacks_t * @('__'.join(member.type.namespaced_name()))__callbacks =
       static_cast<const message_type_support_callbacks_t *>(
       ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
         rosidl_typesupport_opensplice_c,
-        @(', '.join(member.type.namespaces)), @(member.type.name)
+        @(', '.join(member.type.namespaced_name()))
       )()->data);
 @[  end if]@
 @[  if isinstance(member.type, AbstractNestedType)]@
 @[    if isinstance(member.type.value_type, NamespacedType)]@
-    const message_type_support_callbacks_t * @('__'.join(member.type.value_type.namespaces + [member.type.value_type.name] + ['callbacks'])) =
+    const message_type_support_callbacks_t * @('__'.join(member.type.value_type.namespaced_name()))__callbacks =
       static_cast<const message_type_support_callbacks_t *>(
       ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(
         rosidl_typesupport_opensplice_c,
-        @(', '.join(member.type.value_type.namespaces)), @(member.type.value_type.name)
+        @(', '.join(member.type.value_type.namespaced_name()))
       )()->data);
 @[    end if]@
 @[    if isinstance(member.type, Array)]@
@@ -239,7 +239,7 @@ convert_ros_to_dds_@(__ros_msg_type_prefix)(const void * untyped_ros_message, vo
       dds_message->@(member.name)_[i] = ros_i;
 @[      end if]@
 @[    else]@
-      const char * err_msg = @('__'.join(member.type.value_type.namespaces + [member.type.value_type.name] + ['callbacks']))->convert_ros_to_dds(
+      const char * err_msg = @('__'.join(member.type.value_type.namespaced_name()))__callbacks->convert_ros_to_dds(
         &ros_i, &dds_message->@(member.name)_[i]);
       if (err_msg != 0) {
         return err_msg;
@@ -269,7 +269,7 @@ convert_ros_to_dds_@(__ros_msg_type_prefix)(const void * untyped_ros_message, vo
 @[  elif isinstance(member.type, BasicType)]@
     dds_message->@(member.name)_ = ros_message->@(member.name);
 @[  else]@
-    const char * err_msg = @('__'.join(member.type.namespaces + [member.type.name] + ['callbacks']))->convert_ros_to_dds(
+    const char * err_msg = @('__'.join(member.type.namespaced_name()))__callbacks->convert_ros_to_dds(
       &ros_message->@(member.name), &dds_message->@(member.name)_);
     if (err_msg != 0) {
       return err_msg;
@@ -435,7 +435,7 @@ else:
       }
 @[    else]@
       const rosidl_message_type_support_t * ts =
-        ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(member.type.value_type.namespaces)), @(member.type.value_type.name))();
+        ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(member.type.value_type.namespaced_name())))();
       const message_type_support_callbacks_t * callbacks =
         static_cast<const message_type_support_callbacks_t *>(ts->data);
       callbacks->convert_dds_to_ros(&dds_message->@(member.name)_[i], &ros_i);
@@ -465,7 +465,7 @@ else:
     ros_message->@(member.name) = @('(' if member.type.typename == 'boolean' else '')dds_message->@(member.name)_@(' != 0)' if member.type.typename == 'boolean' else '');
 @[  else]@
     const rosidl_message_type_support_t * ts =
-      ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(member.type.namespaces)), @(member.type.name))();
+      ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(member.type.namespaced_name())))();
     const message_type_support_callbacks_t * callbacks =
       static_cast<const message_type_support_callbacks_t *>(ts->data);
     callbacks->convert_dds_to_ros(&dds_message->@(member.name)_, &ros_message->@(member.name));
