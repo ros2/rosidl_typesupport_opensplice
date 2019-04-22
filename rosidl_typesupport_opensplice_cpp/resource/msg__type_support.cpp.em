@@ -64,11 +64,11 @@ struct @(_type.name)_;
 namespace typesupport_opensplice_cpp
 {
 void convert_ros_message_to_dds(
-  const @('::'.join(_type.namespaces))::@(_type.name) &,
+  const @('::'.join(_type.namespaced_name())) &,
   @('::'.join(_type.namespaces))::dds_::@(_type.name)_ &);
 void convert_dds_message_to_ros(
   const @('::'.join(_type.namespaces))::dds_::@(_type.name)_ &,
-  @('::'.join(_type.namespaces))::@(_type.name) &);
+  @('::'.join(_type.namespaced_name())) &);
 }  // namespace typesupport_opensplice_cpp
 @[    for ns in reversed(_type.namespaces)]@
 }  // namespace @(ns)
@@ -243,7 +243,7 @@ convert_dds_message_to_ros(
     for (DDS::ULong i = 0; i < size; i++) {
 @[    if isinstance(member.type.value_type, BasicType) and member.type.value_type.typename == 'boolean']@
       ros_message.@(member.name)[i] = (dds_message.@(member.name)_[i] != 0);
-@[    elif isinstance(member.type.value_type, BasicType) or isinstance(member.type.value_type, AbstractGenericString)]@
+@[    elif isinstance(member.type.value_type, (BasicType, AbstractGenericString))]@
       ros_message.@(member.name)[i] = dds_message.@(member.name)_[i];
 @[    else]@
       @('::'.join(member.type.value_type.namespaces))::typesupport_opensplice_cpp::convert_dds_message_to_ros(

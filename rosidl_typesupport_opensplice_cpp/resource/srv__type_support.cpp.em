@@ -416,7 +416,7 @@ send_request__@(service.namespaced_type.name)(
   void * untyped_requester, const void * untyped_ros_request, int64_t * sequence_number)
 {
   using SampleT = rosidl_typesupport_opensplice_cpp::Sample<@(__dds_msg_type_prefix)_Request_>;
-  using ROSRequestT = @('::'.join(service.namespaced_type.namespaces + [service.namespaced_type.name]))_Request;
+  using ROSRequestT = @('::'.join(service.namespaced_type.namespaced_name()))_Request;
 
   SampleT request;
   auto ros_request = reinterpret_cast<const ROSRequestT *>(untyped_ros_request);
@@ -447,7 +447,7 @@ take_request__@(service.namespaced_type.name)(
     @(__dds_msg_type_prefix)_Request_,
     @(__dds_msg_type_prefix)_Response_
   >;
-  using ROSRequestT = @('::'.join(service.namespaced_type.namespaces + [service.namespaced_type.name]))_Request;
+  using ROSRequestT = @('::'.join(service.namespaced_type.namespaced_name()))_Request;
 
   auto ros_request = static_cast<ROSRequestT *>(untyped_ros_request);
 
@@ -481,7 +481,7 @@ send_response__@(service.namespaced_type.name)(
   void * untyped_responder, const rmw_request_id_t * request_header,
   const void * untyped_ros_response)
 {
-  using ROSResponseT = @('::'.join(service.namespaced_type.namespaces + [service.namespaced_type.name]))_Response;
+  using ROSResponseT = @('::'.join(service.namespaced_type.namespaced_name()))_Response;
   rosidl_typesupport_opensplice_cpp::Sample<@(__dds_msg_type_prefix)_Response_> response;
   auto ros_response = reinterpret_cast<const ROSResponseT *>(untyped_ros_response);
   @('::'.join(service.namespaced_type.namespaces))::typesupport_opensplice_cpp::convert_ros_message_to_dds(*ros_response, response.data());
@@ -505,7 +505,7 @@ take_response__@(service.namespaced_type.name)(
   void * untyped_requester, rmw_request_id_t * request_header, void * untyped_ros_response,
   bool * taken)
 {
-  using ROSResponseT = @('::'.join(service.namespaced_type.namespaces + [service.namespaced_type.name]))_Response;
+  using ROSResponseT = @('::'.join(service.namespaced_type.namespaced_name()))_Response;
   auto ros_response = static_cast<ROSResponseT *>(untyped_ros_response);
 
   using RequesterT = rosidl_typesupport_opensplice_cpp::Requester<

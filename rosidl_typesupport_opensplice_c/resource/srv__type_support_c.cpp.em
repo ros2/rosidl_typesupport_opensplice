@@ -63,12 +63,12 @@ extern "C"
 
 // forward declare type support functions
 const rosidl_message_type_support_t *
-  ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.namespaced_type.namespaces)), @(service.namespaced_type.name)_Request)();
+  ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.namespaced_type.namespaced_name()))_Request)();
 const rosidl_message_type_support_t *
-  ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.namespaced_type.namespaces)), @(service.namespaced_type.name)_Response)();
+  ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.namespaced_type.namespaced_name()))_Response)();
 
 const char *
-register_types__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name)(
+register_types__@('__'.join(service.namespaced_type.namespaced_name()))(
   void * untyped_participant, const char * request_type_name, const char * response_type_name)
 {
   return @('::'.join(service.namespaced_type.namespaces))::typesupport_opensplice_cpp::register_types__@(service.namespaced_type.name)(
@@ -76,7 +76,7 @@ register_types__@('__'.join(service.namespaced_type.namespaces))__@(service.name
 }
 
 const char *
-create_requester__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name)(
+create_requester__@('__'.join(service.namespaced_type.namespaced_name()))(
   void * untyped_participant, const char * service_name,
   void ** untyped_requester, void ** untyped_reader,
   const void * untyped_datareader_qos,
@@ -94,7 +94,7 @@ create_requester__@('__'.join(service.namespaced_type.namespaces))__@(service.na
 }
 
 const char *
-create_responder__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name)(
+create_responder__@('__'.join(service.namespaced_type.namespaced_name()))(
   void * untyped_participant, const char * service_name,
   void ** untyped_responder, void ** untyped_reader,
   const void * untyped_datareader_qos,
@@ -112,14 +112,14 @@ create_responder__@('__'.join(service.namespaced_type.namespaces))__@(service.na
 }
 
 const char *
-send_request__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name)(
+send_request__@('__'.join(service.namespaced_type.namespaced_name()))(
   void * untyped_requester, const void * untyped_ros_request, int64_t * sequence_number)
 {
   using SampleT = rosidl_typesupport_opensplice_cpp::Sample<@(__dds_msg_type_prefix)_Request_>;
 
   SampleT request;
   const rosidl_message_type_support_t * ts =
-    ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.namespaced_type.namespaces)), @(service.namespaced_type.name)_Request)();
+    ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.namespaced_type.namespaced_name()))_Request)();
   const message_type_support_callbacks_t * callbacks =
     static_cast<const message_type_support_callbacks_t *>(ts->data);
   callbacks->convert_ros_to_dds(untyped_ros_request, static_cast<void *>(&request.data()));
@@ -141,7 +141,7 @@ send_request__@('__'.join(service.namespaced_type.namespaces))__@(service.namesp
 }
 
 const char *
-take_request__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name)(
+take_request__@('__'.join(service.namespaced_type.namespaced_name()))(
   void * untyped_responder, rmw_request_id_t * request_header, void * untyped_ros_request,
   bool * taken)
 {
@@ -160,7 +160,7 @@ take_request__@('__'.join(service.namespaced_type.namespaces))__@(service.namesp
 
   if (*taken) {
     const rosidl_message_type_support_t * ts =
-      ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.namespaced_type.namespaces)), @(service.namespaced_type.name)_Request)();
+      ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.namespaced_type.namespaced_name()))_Request)();
     const message_type_support_callbacks_t * callbacks =
       static_cast<const message_type_support_callbacks_t *>(ts->data);
     callbacks->convert_dds_to_ros(static_cast<void *>(&request.data()), untyped_ros_request);
@@ -180,13 +180,13 @@ take_request__@('__'.join(service.namespaced_type.namespaces))__@(service.namesp
 }
 
 const char *
-send_response__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name)(
+send_response__@('__'.join(service.namespaced_type.namespaced_name()))(
   void * untyped_responder, const rmw_request_id_t * request_header,
   const void * untyped_ros_response)
 {
   rosidl_typesupport_opensplice_cpp::Sample<@(__dds_msg_type_prefix)_Response_> response;
   const rosidl_message_type_support_t * ts =
-    ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.namespaced_type.namespaces)), @(service.namespaced_type.name)_Response)();
+    ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.namespaced_type.namespaced_name()))_Response)();
   const message_type_support_callbacks_t * callbacks =
     static_cast<const message_type_support_callbacks_t *>(ts->data);
   callbacks->convert_ros_to_dds(untyped_ros_response, static_cast<void *>(&response.data()));
@@ -205,7 +205,7 @@ send_response__@('__'.join(service.namespaced_type.namespaces))__@(service.names
 }
 
 const char *
-take_response__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name)(
+take_response__@('__'.join(service.namespaced_type.namespaced_name()))(
   void * untyped_requester, rmw_request_id_t * request_header, void * untyped_ros_response,
   bool * taken)
 {
@@ -224,7 +224,7 @@ take_response__@('__'.join(service.namespaced_type.namespaces))__@(service.names
     request_header->sequence_number = response.sequence_number_;
 
     const rosidl_message_type_support_t * ts =
-      ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.namespaced_type.namespaces)), @(service.namespaced_type.name)_Response)();
+      ROSIDL_TYPESUPPORT_INTERFACE__MESSAGE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.namespaced_type.namespaced_name()))_Response)();
     const message_type_support_callbacks_t * callbacks =
       static_cast<const message_type_support_callbacks_t *>(ts->data);
     callbacks->convert_dds_to_ros(
@@ -236,21 +236,21 @@ take_response__@('__'.join(service.namespaced_type.namespaces))__@(service.names
 }
 
 const char *
-destroy_requester__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name)(void * untyped_requester, void (* deallocator)(void *))
+destroy_requester__@('__'.join(service.namespaced_type.namespaced_name()))(void * untyped_requester, void (* deallocator)(void *))
 {
   return @('::'.join(service.namespaced_type.namespaces))::typesupport_opensplice_cpp::destroy_requester__@(service.namespaced_type.name)(
     untyped_requester, deallocator);
 }
 
 const char *
-destroy_responder__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name)(void * untyped_responder, void (* deallocator)(void *))
+destroy_responder__@('__'.join(service.namespaced_type.namespaced_name()))(void * untyped_responder, void (* deallocator)(void *))
 {
   return @('::'.join(service.namespaced_type.namespaces))::typesupport_opensplice_cpp::destroy_responder__@(service.namespaced_type.name)(
     untyped_responder, deallocator);
 }
 
 const char *
-server_is_available__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name)(
+server_is_available__@('__'.join(service.namespaced_type.namespaced_name()))(
   void * requester, const rmw_node_t * node, bool * is_available)
 {
   return @('::'.join(service.namespaced_type.namespaces))::typesupport_opensplice_cpp::server_is_available__@(service.namespaced_type.name)(
@@ -260,15 +260,15 @@ server_is_available__@('__'.join(service.namespaced_type.namespaces))__@(service
 static service_type_support_callbacks_t @(service.namespaced_type.name)__callbacks = {
   "@(package_name)",
   "@(service.namespaced_type.name)",
-  &create_requester__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name),
-  &destroy_requester__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name),
-  &create_responder__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name),
-  &destroy_responder__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name),
-  &send_request__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name),
-  &take_request__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name),
-  &send_response__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name),
-  &take_response__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name),
-  &server_is_available__@('__'.join(service.namespaced_type.namespaces))__@(service.namespaced_type.name),
+  &create_requester__@('__'.join(service.namespaced_type.namespaced_name())),
+  &destroy_requester__@('__'.join(service.namespaced_type.namespaced_name())),
+  &create_responder__@('__'.join(service.namespaced_type.namespaced_name())),
+  &destroy_responder__@('__'.join(service.namespaced_type.namespaced_name())),
+  &send_request__@('__'.join(service.namespaced_type.namespaced_name())),
+  &take_request__@('__'.join(service.namespaced_type.namespaced_name())),
+  &send_response__@('__'.join(service.namespaced_type.namespaced_name())),
+  &take_response__@('__'.join(service.namespaced_type.namespaced_name())),
+  &server_is_available__@('__'.join(service.namespaced_type.namespaced_name())),
 };
 
 static rosidl_service_type_support_t @(service.namespaced_type.name)__type_support = {
@@ -278,7 +278,7 @@ static rosidl_service_type_support_t @(service.namespaced_type.name)__type_suppo
 };
 
 const rosidl_service_type_support_t *
-ROSIDL_TYPESUPPORT_INTERFACE__SERVICE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.namespaced_type.namespaces)), @(service.namespaced_type.name))() {
+ROSIDL_TYPESUPPORT_INTERFACE__SERVICE_SYMBOL_NAME(rosidl_typesupport_opensplice_c, @(', '.join(service.namespaced_type.namespaced_name())))() {
   return &@(service.namespaced_type.name)__type_support;
 }
 
