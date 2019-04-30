@@ -14,6 +14,21 @@
 
 from rosidl_generator_dds_idl import get_post_struct_lines as \
     get_default_post_struct_lines
+from rosidl_generator_dds_idl import idl_typename as \
+    default_idl_typename
+from rosidl_parser.definition import AbstractWString
+from rosidl_parser.definition import BasicType
+
+
+def idl_typename(type_):
+    typename = default_idl_typename(type_)
+    # OpenSplice doesn't support wchar / wstring, map to char / string instead
+    if isinstance(type_, BasicType) and type_.typename == 'wchar':
+        typename == 'char'
+    if isinstance(type_, AbstractWString):
+        assert typename.startswith('wstring')
+        typename = typename[1:]
+    return typename
 
 
 def get_post_struct_lines(message):

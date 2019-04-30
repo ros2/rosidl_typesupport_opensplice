@@ -1,9 +1,11 @@
 // generated from rosidl_typesupport_opensplice_cpp/resource/idl__dds_opensplice_type_support.cpp.em
 // generated code does not contain a copyright notice
 
+#include <codecvt>
 #include <cstring>
 #include <iostream>
 #include <limits>
+#include <locale>
 #include <sstream>
 #include <stdexcept>
 #include <string>

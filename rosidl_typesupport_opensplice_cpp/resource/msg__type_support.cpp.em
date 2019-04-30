@@ -4,8 +4,9 @@
 @# Included from rosidl_typesupport_opensplice_cpp/resource/idl__dds_opensplice__type_support.cpp.em
 @{
 from rosidl_cmake import convert_camel_case_to_lower_case_underscore
-from rosidl_parser.definition import AbstractGenericString
 from rosidl_parser.definition import AbstractNestedType
+from rosidl_parser.definition import AbstractString
+from rosidl_parser.definition import AbstractWString
 from rosidl_parser.definition import Array
 from rosidl_parser.definition import BasicType
 from rosidl_parser.definition import NamespacedType
@@ -36,7 +37,11 @@ header_files = [
 @[    else]@
 @{include_directives.add(header_file)}@
 @[    end if]@
+@[    if '/' not in header_file]@
+#include <@(header_file)>
+@[    else]@
 #include "@(header_file)"
+@[    end if]@
 @[end for]@
 
 @{
@@ -150,8 +155,11 @@ convert_ros_message_to_dds(
     dds_message.@(member.name)_.length(length);
 @[    end if]@
     for (DDS::ULong i = 0; i < size; i++) {
-@[    if isinstance(member.type.value_type, AbstractGenericString)]@
+@[    if isinstance(member.type.value_type, AbstractString)]@
       dds_message.@(member.name)_[i] = ros_message.@(member.name)[i].c_str();
+@[    elif isinstance(member.type.value_type, AbstractWString)]@
+      std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
+      dds_message.@(member.name)_[i] = cv.to_bytes(ros_message.@(member.name)[i].c_str()).c_str();
 @[    elif isinstance(member.type.value_type, BasicType)]@
 @[      if member.type.value_type.typename == 'boolean']@
       dds_message.@(member.name)_[i] = 1 ? ros_message.@(member.name)[i] : 0;
@@ -164,8 +172,11 @@ convert_ros_message_to_dds(
 @[    end if]@
     }
   }
-@[  elif isinstance(member.type, AbstractGenericString)]@
+@[  elif isinstance(member.type, AbstractString)]@
   dds_message.@(member.name)_ = ros_message.@(member.name).c_str();
+@[  elif isinstance(member.type, AbstractWString)]@
+  std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
+  dds_message.@(member.name)_ = cv.to_bytes(ros_message.@(member.name).c_str()).c_str();
 @[  elif isinstance(member.type, BasicType)]@
   dds_message.@(member.name)_ = ros_message.@(member.name);
 @[  else]@
@@ -243,16 +254,22 @@ convert_dds_message_to_ros(
     for (DDS::ULong i = 0; i < size; i++) {
 @[    if isinstance(member.type.value_type, BasicType) and member.type.value_type.typename == 'boolean']@
       ros_message.@(member.name)[i] = (dds_message.@(member.name)_[i] != 0);
-@[    elif isinstance(member.type.value_type, (BasicType, AbstractGenericString))]@
+@[    elif isinstance(member.type.value_type, (BasicType, AbstractString))]@
       ros_message.@(member.name)[i] = dds_message.@(member.name)_[i];
+@[    elif isinstance(member.type.value_type, (BasicType, AbstractWString))]@
+      std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
+      ros_message.@(member.name)[i] = cv.from_bytes(dds_message.@(member.name)_[i]);
 @[    else]@
       @('::'.join(member.type.value_type.namespaces))::typesupport_opensplice_cpp::convert_dds_message_to_ros(
         dds_message.@(member.name)_[i], ros_message.@(member.name)[i]);
 @[    end if]@
     }
   }
-@[  elif isinstance(member.type, AbstractGenericString)]@
+@[  elif isinstance(member.type, AbstractString)]@
   ros_message.@(member.name) = dds_message.@(member.name)_;
+@[  elif isinstance(member.type, AbstractWString)]@
+  std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
+  ros_message.@(member.name) = cv.from_bytes(dds_message.@(member.name)_);
 @[  elif isinstance(member.type, BasicType)]@
   ros_message.@(member.name) =
     @('(' if member.type.typename == 'boolean' else '')dds_message.@(member.name)_@(' != 0)' if member.type.typename == 'boolean' else '');
