@@ -455,6 +455,12 @@ else:
       }
       std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
       std::u16string str = cv.from_bytes(dds_message->@(member.name)_[i]);
+      static_assert(
+        sizeof(std::remove_pointer<decltype(ros_i.data)>::type) == sizeof(std::u16string::value_type),
+        "sizeof of rosidl_generator_c__U16String.data doesn't match std::u16string::value_type");
+      static_assert(
+        alignof(std::remove_pointer<decltype(ros_i.data)>::type) == alignof(std::u16string::value_type),
+        "alignof of rosidl_generator_c__U16String.data doesn't match std::u16string::value_type");
       bool succeeded = rosidl_generator_c__U16String__assignn(
         &ros_i, reinterpret_cast<const uint16_t *>(str.c_str()), str.size());
       if (!succeeded) {
@@ -484,6 +490,12 @@ else:
     }
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
     std::u16string str = cv.from_bytes(dds_message->@(member.name)_);
+    static_assert(
+      sizeof(std::remove_pointer<decltype(ros_message->@(member.name).data)>::type) == sizeof(std::u16string::value_type),
+      "sizeof of rosidl_generator_c__U16String.data doesn't match std::u16string::value_type");
+    static_assert(
+      alignof(std::remove_pointer<decltype(ros_message->@(member.name).data)>::type) == alignof(std::u16string::value_type),
+      "alignof of rosidl_generator_c__U16String.data doesn't match std::u16string::value_type");
     bool succeeded = rosidl_generator_c__U16String__assignn(
       &ros_message->@(member.name), reinterpret_cast<const uint16_t *>(str.c_str()), str.size());
     if (!succeeded) {
