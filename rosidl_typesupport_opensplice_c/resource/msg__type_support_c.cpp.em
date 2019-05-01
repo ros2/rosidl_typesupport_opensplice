@@ -462,7 +462,9 @@ else:
         alignof(std::remove_pointer<decltype(ros_i.data)>::type) == alignof(std::u16string::value_type),
         "alignof of rosidl_generator_c__U16String.data doesn't match std::u16string::value_type");
       bool succeeded = rosidl_generator_c__U16String__assignn(
-        &ros_i, reinterpret_cast<const uint16_t *>(str.c_str()), str.size());
+        &ros_i, reinterpret_cast<
+          std::add_pointer<std::add_const<std::remove_pointer<decltype(ros_i.data)>::type>::type>::type
+        >(str.c_str()), str.size());
       if (!succeeded) {
         return "failed to assign string into field '@(member.name)'";
       }
@@ -497,7 +499,9 @@ else:
       alignof(std::remove_pointer<decltype(ros_message->@(member.name).data)>::type) == alignof(std::u16string::value_type),
       "alignof of rosidl_generator_c__U16String.data doesn't match std::u16string::value_type");
     bool succeeded = rosidl_generator_c__U16String__assignn(
-      &ros_message->@(member.name), reinterpret_cast<const uint16_t *>(str.c_str()), str.size());
+      &ros_message->@(member.name), reinterpret_cast<
+        std::add_pointer<std::add_const<std::remove_pointer<decltype(ros_message->@(member.name).data)>::type>::type>::type
+      >(str.c_str()), str.size());
     if (!succeeded) {
       return "failed to assign string into field '@(member.name)'";
     }
