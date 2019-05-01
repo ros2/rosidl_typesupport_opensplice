@@ -246,8 +246,6 @@ convert_ros_to_dds_@(__ros_msg_type_prefix)(const void * untyped_ros_message, vo
         alignof(char16_t) == alignof(std::remove_pointer<decltype(str->data)>::type),
         "alignof of rosidl_generator_c__U16String.data doesn't match char16_t");
       dds_message->@(member.name)_[i] = cv.to_bytes(reinterpret_cast<char16_t *>(str->data)).c_str();
-      (void)dds_message;
-      (void)ros_message;
 @[      end if]@
 @[    elif isinstance(member.type.value_type, BasicType)]@
 @[      if member.type.value_type.typename == 'boolean']@
