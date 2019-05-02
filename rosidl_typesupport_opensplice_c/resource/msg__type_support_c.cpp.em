@@ -284,12 +284,12 @@ convert_ros_to_dds_@(__ros_msg_type_prefix)(const void * untyped_ros_message, vo
     dds_message->@(member.name)_ = DDS::string_dup(str->data);
 @[    else]@
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
-      static_assert(
-        sizeof(char16_t) == sizeof(std::remove_pointer<decltype(str->data)>::type),
-        "sizeof of rosidl_generator_c__U16String.data doesn't match char16_t");
-      static_assert(
-        alignof(char16_t) == alignof(std::remove_pointer<decltype(str->data)>::type),
-        "alignof of rosidl_generator_c__U16String.data doesn't match char16_t");
+    static_assert(
+      sizeof(char16_t) == sizeof(std::remove_pointer<decltype(str->data)>::type),
+      "sizeof of rosidl_generator_c__U16String.data doesn't match char16_t");
+    static_assert(
+      alignof(char16_t) == alignof(std::remove_pointer<decltype(str->data)>::type),
+      "alignof of rosidl_generator_c__U16String.data doesn't match char16_t");
     dds_message->@(member.name)_ = cv.to_bytes(reinterpret_cast<char16_t *>(str->data)).c_str();
 @[    end if]@
 @[  elif isinstance(member.type, BasicType)]@
