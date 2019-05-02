@@ -2,9 +2,11 @@
 // generated code does not contain a copyright notice
 
 #include <cassert>
+#include <codecvt>
 #include <cstring>
 #include <iostream>
 #include <limits>
+#include <locale>
 #include <sstream>
 
 #include <CdrTypeSupport.h>

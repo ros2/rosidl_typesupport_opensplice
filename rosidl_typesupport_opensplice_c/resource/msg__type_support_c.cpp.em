@@ -40,7 +40,11 @@ header_files = [
 @[  else]@
 @{include_directives.add(header_file)}@
 @[  end if]@
+@[  if '/' not in header_file]@
+#include <@(header_file)>
+@[  else]@
 #include "@(header_file)"
+@[  end if]@
 @[end for]@
 
 // includes and forward declarations of message dependencies and their conversion functions
@@ -215,9 +219,9 @@ convert_ros_to_dds_@(__ros_msg_type_prefix)(const void * untyped_ros_message, vo
 @[    if isinstance(member.type.value_type, AbstractGenericString)]@
 @[      if isinstance(member.type.value_type, AbstractWString)]@
       const rosidl_generator_c__U16String * str = &ros_i;
-@[       else]@
+@[      else]@
       const rosidl_generator_c__String * str = &ros_i;
-@[       end if]@
+@[      end if]@
       if (!str) {
         return "string field was not allocated";
       }
@@ -231,7 +235,18 @@ convert_ros_to_dds_@(__ros_msg_type_prefix)(const void * untyped_ros_message, vo
         return "string not null-terminated";
       }
 
+@[      if isinstance(member.type.value_type, AbstractString)]@
       dds_message->@(member.name)_[i] = DDS::string_dup(str->data);
+@[      else]@
+      std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
+      static_assert(
+        sizeof(char16_t) == sizeof(std::remove_pointer<decltype(str->data)>::type),
+        "sizeof of rosidl_generator_c__U16String.data doesn't match char16_t");
+      static_assert(
+        alignof(char16_t) == alignof(std::remove_pointer<decltype(str->data)>::type),
+        "alignof of rosidl_generator_c__U16String.data doesn't match char16_t");
+      dds_message->@(member.name)_[i] = cv.to_bytes(reinterpret_cast<char16_t *>(str->data)).c_str();
+@[      end if]@
 @[    elif isinstance(member.type.value_type, BasicType)]@
 @[      if member.type.value_type.typename == 'boolean']@
       dds_message->@(member.name)_[i] = 1 ? ros_i : 0;
@@ -265,7 +280,18 @@ convert_ros_to_dds_@(__ros_msg_type_prefix)(const void * untyped_ros_message, vo
       return "string not null-terminated";
     }
 
+@[    if isinstance(member.type, AbstractString)]@
     dds_message->@(member.name)_ = DDS::string_dup(str->data);
+@[    else]@
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
+    static_assert(
+      sizeof(char16_t) == sizeof(std::remove_pointer<decltype(str->data)>::type),
+      "sizeof of rosidl_generator_c__U16String.data doesn't match char16_t");
+    static_assert(
+      alignof(char16_t) == alignof(std::remove_pointer<decltype(str->data)>::type),
+      "alignof of rosidl_generator_c__U16String.data doesn't match char16_t");
+    dds_message->@(member.name)_ = cv.to_bytes(reinterpret_cast<char16_t *>(str->data)).c_str();
+@[    end if]@
 @[  elif isinstance(member.type, BasicType)]@
     dds_message->@(member.name)_ = ros_message->@(member.name);
 @[  else]@
@@ -427,9 +453,18 @@ else:
       if (!ros_i.data) {
         rosidl_generator_c__U16String__init(&ros_i);
       }
-      bool succeeded = rosidl_generator_c__U16String__assign(
-        &ros_i,
-        dds_message->@(member.name)_[i]);
+      std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
+      std::u16string str = cv.from_bytes(dds_message->@(member.name)_[i]);
+      static_assert(
+        sizeof(std::remove_pointer<decltype(ros_i.data)>::type) == sizeof(std::u16string::value_type),
+        "sizeof of rosidl_generator_c__U16String.data doesn't match std::u16string::value_type");
+      static_assert(
+        alignof(std::remove_pointer<decltype(ros_i.data)>::type) == alignof(std::u16string::value_type),
+        "alignof of rosidl_generator_c__U16String.data doesn't match std::u16string::value_type");
+      bool succeeded = rosidl_generator_c__U16String__assignn(
+        &ros_i, reinterpret_cast<
+          std::add_pointer<std::add_const<std::remove_pointer<decltype(ros_i.data)>::type>::type>::type
+        >(str.c_str()), str.size());
       if (!succeeded) {
         return "failed to assign string into field '@(member.name)'";
       }
@@ -455,9 +490,18 @@ else:
     if (!ros_message->@(member.name).data) {
       rosidl_generator_c__U16String__init(&ros_message->@(member.name));
     }
-    bool succeeded = rosidl_generator_c__U16String__assign(
-      &ros_message->@(member.name),
-      dds_message->@(member.name)_);
+    std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
+    std::u16string str = cv.from_bytes(dds_message->@(member.name)_);
+    static_assert(
+      sizeof(std::remove_pointer<decltype(ros_message->@(member.name).data)>::type) == sizeof(std::u16string::value_type),
+      "sizeof of rosidl_generator_c__U16String.data doesn't match std::u16string::value_type");
+    static_assert(
+      alignof(std::remove_pointer<decltype(ros_message->@(member.name).data)>::type) == alignof(std::u16string::value_type),
+      "alignof of rosidl_generator_c__U16String.data doesn't match std::u16string::value_type");
+    bool succeeded = rosidl_generator_c__U16String__assignn(
+      &ros_message->@(member.name), reinterpret_cast<
+        std::add_pointer<std::add_const<std::remove_pointer<decltype(ros_message->@(member.name).data)>::type>::type>::type
+      >(str.c_str()), str.size());
     if (!succeeded) {
       return "failed to assign string into field '@(member.name)'";
     }
