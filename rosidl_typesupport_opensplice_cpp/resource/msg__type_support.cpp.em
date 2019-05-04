@@ -158,8 +158,19 @@ convert_ros_message_to_dds(
 @[    if isinstance(member.type.value_type, AbstractString)]@
       dds_message.@(member.name)_[i] = ros_message.@(member.name)[i].c_str();
 @[    elif isinstance(member.type.value_type, AbstractWString)]@
+#ifndef _WIN32
       std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
       dds_message.@(member.name)_[i] = cv.to_bytes(ros_message.@(member.name)[i].c_str()).c_str();
+#else
+      std::wstring_convert<std::codecvt_utf8_utf16<int16_t>, int16_t> cv;
+      static_assert(
+        sizeof(int16_t) == sizeof(std::u16string::value_type),
+        "sizeof of std::u16string.value_type doesn't match int16_t");
+      static_assert(
+        alignof(int16_t) == alignof(std::u16string::value_type),
+        "alignof of std::u16string.value_type doesn't match int16_t");
+      dds_message.@(member.name)_[i] = cv.to_bytes(reinterpret_cast<const int16_t *>(ros_message.@(member.name)[i].c_str())).c_str();
+#endif
 @[    elif isinstance(member.type.value_type, BasicType)]@
 @[      if member.type.value_type.typename == 'boolean']@
       dds_message.@(member.name)_[i] = 1 ? ros_message.@(member.name)[i] : 0;
@@ -176,8 +187,19 @@ convert_ros_message_to_dds(
   dds_message.@(member.name)_ = ros_message.@(member.name).c_str();
 @[  elif isinstance(member.type, AbstractWString)]@
   {
+#ifndef _WIN32
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
     dds_message.@(member.name)_ = cv.to_bytes(ros_message.@(member.name).c_str()).c_str();
+#else
+    std::wstring_convert<std::codecvt_utf8_utf16<int16_t>, int16_t> cv;
+    static_assert(
+      sizeof(int16_t) == sizeof(std::u16string::value_type),
+      "sizeof of std::u16string.value_type doesn't match int16_t");
+    static_assert(
+      alignof(int16_t) == alignof(std::u16string::value_type),
+      "alignof of std::u16string.value_type doesn't match int16_t");
+    dds_message.@(member.name)_ = cv.to_bytes(reinterpret_cast<const int16_t *>(ros_message.@(member.name).c_str())).c_str();
+#endif
   }
 @[  elif isinstance(member.type, BasicType)]@
   dds_message.@(member.name)_ = ros_message.@(member.name);
@@ -259,8 +281,13 @@ convert_dds_message_to_ros(
 @[    elif isinstance(member.type.value_type, (BasicType, AbstractString))]@
       ros_message.@(member.name)[i] = dds_message.@(member.name)_[i];
 @[    elif isinstance(member.type.value_type, (BasicType, AbstractWString))]@
+#ifndef _WIN32
       std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
       ros_message.@(member.name)[i] = cv.from_bytes(dds_message.@(member.name)_[i]);
+#else
+      std::wstring_convert<std::codecvt_utf8_utf16<int16_t>, int16_t> cv;
+      ros_message.@(member.name)[i] = reinterpret_cast<const char16_t *>(cv.from_bytes(static_cast<const char *>(dds_message.@(member.name)_[i])).c_str());
+#endif
 @[    else]@
       @('::'.join(member.type.value_type.namespaces))::typesupport_opensplice_cpp::convert_dds_message_to_ros(
         dds_message.@(member.name)_[i], ros_message.@(member.name)[i]);
@@ -271,8 +298,13 @@ convert_dds_message_to_ros(
   ros_message.@(member.name) = dds_message.@(member.name)_;
 @[  elif isinstance(member.type, AbstractWString)]@
   {
+#ifndef _WIN32
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
     ros_message.@(member.name) = cv.from_bytes(dds_message.@(member.name)_);
+#else
+    std::wstring_convert<std::codecvt_utf8_utf16<int16_t>, int16_t> cv;
+    ros_message.@(member.name) = reinterpret_cast<const char16_t *>(cv.from_bytes(static_cast<const char *>(dds_message.@(member.name)_)).c_str());
+#endif
   }
 @[  elif isinstance(member.type, BasicType)]@
   ros_message.@(member.name) =

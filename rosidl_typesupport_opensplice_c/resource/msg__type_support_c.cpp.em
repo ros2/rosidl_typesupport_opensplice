@@ -238,6 +238,7 @@ convert_ros_to_dds_@(__ros_msg_type_prefix)(const void * untyped_ros_message, vo
 @[      if isinstance(member.type.value_type, AbstractString)]@
       dds_message->@(member.name)_[i] = DDS::string_dup(str->data);
 @[      else]@
+#ifndef _WIN32
       std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
       static_assert(
         sizeof(char16_t) == sizeof(std::remove_pointer<decltype(str->data)>::type),
@@ -245,7 +246,17 @@ convert_ros_to_dds_@(__ros_msg_type_prefix)(const void * untyped_ros_message, vo
       static_assert(
         alignof(char16_t) == alignof(std::remove_pointer<decltype(str->data)>::type),
         "alignof of rosidl_generator_c__U16String.data doesn't match char16_t");
-      dds_message->@(member.name)_[i] = cv.to_bytes(reinterpret_cast<char16_t *>(str->data)).c_str();
+      dds_message->@(member.name)_[i] = cv.to_bytes(reinterpret_cast<const char16_t *>(str->data)).c_str();
+#else
+      std::wstring_convert<std::codecvt_utf8_utf16<int16_t>, int16_t> cv;
+      static_assert(
+        sizeof(wchar_t) == sizeof(std::remove_pointer<decltype(str->data)>::type),
+        "sizeof of rosidl_generator_c__U16String.data doesn't match wchar_t");
+      static_assert(
+        alignof(wchar_t) == alignof(std::remove_pointer<decltype(str->data)>::type),
+        "alignof of rosidl_generator_c__U16String.data doesn't match wchar_t");
+      dds_message->@(member.name)_[i] = cv.to_bytes(reinterpret_cast<const int16_t *>(str->data)).c_str();
+#endif
 @[      end if]@
 @[    elif isinstance(member.type.value_type, BasicType)]@
 @[      if member.type.value_type.typename == 'boolean']@
@@ -283,6 +294,7 @@ convert_ros_to_dds_@(__ros_msg_type_prefix)(const void * untyped_ros_message, vo
 @[    if isinstance(member.type, AbstractString)]@
     dds_message->@(member.name)_ = DDS::string_dup(str->data);
 @[    else]@
+#ifndef _WIN32
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
     static_assert(
       sizeof(char16_t) == sizeof(std::remove_pointer<decltype(str->data)>::type),
@@ -290,7 +302,17 @@ convert_ros_to_dds_@(__ros_msg_type_prefix)(const void * untyped_ros_message, vo
     static_assert(
       alignof(char16_t) == alignof(std::remove_pointer<decltype(str->data)>::type),
       "alignof of rosidl_generator_c__U16String.data doesn't match char16_t");
-    dds_message->@(member.name)_ = cv.to_bytes(reinterpret_cast<char16_t *>(str->data)).c_str();
+    dds_message->@(member.name)_ = cv.to_bytes(reinterpret_cast<const char16_t *>(str->data)).c_str();
+#else
+    std::wstring_convert<std::codecvt_utf8_utf16<int16_t>, int16_t> cv;
+    static_assert(
+      sizeof(wchar_t) == sizeof(std::remove_pointer<decltype(str->data)>::type),
+      "sizeof of rosidl_generator_c__U16String.data doesn't match wchar_t");
+    static_assert(
+      alignof(wchar_t) == alignof(std::remove_pointer<decltype(str->data)>::type),
+      "alignof of rosidl_generator_c__U16String.data doesn't match wchar_t");
+    dds_message->@(member.name)_ = cv.to_bytes(reinterpret_cast<const int16_t *>(str->data)).c_str();
+#endif
 @[    end if]@
 @[  elif isinstance(member.type, BasicType)]@
     dds_message->@(member.name)_ = ros_message->@(member.name);
@@ -453,8 +475,13 @@ else:
       if (!ros_i.data) {
         rosidl_generator_c__U16String__init(&ros_i);
       }
+#ifndef _WIN32
       std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
       std::u16string str = cv.from_bytes(dds_message->@(member.name)_[i]);
+#else
+      std::wstring_convert<std::codecvt_utf8_utf16<int16_t>, int16_t> cv;
+      std::u16string str = reinterpret_cast<const char16_t *>(cv.from_bytes(static_cast<const char *>(dds_message->@(member.name)_[i])).c_str());
+#endif
       static_assert(
         sizeof(std::remove_pointer<decltype(ros_i.data)>::type) == sizeof(std::u16string::value_type),
         "sizeof of rosidl_generator_c__U16String.data doesn't match std::u16string::value_type");
@@ -490,8 +517,13 @@ else:
     if (!ros_message->@(member.name).data) {
       rosidl_generator_c__U16String__init(&ros_message->@(member.name));
     }
+#ifndef _WIN32
     std::wstring_convert<std::codecvt_utf8_utf16<char16_t>, char16_t> cv;
     std::u16string str = cv.from_bytes(dds_message->@(member.name)_);
+#else
+    std::wstring_convert<std::codecvt_utf8_utf16<int16_t>, int16_t> cv;
+    std::u16string str = reinterpret_cast<const char16_t *>(cv.from_bytes(static_cast<const char *>(dds_message->@(member.name)_)).c_str());
+#endif
     static_assert(
       sizeof(std::remove_pointer<decltype(ros_message->@(member.name).data)>::type) == sizeof(std::u16string::value_type),
       "sizeof of rosidl_generator_c__U16String.data doesn't match std::u16string::value_type");
