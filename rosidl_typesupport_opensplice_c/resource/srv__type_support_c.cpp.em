@@ -258,7 +258,7 @@ server_is_available__@('__'.join(service.namespaced_type.namespaced_name()))(
 }
 
 static service_type_support_callbacks_t @(service.namespaced_type.name)__callbacks = {
-  "@(package_name)",
+  "@('::'.join([package_name] + list(interface_path.parents[0].parts)))",
   "@(service.namespaced_type.name)",
   &create_requester__@('__'.join(service.namespaced_type.namespaced_name())),
   &destroy_requester__@('__'.join(service.namespaced_type.namespaced_name())),

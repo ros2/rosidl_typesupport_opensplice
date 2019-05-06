@@ -542,7 +542,7 @@ deserialize__@(message.structure.namespaced_type.name)(
 }
 
 static message_type_support_callbacks_t @(message.structure.namespaced_type.name)_callbacks = {
-  "@(package_name)",
+  "@('::'.join([package_name] + list(interface_path.parents[0].parts)))",
   "@(message.structure.namespaced_type.name)",
   &register_type__@(message.structure.namespaced_type.name),
   &publish__@(message.structure.namespaced_type.name),

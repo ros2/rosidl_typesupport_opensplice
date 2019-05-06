@@ -793,7 +793,7 @@ deserialize_@(__ros_msg_type_prefix)(
 @# // Collect the callback functions and provide a function to get the type support struct.
 
 static message_type_support_callbacks_t @(message.structure.namespaced_type.name)__callbacks = {
-  "@(package_name)",  // package_name
+  "@('::'.join([package_name] + list(interface_path.parents[0].parts)))",  // message_namespace
   "@(message.structure.namespaced_type.name)",  // message_name
   register_type_@(__ros_msg_type_prefix),  // register_type
   publish_@(__ros_msg_type_prefix),  // publish
