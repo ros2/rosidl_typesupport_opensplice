@@ -24,7 +24,7 @@
 
 typedef struct service_type_support_callbacks_t
 {
-  const char * package_name;
+  const char * service_namespace;
   const char * service_name;
   // Function to create a requester
   // Returns NULL if the requester was successfully created, otherwise an error string.
