@@ -204,7 +204,7 @@ convert_ros_to_dds_@(__ros_msg_type_prefix)(const void * untyped_ros_message, vo
     size_t size = @(member.type.size);
 @[    else]@
     size_t size = ros_message->@(member.name).size;
-    if (size > (std::numeric_limits<DDS::Long>::max)()) {
+    if (size > static_cast<size_t>((std::numeric_limits<DDS::Long>::max)())) {
       return "array size exceeds maximum DDS sequence size";
     }
     DDS::Long length = static_cast<DDS::Long>(size);
