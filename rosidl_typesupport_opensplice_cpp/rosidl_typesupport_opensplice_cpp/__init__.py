@@ -111,8 +111,6 @@ def _replace_path_and_timestamp(lines, msg_name, idl_path):
             assert found_source, "No '// Source: ' line was found before"
             lines[i] = '//  Generated: timestamp removed to make the build reproducible'
             break
-    else:
-        assert False, "Failed to find '// Generated: ' line"
     return lines
 
 
