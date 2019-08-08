@@ -2,7 +2,7 @@
 // rosidl_typesupport_opensplice_cpp/resource/srv__rosidl_typesupport_opensplice_cpp.hpp.em
 // generated code does not contain a copyright notice
 
-@# Included from rosidl_typesupport_fastrtps_cpp/resource/idl__rosidl_typesupport_opensplice_cpp.hpp.em
+@# Included from rosidl_typesupport_opensplice_cpp/resource/idl__rosidl_typesupport_opensplice_cpp.hpp.em
 @{
 TEMPLATE(
     'msg__rosidl_typesupport_opensplice_cpp.hpp.em',

@@ -2,7 +2,7 @@
 // rosidl_typesupport_opensplice_cpp/resource/msg__rosidl_typesupport_opensplice_cpp.hpp.em
 // generated code does not contain a copyright notice
 
-@# Included from rosidl_typesupport_fastrtps_cpp/resource/idl__rosidl_typesupport_opensplice_cpp.hpp.em
+@# Included from rosidl_typesupport_opensplice_cpp/resource/idl__rosidl_typesupport_opensplice_cpp.hpp.em
 @{
 from rosidl_cmake import convert_camel_case_to_lower_case_underscore
 include_parts = [package_name] + list(interface_path.parents[0].parts)
