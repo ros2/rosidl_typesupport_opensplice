@@ -10,7 +10,10 @@
     <DDSI2Service name="ddsi2">
         <General>
             <NetworkInterfaceAddress>AUTO</NetworkInterfaceAddress>
-            <AllowMulticast>true</AllowMulticast>
+            <!-- On wireless networks, multicast traffic can severely limit effective bandwidth,
+                 so enable it only for participant discovery.
+            -->
+            <AllowMulticast>spdp</AllowMulticast>
             <EnableMulticastLoopback>true</EnableMulticastLoopback>
             <CoexistWithNativeNetworking>false</CoexistWithNativeNetworking>
             <FragmentSize>64000B</FragmentSize>
