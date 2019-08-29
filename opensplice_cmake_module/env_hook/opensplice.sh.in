@@ -52,6 +52,8 @@ else
 
   # function to prepend non-duplicate values to environment variables
   # using colons as separators and avoiding trailing separators
+  # copied from https://github.com/ament/ament_package/blob/6c8acd25498d2674e7ad9d316b35d112ae1ab8c1/ament_package/template/package_level/local_setup.sh.in#L45-L94
+  # since this script can't assume that the package level script was sourced before
   _opensplice_prepend_unique_value() {
     # arguments
     _listname="$1"
