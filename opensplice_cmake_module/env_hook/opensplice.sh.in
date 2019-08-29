@@ -49,6 +49,60 @@ if [ -f "$_OSPL_HOME_TO_USE/release.com" ]; then
   unset _ORIGINAL_OSPL_URI
 else
   export OSPL_TMPL_PATH=$_OSPL_HOME_TO_USE/etc/opensplice/idlpp
+
+  # function to prepend non-duplicate values to environment variables
+  # using colons as separators and avoiding trailing separators
+  # copied from https://github.com/ament/ament_package/blob/6c8acd25498d2674e7ad9d316b35d112ae1ab8c1/ament_package/template/package_level/local_setup.sh.in#L45-L94
+  # since this script can't assume that the package level script was sourced before
+  _opensplice_prepend_unique_value() {
+    # arguments
+    _listname="$1"
+    _value="$2"
+    #echo "listname $_listname"
+    #eval echo "list value \$$_listname"
+    #echo "value $_value"
+
+    # check if the list contains the value
+    eval _values=\"\$$_listname\"
+    _duplicate=
+    _connext_prepend_unique_value_IFS=$IFS
+    IFS=":"
+    if [ "$AMENT_SHELL" = "zsh" ]; then
+      ament_zsh_to_array _values
+    fi
+    for _item in $_values; do
+      # ignore empty strings
+      if [ -z "$_item" ]; then
+        continue
+      fi
+      if [ "$_item" = "$_value" ]; then
+        _duplicate=1
+      fi
+    done
+    unset _item
+
+    # prepend only non-duplicates
+    if [ -z "$_duplicate" ]; then
+      # avoid trailing separator
+      if [ -z "$_values" ]; then
+        eval export $_listname=\"$_value\"
+        #eval echo "set list \$$_listname"
+      else
+        # field separator must not be a colon
+        unset IFS
+        eval export $_listname=\"$_value:\$$_listname\"
+        #eval echo "prepend list \$$_listname"
+      fi
+    fi
+    IFS=$_connext_prepend_unique_value_IFS
+    unset _connext_prepend_unique_value_IFS
+    unset _duplicate
+    unset _values
+
+    unset _value
+    unset _listname
+  }
+
   # detect if running on Darwin platform
   _UNAME=`uname -s`
   _IS_DARWIN=0
@@ -58,11 +112,12 @@ else
   unset _UNAME
 
   if [ $_IS_DARWIN -eq 0 ]; then
-    ament_prepend_unique_value LD_LIBRARY_PATH "$_OSPL_HOME_TO_USE/lib"
+    _opensplice_prepend_unique_value LD_LIBRARY_PATH "$_OSPL_HOME_TO_USE/lib"
   else
-    ament_prepend_unique_value DYLD_LIBRARY_PATH "$_OSPL_HOME_TO_USE/lib"
+    _opensplice_prepend_unique_value DYLD_LIBRARY_PATH "$_OSPL_HOME_TO_USE/lib"
   fi
   unset _IS_DARWIN
+  unset _opensplice_prepend_unique_value
 fi
 
 if [ -z "$OSPL_URI" ]; then
