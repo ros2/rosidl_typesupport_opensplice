@@ -34,7 +34,7 @@ else
 fi
 
 # TODO(jacobperron): Find a better solution that does not rely on colcon
-# if AMENT_CURRENT_PREFIX is not set, fall back to destination set at configure time
+# if AMENT_CURRENT_PREFIX is not set, try to use COLCON_CURRENT_PREFIX if available
 if [ ! -d "$AMENT_CURRENT_PREFIX" ]; then
   if [ -z "$COLCON_CURRENT_PREFIX" ]; then
     echo "The compile time prefix path '$AMENT_CURRENT_PREFIX' doesn't " \
