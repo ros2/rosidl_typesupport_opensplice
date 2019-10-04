@@ -78,7 +78,9 @@ else
     _connext_prepend_unique_value_IFS=$IFS
     IFS=":"
     if [ "$AMENT_SHELL" = "zsh" ]; then
-      ament_zsh_to_array _values
+      # convert array-like string into array
+      # to wordaround SH_WORD_SPLIT not being set
+      eval _values="(\"${=_values}\")"
     fi
     for _item in $_values; do
       # ignore empty strings
